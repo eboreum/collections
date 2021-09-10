@@ -1,0 +1,58 @@
+{
+    "name": "eboreum/collections",
+    "description": "Wish you had generics in PHP? This library provides a sensible means of managing collections of data (i.e. arrays with restrictions), immutably, until such a time that PHP generics are bestowed upon us.",
+    "type": "library",
+    "require": {
+        "php": ">=7.4",
+        "eboreum/caster": "^0.0.2"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.99",
+        "phpunit/phpunit": "^9.5",
+        "wikimedia/composer-merge-plugin": "^2.0"
+    },
+    "suggest": {
+        "eboreum/collection-class-generator": "For automatically generating and/or mending typed collection classes for specific classes."
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kasper Søfren",
+            "email": "soefritz@gmail.com",
+            "homepage": "https://github.com/kafoso"
+        },
+        {
+            "name": "Carsten Jørgensen",
+            "email": "dev@corex.dk",
+            "homepage": "https://github.com/corex"
+        }
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Eboreum\\Collections\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TestResource\\Unit\\Eboreum\\Collections\\": "tests/resources/TestResource/Unit",
+            "Test\\Unit\\Eboreum\\Collections\\": "tests/tests/Test/Unit"
+        }
+    },
+    "extra": {
+        "merge-plugin": {
+            "require": [
+                "../exceptional/composer.json"
+            ],
+            "recurse": true,
+            "replace": false,
+            "ignore-duplicates": false,
+            "merge-dev": true,
+            "merge-extra": false,
+            "merge-extra-deep": false,
+            "merge-scripts": false
+        }
+    }
+}
