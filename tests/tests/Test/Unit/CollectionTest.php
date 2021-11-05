@@ -10,6 +10,74 @@ use Eboreum\Collections\Exception\RuntimeException;
 
 class CollectionTest extends AbstractCollectionTestCase
 {
+    public function testConstructThrowsExceptionWhenSomeElementsAreNotAccepted(): void
+    {
+        $elements = [
+            "foo",
+            42,
+            "bar",
+            3.14,
+            "baz",
+        ];
+
+        try {
+            new class($elements) extends Collection
+            {
+                /**
+                 * {@inheritDoc}
+                 */
+                public static function isElementAccepted($element): bool
+                {
+                    return is_string($element);
+                }
+            };
+        } catch (\Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                sprintf(
+                    implode("", [
+                        '/',
+                        '^',
+                        'Failure in (class@anonymous\/in\/.+\/%s\:\d+)\-\>__construct\(',
+                            '\$elements = \(array\(5\)\) \[.+\] \(sample\)',
+                        '\) inside \(object\) \1 \{.+\}',
+                        '$',
+                        '/',
+                    ]),
+                    preg_quote(basename(__FILE__), "/"),
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                sprintf(
+                    implode("", [
+                        '/',
+                        '^',
+                        'In argument \$elements, 2\/5 elements are invalid, including\: \[',
+                            '1 \=\> \(int\) 42',
+                            ', 3 \=\> \(float\) 3\.14',
+                        '\]',
+                        '$',
+                        '/',
+                    ]),
+                    preg_quote(basename(__FILE__), "/"),
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertTrue(is_null($currentException));
+
+            return;
+        }
+
+        $this->fail("Exception was never thrown.");
+    }
+
     public function testContainsThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
     {
         $collectionA = new class extends Collection

@@ -10,7 +10,7 @@ use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\Exception\UnexpectedValueException;
 use PHPUnit\Framework\TestCase;
 
-abstract class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
+class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 {
     public function testConstructorThrowsExceptionWhenHandledClassNameIsNotAnExistingClass(): void
     {
