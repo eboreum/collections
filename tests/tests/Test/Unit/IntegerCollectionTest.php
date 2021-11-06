@@ -1,12 +1,9 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
-use Eboreum\Collections\Collection;
-use Eboreum\Collections\Exception\InvalidArgumentException;
-use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\IntegerCollection;
 
 class IntegerCollectionTest extends AbstractTypeCollectionTestCase
@@ -50,8 +47,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
         array $elements,
         \Closure $callback,
         bool $isUsingFirstEncounteredElement
-    ): void
-    {
+    ): void {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
 
@@ -69,55 +65,55 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
     {
         return [
             [
-                "Empty collection.",
+                'Empty collection.',
                 [],
                 [],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
             [
-                "1 single item collection.",
+                '1 single item collection.',
                 [$this->getSingleElement()],
                 [$this->getSingleElement()],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
             [
-                "Integer item collection, ascending, use first encountered.",
+                'Integer item collection, ascending, use first encountered.',
                 [0 => 1, 1 => 2, 3 => 3, 5 => 4],
-                [1,2,1,3,1,4],
-                function(int $value){
+                [1, 2, 1, 3, 1, 4],
+                static function (int $value): string {
                     return strval($value);
                 },
                 true,
             ],
             [
-                "Integer item collection, ascending, use last encountered.",
+                'Integer item collection, ascending, use last encountered.',
                 [1 => 2, 3 => 3, 4 => 1, 5 => 4],
-                [1,2,1,3,1,4],
-                function(int $value){
+                [1, 2, 1, 3, 1, 4],
+                static function (int $value): string {
                     return strval($value);
                 },
                 false,
             ],
             [
-                "Integer item collection, descending, use first encountered.",
+                'Integer item collection, descending, use first encountered.',
                 [0 => 4, 1 => 1, 2 => 3, 4 => 2],
-                [4,1,3,1,2,1],
-                function(int $value){
+                [4, 1, 3, 1, 2, 1],
+                static function (int $value): string {
                     return strval($value);
                 },
                 true,
             ],
             [
-                "Integer item collection, descending, use last encountered.",
+                'Integer item collection, descending, use last encountered.',
                 [0 => 4, 2 => 3, 4 => 2, 5 => 1],
-                [4,1,3,1,2,1],
-                function(int $value){
+                [4, 1, 3, 1, 2, 1],
+                static function (int $value): string {
                     return strval($value);
                 },
                 false,
@@ -132,31 +128,31 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
     {
         return [
             [
-                "Integer keys. 0 in both, means #2 is appended as key 1.",
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
                 new IntegerCollection([0 => 999]),
                 new IntegerCollection([0 => -999]),
-                function(
+                function (
                     IntegerCollection $collectionA,
                     IntegerCollection $collectionB,
                     IntegerCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(2, $collectionC, $message);
                     $this->assertSame([0 => 999, 1 => -999], $collectionC->toArray(), $message);
                 },
             ],
             [
-                "Same name string keys. Will override.",
-                new IntegerCollection(["foo" => 999]),
-                new IntegerCollection(["foo" => -999]),
-                function(
+                'Same name string keys. Will override.',
+                new IntegerCollection(['foo' => 999]),
+                new IntegerCollection(['foo' => -999]),
+                function (
                     IntegerCollection $collectionA,
                     IntegerCollection $collectionB,
                     IntegerCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(["foo" => -999], $collectionC->toArray(), $message);
+                    $this->assertSame(['foo' => -999], $collectionC->toArray(), $message);
                 },
             ],
         ];
@@ -185,7 +181,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
     {
         return [
             -1,
-            "foo" => 2,
+            'foo' => 2,
             42 => -3,
             42,
         ];

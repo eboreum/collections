@@ -1,15 +1,10 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
-use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
-use Eboreum\Collections\Collection;
-use Eboreum\Collections\Exception\InvalidArgumentException;
-use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\Object_\ClosureCollection;
-use Test\Unit\Eboreum\Collections\AbstractTypeCollectionTestCase;
 
 class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
@@ -20,55 +15,55 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
     {
         return [
             [
-                "Empty collection.",
+                'Empty collection.',
                 [],
                 [],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => function(){
-                        return "";
+                    0 => static function (): string {
+                        return '';
                     },
                 ];
 
                 return [
-                    "1 single item collection.",
+                    '1 single item collection.',
                     $elements,
                     $elements,
-                    function(\Closure $closure){
+                    static function (\Closure $closure) {
                         return $closure();
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => function(){
-                        return "a";
+                    0 => static function (): string {
+                        return 'a';
                     },
-                    1 => function(){
-                        return "b";
+                    1 => static function (): string {
+                        return 'b';
                     },
-                    2 => function(){
-                        return "c";
+                    2 => static function (): string {
+                        return 'c';
                     },
-                    3 => function(){
-                        return "b";
+                    3 => static function (): string {
+                        return 'b';
                     },
-                    4 => function(){
-                        return "d";
+                    4 => static function (): string {
+                        return 'd';
                     },
-                    5 => function(){
-                        return "b";
+                    5 => static function (): string {
+                        return 'b';
                     },
                 ];
 
                 return [
-                    "Ascending, use first encountered.",
+                    'Ascending, use first encountered.',
                     [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -76,36 +71,36 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         4 => $elements[4],
                     ],
                     $elements,
-                    function(\Closure $closure){
+                    static function (\Closure $closure) {
                         return $closure();
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => function(){
-                        return "a";
+                    0 => static function (): string {
+                        return 'a';
                     },
-                    1 => function(){
-                        return "b";
+                    1 => static function (): string {
+                        return 'b';
                     },
-                    2 => function(){
-                        return "c";
+                    2 => static function (): string {
+                        return 'c';
                     },
-                    3 => function(){
-                        return "b";
+                    3 => static function (): string {
+                        return 'b';
                     },
-                    4 => function(){
-                        return "d";
+                    4 => static function (): string {
+                        return 'd';
                     },
-                    5 => function(){
-                        return "b";
+                    5 => static function (): string {
+                        return 'b';
                     },
                 ];
 
                 return [
-                    "Ascending, use last encountered.",
+                    'Ascending, use last encountered.',
                     [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -113,36 +108,36 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         5 => $elements[5],
                     ],
                     $elements,
-                    function(\Closure $closure){
+                    static function (\Closure $closure) {
                         return $closure();
                     },
                     false,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => function(){
-                        return "d";
+                    0 => static function (): string {
+                        return 'd';
                     },
-                    1 => function(){
-                        return "b";
+                    1 => static function (): string {
+                        return 'b';
                     },
-                    2 => function(){
-                        return "c";
+                    2 => static function (): string {
+                        return 'c';
                     },
-                    3 => function(){
-                        return "b";
+                    3 => static function (): string {
+                        return 'b';
                     },
-                    4 => function(){
-                        return "a";
+                    4 => static function (): string {
+                        return 'a';
                     },
-                    5 => function(){
-                        return "b";
+                    5 => static function (): string {
+                        return 'b';
                     },
                 ];
 
                 return [
-                    "Descending, use first encountered.",
+                    'Descending, use first encountered.',
                     [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -150,36 +145,36 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         4 => $elements[4],
                     ],
                     $elements,
-                    function(\Closure $closure){
+                    static function (\Closure $closure) {
                         return $closure();
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => function(){
-                        return "d";
+                    0 => static function (): string {
+                        return 'd';
                     },
-                    1 => function(){
-                        return "b";
+                    1 => static function (): string {
+                        return 'b';
                     },
-                    2 => function(){
-                        return "c";
+                    2 => static function (): string {
+                        return 'c';
                     },
-                    3 => function(){
-                        return "b";
+                    3 => static function (): string {
+                        return 'b';
                     },
-                    4 => function(){
-                        return "a";
+                    4 => static function (): string {
+                        return 'a';
                     },
-                    5 => function(){
-                        return "b";
+                    5 => static function (): string {
+                        return 'b';
                     },
                 ];
 
                 return [
-                    "Descending, use last encountered.",
+                    'Descending, use last encountered.',
                     [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -187,7 +182,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         5 => $elements[5],
                     ],
                     $elements,
-                    function(\Closure $closure){
+                    static function (\Closure $closure) {
                         return $closure();
                     },
                     false,
@@ -203,15 +198,23 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
     {
         return [
             [
-                "Integer keys. 0 in both, means #2 is appended as key 1.",
-                new ClosureCollection([0 => function(){}]),
-                new ClosureCollection([0 => function(){}]),
-                function(
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
+                new ClosureCollection([
+                    0 => static function (): void {
+                        // Merely for test purposes
+                    },
+                ]),
+                new ClosureCollection([
+                    0 => static function (): void {
+                        // Merely for test purposes
+                    },
+                ]),
+                function (
                     ClosureCollection $collectionA,
                     ClosureCollection $collectionB,
                     ClosureCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(2, $collectionC, $message);
                     $this->assertSame([0, 1], $collectionC->getKeys(), $message);
                     $this->assertSame($collectionA->first(), $collectionC->first(), $message);
@@ -219,17 +222,25 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                 },
             ],
             [
-                "Same name string keys. Will override.",
-                new ClosureCollection(["foo" => function(){}]),
-                new ClosureCollection(["foo" => function(){}]),
-                function(
+                'Same name string keys. Will override.',
+                new ClosureCollection([
+                    'foo' => static function (): void {
+                        // Merely for test purposes
+                    },
+                ]),
+                new ClosureCollection([
+                    'foo' => static function (): void {
+                        // Merely for test purposes
+                    },
+                ]),
+                function (
                     ClosureCollection $collectionA,
                     ClosureCollection $collectionB,
                     ClosureCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(["foo"], $collectionC->getKeys(), $message);
+                    $this->assertSame(['foo'], $collectionC->getKeys(), $message);
                     $this->assertNotSame($collectionA->first(), $collectionC->first(), $message);
                     $this->assertSame($collectionB->first(), $collectionC->first(), $message);
                     $this->assertSame($collectionB->last(), $collectionC->last(), $message);
@@ -251,7 +262,9 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
      */
     protected function getSingleElement()
     {
-        return function(){};
+        return static function (): void {
+            // Merely for test purposes
+        };
     }
 
     /**
@@ -260,10 +273,18 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
     protected function getMultipleElements(): array
     {
         return [
-            function(){},
-            "foo" => function(){},
-            42 => function(){},
-            function(){},
+            static function (): void {
+                // Merely for test purposes
+            },
+            'foo' => static function (): void {
+                // Merely for test purposes
+            },
+            42 => static function (): void {
+                // Merely for test purposes
+            },
+            static function (): void {
+                // Merely for test purposes
+            },
         ];
     }
 }

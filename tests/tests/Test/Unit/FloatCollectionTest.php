@@ -1,12 +1,9 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
-use Eboreum\Collections\Collection;
-use Eboreum\Collections\Exception\InvalidArgumentException;
-use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\FloatCollection;
 
 class FloatCollectionTest extends AbstractTypeCollectionTestCase
@@ -50,8 +47,7 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
         array $elements,
         \Closure $callback,
         bool $isUsingFirstEncounteredElement
-    ): void
-    {
+    ): void {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
 
@@ -69,55 +65,55 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
     {
         return [
             [
-                "Empty collection.",
+                'Empty collection.',
                 [],
                 [],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
             [
-                "1 single item collection.",
+                '1 single item collection.',
                 [3.1415],
                 [3.1415],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
             [
-                "Ascending, use first encountered.",
+                'Ascending, use first encountered.',
                 [0 => 0.0, 1 => 3.1415, 3 => -1.0, 5 => 2.7183],
                 [0.0,3.1415,0.0,-1.0,0.0,2.7183],
-                function(float $value){
+                static function (float $value): string {
                     return strval($value);
                 },
                 true,
             ],
             [
-                "Ascending, use last encountered.",
+                'Ascending, use last encountered.',
                 [1 => 3.1415, 3 => -1.0, 4 => 0.0, 5 => 2.7183],
                 [0.0,3.1415,0.0,-1.0,0.0,2.7183],
-                function(float $value){
+                static function (float $value): string {
                     return strval($value);
                 },
                 false,
             ],
             [
-                "Descending, use first encountered.",
+                'Descending, use first encountered.',
                 [0 => 2.7183, 1 => 0.0, 2 => -1.0, 4 => 3.1415],
                 [2.7183,0.0,-1.0,0.0,3.1415,0.0],
-                function(float $value){
+                static function (float $value): string {
                     return strval($value);
                 },
                 true,
             ],
             [
-                "Descending, use last encountered.",
+                'Descending, use last encountered.',
                 [0 => 2.7183, 2 => -1.0, 4 => 3.1415, 5 => 0.0],
                 [2.7183,0.0,-1.0,0.0,3.1415,0.0],
-                function(float $value){
+                static function (float $value): string {
                     return strval($value);
                 },
                 false,
@@ -132,31 +128,31 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
     {
         return [
             [
-                "Integer keys. 0 in both, means #2 is appended as key 1.",
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
                 new FloatCollection([0 => 3.1415]),
                 new FloatCollection([0 => 2.7182]),
-                function(
+                function (
                     FloatCollection $collectionA,
                     FloatCollection $collectionB,
                     FloatCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(2, $collectionC, $message);
                     $this->assertSame([0 => 3.1415, 1 => 2.7182], $collectionC->toArray(), $message);
                 },
             ],
             [
-                "Same name string keys. Will override.",
-                new FloatCollection(["foo" => 3.1415]),
-                new FloatCollection(["foo" => 2.7182]),
-                function(
+                'Same name string keys. Will override.',
+                new FloatCollection(['foo' => 3.1415]),
+                new FloatCollection(['foo' => 2.7182]),
+                function (
                     FloatCollection $collectionA,
                     FloatCollection $collectionB,
                     FloatCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(["foo" => 2.7182], $collectionC->toArray(), $message);
+                    $this->assertSame(['foo' => 2.7182], $collectionC->toArray(), $message);
                 },
             ],
         ];
@@ -185,7 +181,7 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
     {
         return [
             -0.9999,
-            "foo" => 3.1415,
+            'foo' => 3.1415,
             42 => 2.7182,
             -7.7,
         ];

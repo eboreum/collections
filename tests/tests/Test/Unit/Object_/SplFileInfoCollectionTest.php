@@ -1,13 +1,9 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
-use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
-use Eboreum\Collections\Collection;
-use Eboreum\Collections\Exception\InvalidArgumentException;
-use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\Object_\SplFileInfoCollection;
 
 class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
@@ -19,27 +15,26 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
     {
         return [
             [
-                "Empty collection.",
+                'Empty collection.',
                 [],
                 [],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
-            (function(){
+            (static function (): array {
                 $elements = [
                     0 => new \SplFileInfo(__FILE__),
                 ];
 
-                $elements[0]->var = "a"; /** @phpstan-ignore-line */
+                $elements[0]->var = 'a'; /** @phpstan-ignore-line */
 
                 return [
-                    "1 single item collection.",
+                    '1 single item collection.',
                     $elements,
                     $elements,
-                    function(\SplFileInfo $object): string
-                    {
+                    static function (\SplFileInfo $object): string {
                         $var = $object->var; /** @phpstan-ignore-line */
 
                         assert(is_string($var));
@@ -49,18 +44,21 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
+                $basePath = TEST_ROOT_PATH
+                    . '/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest'
+                    . '/dataProvider_testToUniqueByCallbackWorks';
                 $elements = [
-                    0 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/A.txt"),
-                    1 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
-                    2 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/C.txt"),
-                    3 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
-                    4 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/D.txt"),
-                    5 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
+                    0 => new \SplFileInfo($basePath . '/A.txt'),
+                    1 => new \SplFileInfo($basePath . '/B.txt'),
+                    2 => new \SplFileInfo($basePath . '/C.txt'),
+                    3 => new \SplFileInfo($basePath . '/B.txt'),
+                    4 => new \SplFileInfo($basePath . '/D.txt'),
+                    5 => new \SplFileInfo($basePath . '/B.txt'),
                 ];
 
                 return [
-                    "Ascending, use first encountered.",
+                    'Ascending, use first encountered.',
                     [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -68,25 +66,28 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                         4 => $elements[4],
                     ],
                     $elements,
-                    function(\SplFileInfo $object): string
-                    {
+                    static function (\SplFileInfo $object): string {
                         return $object->getFilename();
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
+                $basePath = TEST_ROOT_PATH
+                    . '/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest'
+                    . '/dataProvider_testToUniqueByCallbackWorks';
+
                 $elements = [
-                    0 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/A.txt"),
-                    1 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
-                    2 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/C.txt"),
-                    3 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
-                    4 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/D.txt"),
-                    5 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
+                    0 => new \SplFileInfo($basePath . '/A.txt'),
+                    1 => new \SplFileInfo($basePath . '/B.txt'),
+                    2 => new \SplFileInfo($basePath . '/C.txt'),
+                    3 => new \SplFileInfo($basePath . '/B.txt'),
+                    4 => new \SplFileInfo($basePath . '/D.txt'),
+                    5 => new \SplFileInfo($basePath . '/B.txt'),
                 ];
 
                 return [
-                    "Ascending, use last encountered.",
+                    'Ascending, use last encountered.',
                     [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -94,25 +95,28 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                         5 => $elements[5],
                     ],
                     $elements,
-                    function(\SplFileInfo $object): string
-                    {
+                    static function (\SplFileInfo $object): string {
                         return $object->getFilename();
                     },
                     false,
                 ];
             })(),
-            (function(){
+            (static function (): array {
+                $basePath = TEST_ROOT_PATH
+                    . '/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest'
+                    . '/dataProvider_testToUniqueByCallbackWorks';
+
                 $elements = [
-                    0 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/D.txt"),
-                    1 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
-                    2 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/C.txt"),
-                    3 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
-                    4 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/A.txt"),
-                    5 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
+                    0 => new \SplFileInfo($basePath . '/D.txt'),
+                    1 => new \SplFileInfo($basePath . '/B.txt'),
+                    2 => new \SplFileInfo($basePath . '/C.txt'),
+                    3 => new \SplFileInfo($basePath . '/B.txt'),
+                    4 => new \SplFileInfo($basePath . '/A.txt'),
+                    5 => new \SplFileInfo($basePath . '/B.txt'),
                 ];
 
                 return [
-                    "Descending, use first encountered.",
+                    'Descending, use first encountered.',
                     [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -120,25 +124,28 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                         4 => $elements[4],
                     ],
                     $elements,
-                    function(\SplFileInfo $object): string
-                    {
+                    static function (\SplFileInfo $object): string {
                         return $object->getFilename();
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
+                $basePath = TEST_ROOT_PATH
+                    . '/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest'
+                    . '/dataProvider_testToUniqueByCallbackWorks';
+
                 $elements = [
-                    0 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/D.txt"),
-                    1 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
-                    2 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/C.txt"),
-                    3 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
-                    4 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/A.txt"),
-                    5 => new \SplFileInfo(TEST_ROOT_PATH . "/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest/dataProvider_testToUniqueByCallbackWorks/B.txt"),
+                    0 => new \SplFileInfo($basePath . '/D.txt'),
+                    1 => new \SplFileInfo($basePath . '/B.txt'),
+                    2 => new \SplFileInfo($basePath . '/C.txt'),
+                    3 => new \SplFileInfo($basePath . '/B.txt'),
+                    4 => new \SplFileInfo($basePath . '/A.txt'),
+                    5 => new \SplFileInfo($basePath . '/B.txt'),
                 ];
 
                 return [
-                    "Descending, use last encountered.",
+                    'Descending, use last encountered.',
                     [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -146,8 +153,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                         5 => $elements[5],
                     ],
                     $elements,
-                    function(\SplFileInfo $object): string
-                    {
+                    static function (\SplFileInfo $object): string {
                         return $object->getFilename();
                     },
                     false,
@@ -163,32 +169,32 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
     {
         return [
             [
-                "Integer keys. 0 in both, means #2 is appended as key 1.",
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
                 new SplFileInfoCollection([0 => new \SplFileInfo(__FILE__)]),
                 new SplFileInfoCollection([0 => new \SplFileInfo(__FILE__)]),
-                function(
+                function (
                     SplFileInfoCollection $collectionA,
                     SplFileInfoCollection $collectionB,
                     SplFileInfoCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(2, $collectionC, $message);
                     $this->assertSame($collectionA->first(), $collectionC->first(), $message);
                     $this->assertSame($collectionB->first(), $collectionC->last(), $message);
                 },
             ],
             [
-                "Same name string keys. Will override.",
-                new SplFileInfoCollection(["foo" => new \SplFileInfo(__FILE__)]),
-                new SplFileInfoCollection(["foo" => new \SplFileInfo(__FILE__)]),
-                function(
+                'Same name string keys. Will override.',
+                new SplFileInfoCollection(['foo' => new \SplFileInfo(__FILE__)]),
+                new SplFileInfoCollection(['foo' => new \SplFileInfo(__FILE__)]),
+                function (
                     SplFileInfoCollection $collectionA,
                     SplFileInfoCollection $collectionB,
                     SplFileInfoCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(["foo"], $collectionC->getKeys(), $message);
+                    $this->assertSame(['foo'], $collectionC->getKeys(), $message);
                     $this->assertSame($collectionB->first(), $collectionC->first(), $message);
                     $this->assertSame($collectionB->last(), $collectionC->last(), $message);
                 },
@@ -196,32 +202,32 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
         ];
     }
 
-   /**
-    * {@inheritDoc}
-    */
-   protected function getHandledCollectionClassName(): string
-   {
-       return SplFileInfoCollection::class;
-   }
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return SplFileInfoCollection::class;
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   protected function getSingleElement()
-   {
-       return new \SplFileInfo(__FILE__);
-   }
+    /**
+     * {@inheritDoc}
+     */
+    protected function getSingleElement()
+    {
+        return new \SplFileInfo(__FILE__);
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   protected function getMultipleElements(): array
-   {
-       return [
-        new \SplFileInfo(__FILE__),
-        "foo" => new \SplFileInfo(__FILE__),
-        42 => new \SplFileInfo(__FILE__),
-        new \SplFileInfo(__FILE__),
-       ];
-   }
+    /**
+     * {@inheritDoc}
+     */
+    protected function getMultipleElements(): array
+    {
+        return [
+            new \SplFileInfo(__FILE__),
+            'foo' => new \SplFileInfo(__FILE__),
+            42 => new \SplFileInfo(__FILE__),
+            new \SplFileInfo(__FILE__),
+        ];
+    }
 }

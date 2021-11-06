@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Abstraction;
 
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Exception\RuntimeException;
-use Eboreum\Collections\Exception\UnexpectedValueException;
 use PHPUnit\Framework\TestCase;
 
 class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
@@ -22,7 +21,11 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                  */
                 public static function getHandledClassName(): string
                 {
-                    return "IDontExist6f27c77df211460d95103a19491ac2dc"; /** @phpstan-ignore-line It is intentional that this class does not exist */
+                    /**
+                     * We use "phpstan-ignore-line", because it is intentional that this class does not exist. That is
+                     * exactly what we test for.
+                     */
+                    return 'IDontExist6f27c77df211460d95103a19491ac2dc'; // @phpstan-ignore-line
                 }
             };
         } catch (\Exception $e) {
@@ -30,7 +33,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in class@anonymous\/in\/.+\/%s:+\d+-\>__construct\(',
@@ -41,9 +44,9 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -52,7 +55,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Collection class@anonymous\/in\/.+\/%s:\d+ has handled class ',
@@ -60,27 +63,27 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testConstructorThrowsExceptionWhenArgumentElementContainsInvalidValues(): void
     {
         $elements = [
-            new \stdClass,
-            new \DateTime("2021-01-01T00:00:00+00:00"),
-            new \stdClass,
-            "foo" => new \DateTimeImmutable("2021-01-01T00:00:00+00:00"),
+            new \stdClass(),
+            new \DateTime('2021-01-01T00:00:00+00:00'),
+            new \stdClass(),
+            'foo' => new \DateTimeImmutable('2021-01-01T00:00:00+00:00'),
         ];
 
         try {
@@ -91,7 +94,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                  */
                 public static function getHandledClassName(): string
                 {
-                    return "stdClass";
+                    return 'stdClass';
                 }
             };
         } catch (\Exception $e) {
@@ -99,7 +102,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in class@anonymous\/in\/.+\/%s:+\d+-\>__construct\(',
@@ -115,9 +118,9 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -126,7 +129,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'In argument \$elements, 2\/4 elements are invalid, including: \[',
@@ -141,19 +144,19 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithMergedThrowsExceptionWhenArgumentCollectionDoesNotHaveASuitableHandledClassName(): void
     {
         $elementsA = [
-            new \stdClass,
-            new \stdClass,
+            new \stdClass(),
+            new \stdClass(),
         ];
 
         $collectionA = new class ($elementsA) extends AbstractNamedClassOrInterfaceCollection
@@ -163,13 +166,13 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
              */
             public static function getHandledClassName(): string
             {
-                return "stdClass";
+                return 'stdClass';
             }
         };
 
         $elementsB = [
-            new \DateTimeImmutable("2021-01-01T00:00:00+00:00"),
-            new \DateTimeImmutable("2021-01-01T00:00:00+00:00"),
+            new \DateTimeImmutable('2021-01-01T00:00:00+00:00'),
+            new \DateTimeImmutable('2021-01-01T00:00:00+00:00'),
         ];
 
         $collectionB = new class ($elementsB) extends AbstractNamedClassOrInterfaceCollection
@@ -179,7 +182,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
              */
             public static function getHandledClassName(): string
             {
-                return "DateTimeImmutable";
+                return 'DateTimeImmutable';
             }
         };
 
@@ -190,7 +193,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in class@anonymous\/in\/.+\/%s\:+\d+-\>withMerged\(',
@@ -201,10 +204,10 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -213,7 +216,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$collection must be an instance of class@anonymous\/in\/.+\/%s\:\d+',
@@ -224,19 +227,19 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 }

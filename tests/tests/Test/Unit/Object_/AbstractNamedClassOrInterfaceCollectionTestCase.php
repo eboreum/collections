@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
@@ -29,7 +29,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>withAdded\(',
@@ -40,9 +40,9 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -51,7 +51,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Expects argument \$element to be an object, instance of \\\\%s, but it is not\.',
@@ -59,18 +59,18 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledClassName, "/"),
+                    preg_quote($handledClassName, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     /**
@@ -89,7 +89,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s\-\>withRemovedElement\(',
@@ -100,9 +100,9 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -111,7 +111,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Expects argument \$element to be an object, instance of \\\\%s, but it is not\.',
@@ -119,17 +119,17 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledClassName, "/"),
+                    preg_quote($handledClassName, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 }

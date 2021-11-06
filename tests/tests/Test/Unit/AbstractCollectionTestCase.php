@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
-use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\CollectionInterface;
-use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +18,7 @@ abstract class AbstractCollectionTestCase extends TestCase
         $dateTimeCollection = new $handledCollectionClassName($elements);
 
         $this->assertCount(4, $dateTimeCollection);
-        $this->assertSame([0, "foo", 42, 43], $dateTimeCollection->getKeys());
+        $this->assertSame([0, 'foo', 42, 43], $dateTimeCollection->getKeys());
         $this->assertSame($elements, $dateTimeCollection->toArray());
         $this->assertSame(array_values($elements), $dateTimeCollection->toArrayValues());
     }
@@ -32,14 +30,14 @@ abstract class AbstractCollectionTestCase extends TestCase
         $collectionA = new $handledCollectionClassName();
 
         $this->assertFalse($collectionA->contains($elements[0]));
-        $this->assertFalse($collectionA->contains($elements["foo"]));
+        $this->assertFalse($collectionA->contains($elements['foo']));
         $this->assertFalse($collectionA->contains($elements[42]));
         $this->assertFalse($collectionA->contains($elements[43]));
 
         $collectionB = new $handledCollectionClassName($elements);
 
         $this->assertTrue($collectionB->contains($elements[0]));
-        $this->assertTrue($collectionB->contains($elements["foo"]));
+        $this->assertTrue($collectionB->contains($elements['foo']));
         $this->assertTrue($collectionB->contains($elements[42]));
         $this->assertTrue($collectionB->contains($elements[43]));
     }
@@ -58,7 +56,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testCurrentReturnsNullWhenThereAreNoElementsInCollection(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $collection = new $handledCollectionClassName;
+        $collection = new $handledCollectionClassName();
 
         $this->assertNull($collection->current());
     }
@@ -69,19 +67,19 @@ abstract class AbstractCollectionTestCase extends TestCase
         $elements = $this->getMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
-        $this->assertSame($elements[0], $collection->find(function($v, $k){
+        $this->assertSame($elements[0], $collection->find(static function ($v, $k): bool {
             return 0 === $k;
         }));
-        $this->assertSame($elements["foo"], $collection->find(function($v, $k){
-            return "foo" === $k;
+        $this->assertSame($elements['foo'], $collection->find(static function ($v, $k): bool {
+            return 'foo' === $k;
         }));
-        $this->assertSame($elements[42], $collection->find(function($v, $k){
+        $this->assertSame($elements[42], $collection->find(static function ($v, $k): bool {
             return 42 === $k;
         }));
-        $this->assertSame($elements[43], $collection->find(function($v, $k){
+        $this->assertSame($elements[43], $collection->find(static function ($v, $k): bool {
             return 43 === $k;
         }));
-        $this->assertNull($collection->find(function($v, $k){
+        $this->assertNull($collection->find(static function ($v, $k): bool {
             return false;
         }));
     }
@@ -89,9 +87,9 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testFindReturnsNullWhenThereAreNoElementsInCollection(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $collection = new $handledCollectionClassName;
+        $collection = new $handledCollectionClassName();
 
-        $this->assertNull($collection->find(function($v, $k){
+        $this->assertNull($collection->find(static function ($v, $k) {
             return true;
         }));
     }
@@ -103,8 +101,8 @@ abstract class AbstractCollectionTestCase extends TestCase
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertSame($elements[0], $collection->first());
-        $this->assertSame($elements["foo"], $collection->next());
-        $this->assertSame($elements["foo"], $collection->current());
+        $this->assertSame($elements['foo'], $collection->next());
+        $this->assertSame($elements['foo'], $collection->current());
         $this->assertSame($elements[0], $collection->first());
         $this->assertSame($elements[0], $collection->current());
         $this->assertSame($elements[43], $collection->last());
@@ -129,7 +127,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $this->assertNull($collection->get(-1));
         $this->assertSame($elements[0], $collection->get(0));
-        $this->assertSame($elements["foo"], $collection->get("foo"));
+        $this->assertSame($elements['foo'], $collection->get('foo'));
         $this->assertSame($elements[42], $collection->get(42));
         $this->assertSame($elements[43], $collection->get(43));
     }
@@ -156,7 +154,7 @@ abstract class AbstractCollectionTestCase extends TestCase
         $elements = $this->getMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
-        $this->assertSame([0, "foo", 42, 43], $collection->getKeys());
+        $this->assertSame([0, 'foo', 42, 43], $collection->getKeys());
     }
 
     public function testHasWorks(): void
@@ -167,7 +165,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $this->assertFalse($collection->has(-1));
         $this->assertTrue($collection->has(0));
-        $this->assertTrue($collection->has("foo"));
+        $this->assertTrue($collection->has('foo'));
         $this->assertTrue($collection->has(42));
         $this->assertTrue($collection->has(43));
         $this->assertFalse($collection->has(44));
@@ -182,7 +180,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $this->assertNull($collection->indexOf($element));
         $this->assertSame(0, $collection->indexOf($elements[0]));
-        $this->assertSame("foo", $collection->indexOf($elements["foo"]));
+        $this->assertSame('foo', $collection->indexOf($elements['foo']));
         $this->assertSame(42, $collection->indexOf($elements[42]));
     }
 
@@ -204,21 +202,18 @@ abstract class AbstractCollectionTestCase extends TestCase
      * @param mixed $expectedMax
      * @param array<int, mixed> $elements
      */
-    public function testMaxWorks(
-        $expectedMax,
-        array $elements
-    ): void
+    public function testMaxWorks($expectedMax, array $elements): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collection = new $handledCollectionClassName($elements);
 
-        $this->assertSame($expectedMax, $collection->max(function($v, $k){
+        $this->assertSame($expectedMax, $collection->max(static function ($v, $k) {
             return $k;
         }));
 
         $collection = new $handledCollectionClassName();
 
-        $this->assertNull($collection->max(function(){
+        $this->assertNull($collection->max(static function () {
             return 0;
         }));
     }
@@ -229,7 +224,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function dataProvider_testMaxWorks(): array
     {
         return [
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -237,7 +232,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     [$elements[0]],
                 ];
             })(),
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -245,7 +240,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     array_slice($elements, 0, 2),
                 ];
             })(),
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -253,7 +248,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     array_slice($elements, 0, 3),
                 ];
             })(),
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -261,7 +256,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     $elements,
                 ];
             })(),
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -277,21 +272,18 @@ abstract class AbstractCollectionTestCase extends TestCase
      * @param mixed $expectedMin
      * @param array<int, mixed> $elements
      */
-    public function testMinWorks(
-        $expectedMin,
-        array $elements
-    ): void
+    public function testMinWorks($expectedMin, array $elements): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collection = new $handledCollectionClassName($elements);
 
-        $this->assertSame($expectedMin, $collection->min(function($v, $k){
+        $this->assertSame($expectedMin, $collection->min(static function ($v, $k) {
             return $k;
         }));
 
         $collection = new $handledCollectionClassName();
 
-        $this->assertNull($collection->min(function(){
+        $this->assertNull($collection->min(static function () {
             return 0;
         }));
     }
@@ -302,7 +294,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function dataProvider_testMinWorks(): array
     {
         return [
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -310,7 +302,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     [$elements[0]],
                 ];
             })(),
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -318,7 +310,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     array_slice($elements, 0, 2),
                 ];
             })(),
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -326,7 +318,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     array_slice($elements, 0, 3),
                 ];
             })(),
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -334,7 +326,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     $elements,
                 ];
             })(),
-            (function(){
+            (function (): array {
                 $elements = array_values($this->getMultipleElements());
 
                 return [
@@ -352,8 +344,8 @@ abstract class AbstractCollectionTestCase extends TestCase
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertSame($elements[0], $collection->current());
-        $this->assertSame($elements["foo"], $collection->next());
-        $this->assertSame($elements["foo"], $collection->current());
+        $this->assertSame($elements['foo'], $collection->next());
+        $this->assertSame($elements['foo'], $collection->current());
         $this->assertSame($elements[42], $collection->next());
         $this->assertSame($elements[42], $collection->current());
         $this->assertSame($elements[43], $collection->next());
@@ -415,13 +407,13 @@ abstract class AbstractCollectionTestCase extends TestCase
         $elements = $this->getMultipleElements();
         $collectionA = new $handledCollectionClassName($elements);
 
-        $collectionB = $collectionA->toSortedByCallback(function(){
+        $collectionB = $collectionA->toSortedByCallback(static function () {
             return 1;
         });
 
         $expected = [
             43 => $elements[43],
-            "foo" => $elements["foo"],
+            'foo' => $elements['foo'],
             42 => $elements[42],
             0 => $elements[0],
         ];
@@ -434,10 +426,10 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testToSortedByCallbackHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
     {
         $collection = new Collection([null, null]);
-        $exception = new \Exception;
+        $exception = new \Exception();
 
         try {
-            $collection->toSortedByCallback(function() use ($exception){
+            $collection->toSortedByCallback(static function () use ($exception): void {
                 throw $exception;
             });
         } catch (\Exception $e) {
@@ -445,7 +437,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>toSortedByCallback\(',
@@ -456,8 +448,8 @@ abstract class AbstractCollectionTestCase extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -466,12 +458,12 @@ abstract class AbstractCollectionTestCase extends TestCase
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     /**
@@ -485,8 +477,7 @@ abstract class AbstractCollectionTestCase extends TestCase
         array $elements,
         \Closure $callback,
         bool $isUsingFirstEncounteredElement
-    ): void
-    {
+    ): void {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
 
@@ -495,9 +486,9 @@ abstract class AbstractCollectionTestCase extends TestCase
             $isUsingFirstEncounteredElement,
         );
 
-        $this->assertNotSame($collectionA, $collectionB);
-        $this->assertSame($elements, $collectionA->toArray());
-        $this->assertSame($expected, $collectionB->toArray());
+        $this->assertNotSame($collectionA, $collectionB, $message);
+        $this->assertSame($elements, $collectionA->toArray(), $message);
+        $this->assertSame($expected, $collectionB->toArray(), $message);
     }
 
     public function testToUniqueByCallbackHandlesExceptionGracefullyWhenAFailureInTheCallbackOccurs(): void
@@ -505,10 +496,10 @@ abstract class AbstractCollectionTestCase extends TestCase
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $elements = $this->getMultipleElements();
         $collection = new $handledCollectionClassName($elements);
-        $exception = new \Exception;
+        $exception = new \Exception();
 
         try {
-            $collection->toUniqueByCallback(function() use ($exception){
+            $collection->toUniqueByCallback(static function () use ($exception): void {
                 throw $exception;
             });
         } catch (\Exception $e) {
@@ -516,7 +507,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>toUniqueByCallback\(',
@@ -528,12 +519,12 @@ abstract class AbstractCollectionTestCase extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
                     (
                         Collection::class !== $handledCollectionClassName
-                        ? preg_quote("\\" . Collection::class . "->", "/")
-                        : ""
+                        ? preg_quote('\\' . Collection::class . '->', '/')
+                        : ''
                     ),
                 ),
                 $currentException->getMessage(),
@@ -542,7 +533,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             $currentException = $currentException->getPrevious();
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     'Failure when calling \$callback\(.+, .+\)',
                     '$',
@@ -555,12 +546,12 @@ abstract class AbstractCollectionTestCase extends TestCase
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testToUniqueByCallbackThrowsExceptionWhenCallbackDoesNotReturnAString(): void
@@ -570,7 +561,7 @@ abstract class AbstractCollectionTestCase extends TestCase
         $collection = new $handledCollectionClassName($elements);
 
         try {
-            $collection->toUniqueByCallback(function(){
+            $collection->toUniqueByCallback(static function () {
                 return null;
             });
         } catch (\Exception $e) {
@@ -578,7 +569,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>toUniqueByCallback\(',
@@ -590,12 +581,12 @@ abstract class AbstractCollectionTestCase extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
                     (
                         Collection::class !== $handledCollectionClassName
-                        ? preg_quote("\\" . Collection::class . "->", "/")
-                        : ""
+                        ? preg_quote('\\' . Collection::class . '->', '/')
+                        : ''
                     ),
                 ),
                 $currentException->getMessage(),
@@ -604,7 +595,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             $currentException = $currentException->getPrevious();
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     'Call \$callback\(.+, .+\) must return string, but it did not\.',
                     ' Found return value\: \(null\) null',
@@ -615,12 +606,12 @@ abstract class AbstractCollectionTestCase extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithAddedWorks(): void
@@ -674,7 +665,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $index = -1;
 
-        $collectionB = $collectionA->withFiltered(function($v, $k) use ($elements, &$index){
+        $collectionB = $collectionA->withFiltered(function ($v, $k) use ($elements, &$index): bool {
             $index++;
 
             $this->assertSame(array_keys($elements)[$index], $k);
@@ -698,8 +689,7 @@ abstract class AbstractCollectionTestCase extends TestCase
         CollectionInterface $collectionA,
         CollectionInterface $collectionB,
         \Closure $callback
-    ): void
-    {
+    ): void {
         $collectionC = $collectionA->withMerged($collectionB);
 
         $this->assertNotSame($collectionA, $collectionC, $message);
@@ -750,12 +740,12 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $collectionA = new $handledCollectionClassName($elements);
 
-        $collectionB = $collectionA->withSet("foo", $elements[0]);
+        $collectionB = $collectionA->withSet('foo', $elements[0]);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
         $expectedElementsB = $elements;
-        $expectedElementsB["foo"] = $elements[0];
+        $expectedElementsB['foo'] = $elements[0];
         $this->assertSame($expectedElementsB, $collectionB->toArray());
     }
 
@@ -786,7 +776,7 @@ abstract class AbstractCollectionTestCase extends TestCase
      */
     protected function getHandledCollectionClassNameShort(): string
     {
-        $split = explode("\\", $this->getHandledCollectionClassName());
+        $split = explode('\\', $this->getHandledCollectionClassName());
 
         return end($split);
     }

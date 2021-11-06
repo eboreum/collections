@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
@@ -13,15 +13,15 @@ class CollectionTest extends AbstractCollectionTestCase
     public function testConstructThrowsExceptionWhenSomeElementsAreNotAccepted(): void
     {
         $elements = [
-            "foo",
+            'foo',
             42,
-            "bar",
+            'bar',
             3.14,
-            "baz",
+            'baz',
         ];
 
         try {
-            new class($elements) extends Collection
+            new class ($elements) extends Collection
             {
                 /**
                  * {@inheritDoc}
@@ -36,7 +36,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in (class@anonymous\/in\/.+\/%s\:\d+)\-\>__construct\(',
@@ -45,7 +45,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -54,7 +54,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'In argument \$elements, 2\/5 elements are invalid, including\: \[',
@@ -64,18 +64,18 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testContainsThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
@@ -84,6 +84,7 @@ class CollectionTest extends AbstractCollectionTestCase
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -99,7 +100,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by class@anonymous\/in\/.+\/%s\:\d+\.',
@@ -107,23 +108,23 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testCurrentReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $collection = new Collection;
+        $collection = new Collection();
 
         $this->assertNull($collection->current());
     }
@@ -133,15 +134,11 @@ class CollectionTest extends AbstractCollectionTestCase
      * @param array<int, string> $expected
      * @param array<int, mixed> $elements
      */
-    public function testEachWorks(
-        array $expected,
-        array $elements,
-        \Closure $callback
-    ): void
+    public function testEachWorks(array $expected, array $elements, \Closure $callback): void
     {
         $collection = new Collection($elements);
 
-        $carry = new \stdClass;
+        $carry = new \stdClass();
         $carry->results = [];
 
         $collection->each($callback, $carry);
@@ -151,11 +148,12 @@ class CollectionTest extends AbstractCollectionTestCase
 
     public function testWithAddedThrowsExceptionWhenElementIsNotAcceptedByCollection(): void
     {
-        $elements = [true, 42, "foo" => "bar"];
-        $collection = new class($elements) extends Collection
+        $elements = [true, 42, 'foo' => 'bar'];
+        $collection = new class ($elements) extends Collection
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -171,7 +169,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in class@anonymous\/in\/.+\/%s\:+\d+-\>withAdded\(',
@@ -182,9 +180,9 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -193,7 +191,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by class@anonymous\/in\/.+\/%s\:\d+\.',
@@ -201,27 +199,28 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithAddedMultipleThrowsExceptionWhenElementIsNotAcceptedByCollection(): void
     {
-        $elements = [true, 42, "foo" => "bar"];
-        $collection = new class($elements) extends Collection
+        $elements = [true, 42, 'foo' => 'bar'];
+        $collection = new class ($elements) extends Collection
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -237,7 +236,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in class@anonymous\/in\/.+\/%s\:+\d+-\>withAddedMultiple\(',
@@ -248,9 +247,9 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -259,7 +258,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'In argument \$elements, 1\/2 elements are invalid, including\: \[',
@@ -268,34 +267,34 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithFilteredHandlesExceptionGracefullyWhenAnExceptionIsThrownInsideTheClosure(): void
     {
-        $collection = new Collection([null, true, 42, "foo" => "bar"]);
+        $collection = new Collection([null, true, 42, 'foo' => 'bar']);
 
         try {
-            $collection->withFiltered(function($v){
-                throw new \Exception("fail");
+            $collection->withFiltered(static function ($v): void {
+                throw new \Exception('fail');
             });
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>withFiltered\(',
@@ -306,31 +305,32 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertSame("Exception", get_class($currentException));
-            $this->assertSame("fail", $currentException->getMessage());
+            $this->assertSame('Exception', get_class($currentException));
+            $this->assertSame('fail', $currentException->getMessage());
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithMergedThrowsExceptionWhenArgumentCollectionBIsNotASubclassOfCollectionA(): void
     {
-        $collectionA = new class([true, 42, "foo" => "bar"]) extends Collection
+        $collectionA = new class ([true, 42, 'foo' => 'bar']) extends Collection
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -348,7 +348,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in class@anonymous\/in\/.+\/%s\:\d+\-\>withMerged\(',
@@ -359,10 +359,10 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -371,7 +371,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$collection must be an instance of class@anonymous\/in\/.+\/%s\:\d+',
@@ -381,24 +381,24 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithRemovedThrowsExceptionWhenArgumentKeyIsInvalid(): void
     {
-        $collection = new Collection([null, true, 42, "foo" => "bar"]);
+        $collection = new Collection([null, true, 42, 'foo' => 'bar']);
 
         try {
             $collection->withRemoved(null); /** @phpstan-ignore-line */
@@ -406,7 +406,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     '^',
                     'Argument \$key must be int or string, but it is not\.',
@@ -418,20 +418,21 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithRemovedElementThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
     {
-        $collection = new class([true, 42, "foo" => "bar"]) extends Collection
+        $collection = new class ([true, 42, 'foo' => 'bar']) extends Collection
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -447,7 +448,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in class@anonymous\/in\/.+\/%s\:\d+\-\>withRemovedElement\(',
@@ -458,9 +459,9 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -469,7 +470,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by class@anonymous\/in\/.+\/%s\:\d+\.',
@@ -477,23 +478,23 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithSetElementThrowsExceptionWhenArgumentKeyIsInvalid(): void
     {
-        $collection = new Collection([true, 42, "foo" => "bar"]);
+        $collection = new Collection([true, 42, 'foo' => 'bar']);
 
         try {
             $collection->withSet(null, null); /** @phpstan-ignore-line */
@@ -502,7 +503,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s\-\>withSet\(',
@@ -514,8 +515,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -524,7 +525,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$key must be int or string, but it is not\.',
@@ -532,26 +533,27 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithSetElementThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
     {
-        $collection = new class([true, 42, "foo" => "bar"]) extends Collection
+        $collection = new class ([true, 42, 'foo' => 'bar']) extends Collection
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -567,7 +569,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in class@anonymous\/in\/.+\/%s\:\d+\-\>withSet\(',
@@ -579,9 +581,9 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -590,7 +592,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by class@anonymous\/in\/.+\/%s\:\d+\.',
@@ -598,18 +600,18 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testAssertIsElementAcceptedWorks(): void
@@ -617,12 +619,13 @@ class CollectionTest extends AbstractCollectionTestCase
         Collection::assertIsElementAccepted(null);
         Collection::assertIsElementAccepted(true);
         Collection::assertIsElementAccepted(42);
-        Collection::assertIsElementAccepted("bar");
+        Collection::assertIsElementAccepted('bar');
 
-        $collection = new class([]) extends Collection
+        $collection = new class ([]) extends Collection
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -638,7 +641,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by class@anonymous\/in\/.+\/%s\:\d+\.',
@@ -646,18 +649,18 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testMakeInvalidsWorks(): void
@@ -665,12 +668,13 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->assertSame([], Collection::makeInvalids([null]));
         $this->assertSame([], Collection::makeInvalids([null, true]));
         $this->assertSame([], Collection::makeInvalids([null, true, 42]));
-        $this->assertSame([], Collection::makeInvalids([null, true, 42, "foo" => "bar"]));
+        $this->assertSame([], Collection::makeInvalids([null, true, 42, 'foo' => 'bar']));
 
-        $collection = new class([]) extends Collection
+        $collection = new class ([]) extends Collection
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -681,12 +685,12 @@ class CollectionTest extends AbstractCollectionTestCase
 
         $this->assertSame(
             [
-                0 => "0 => (null) null",
-                1 => "1 => (bool) true",
-                2 => "2 => (int) 42",
-                3 => "\"foo\" => (string(3)) \"bar\"",
+                0 => '0 => (null) null',
+                1 => '1 => (bool) true',
+                2 => '2 => (int) 42',
+                3 => '"foo" => (string(3)) "bar"',
             ],
-            $collection::makeInvalids([null, true, 42, "foo" => "bar"]),
+            $collection::makeInvalids([null, true, 42, 'foo' => 'bar']),
         );
     }
 
@@ -695,12 +699,13 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->assertTrue(Collection::isElementAccepted(null));
         $this->assertTrue(Collection::isElementAccepted(true));
         $this->assertTrue(Collection::isElementAccepted(42));
-        $this->assertTrue(Collection::isElementAccepted("bar"));
+        $this->assertTrue(Collection::isElementAccepted('bar'));
 
-        $collection = new class([]) extends Collection
+        $collection = new class ([]) extends Collection
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -712,7 +717,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->assertFalse($collection::isElementAccepted(null));
         $this->assertFalse($collection::isElementAccepted(true));
         $this->assertFalse($collection::isElementAccepted(42));
-        $this->assertFalse($collection::isElementAccepted("bar"));
+        $this->assertFalse($collection::isElementAccepted('bar'));
     }
 
     /**
@@ -723,15 +728,15 @@ class CollectionTest extends AbstractCollectionTestCase
         return [
             [
                 [
-                    "integer:NULL",
-                    "integer:boolean",
-                    "integer:integer",
-                    "string:string",
+                    'integer:NULL',
+                    'integer:boolean',
+                    'integer:integer',
+                    'string:string',
                 ],
-                [null, true, 42, "foo" => "bar"],
-                function($v, $k, object $carry){
+                [null, true, 42, 'foo' => 'bar'],
+                static function ($v, $k, object $carry): void {
                     $carry->results[] = sprintf( /** @phpstan-ignore-line */
-                        "%s:%s",
+                        '%s:%s',
                         gettype($k),
                         gettype($v),
                     );
@@ -739,18 +744,18 @@ class CollectionTest extends AbstractCollectionTestCase
             ],
             [
                 [
-                    "integer:NULL",
-                    "integer:boolean",
-                    "string:string",
+                    'integer:NULL',
+                    'integer:boolean',
+                    'string:string',
                 ],
-                [null, true, 42, "foo" => "bar"],
-                function($v, $k, object $carry){
+                [null, true, 42, 'foo' => 'bar'],
+                static function ($v, $k, object $carry) {
                     if (2 === $k) {
                         return false;
                     }
 
                     $carry->results[] = sprintf( /** @phpstan-ignore-line */
-                        "%s:%s",
+                        '%s:%s',
                         gettype($k),
                         gettype($v),
                     );
@@ -762,10 +767,10 @@ class CollectionTest extends AbstractCollectionTestCase
     public function testEachHandlesExceptionGracefullyWhenAFailureHappensInsideTheCallback(): void
     {
         $collection = new Collection([null]);
-        $exception = new \Exception("foo");
+        $exception = new \Exception('foo');
 
         try {
-            $collection->each(function() use ($exception){
+            $collection->each(static function () use ($exception): void {
                 throw $exception;
             });
         } catch (\Exception $e) {
@@ -773,7 +778,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>each\(',
@@ -785,8 +790,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -794,7 +799,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $currentException = $currentException->getPrevious();
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     'Failure when calling \$callback\(\(null\) null, \(int\) 0, \(null\) null\)',
                     '$',
@@ -807,12 +812,12 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     /**
@@ -820,15 +825,11 @@ class CollectionTest extends AbstractCollectionTestCase
      * @param array<int, string> $expected
      * @param array<int|string, mixed> $elements
      */
-    public function testEveryWorks(
-        array $expected,
-        array $elements,
-        \Closure $callback
-    ): void
+    public function testEveryWorks(array $expected, array $elements, \Closure $callback): void
     {
         $collection = new Collection($elements);
 
-        $carry = new \stdClass;
+        $carry = new \stdClass();
         $carry->results = [];
 
         $collection->every($callback, $carry);
@@ -844,30 +845,28 @@ class CollectionTest extends AbstractCollectionTestCase
         return [
             [
                 [
-                    "integer:NULL",
-                    "integer:boolean",
+                    'integer:NULL',
+                    'integer:boolean',
                 ],
-                [null, true, 42, "foo" => "bar"],
-                function($v, $k, object $carry){
+                [null, true, 42, 'foo' => 'bar'],
+                static function ($v, $k, object $carry) {
                     if (2 === $k) {
                         return false;
                     }
 
                     $carry->results[] = sprintf( /** @phpstan-ignore-line */
-                        "%s:%s",
+                        '%s:%s',
                         gettype($k),
                         gettype($v),
                     );
                 },
             ],
             [
-                [
-                    "integer:NULL",
-                ],
+                ['integer:NULL'],
                 [null],
-                function($v, $k, object $carry){
+                static function ($v, $k, object $carry) {
                     $carry->results[] = sprintf( /** @phpstan-ignore-line */
-                        "%s:%s",
+                        '%s:%s',
                         gettype($k),
                         gettype($v),
                     );
@@ -876,13 +875,11 @@ class CollectionTest extends AbstractCollectionTestCase
                 },
             ],
             [
-                [
-                    "integer:NULL",
-                ],
+                ['integer:NULL'],
                 [null],
-                function($v, $k, object $carry){
+                static function ($v, $k, object $carry) {
                     $carry->results[] = sprintf( /** @phpstan-ignore-line */
-                        "%s:%s",
+                        '%s:%s',
                         gettype($k),
                         gettype($v),
                     );
@@ -896,10 +893,10 @@ class CollectionTest extends AbstractCollectionTestCase
     public function testEveryHandlesExceptionGracefullyWhenAFailureHappensInsideTheCallback(): void
     {
         $collection = new Collection([null]);
-        $exception = new \Exception("foo");
+        $exception = new \Exception('foo');
 
         try {
-            $collection->every(function() use ($exception){
+            $collection->every(static function () use ($exception): void {
                 throw $exception;
             });
         } catch (\Exception $e) {
@@ -907,7 +904,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>every\(',
@@ -919,8 +916,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -928,7 +925,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $currentException = $currentException->getPrevious();
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     'Failure when calling \$callback\(\(null\) null, \(int\) 0, \(null\) null\)',
                     '$',
@@ -941,12 +938,12 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testEveryThrowsExceptionWhenReturnValueOfArgumentCallbackIsInvalid(): void
@@ -954,7 +951,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null]);
 
         try {
-            $collection->every(function(){
+            $collection->every(static function () {
                 return 42;
             });
         } catch (\Exception $e) {
@@ -962,7 +959,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>every\(',
@@ -974,8 +971,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -983,7 +980,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $currentException = $currentException->getPrevious();
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     'Call \$callback\(\(null\) null, \(int\) 0, \(null\) null\) must return void, `null`, `false`',
                     ', or `true`, but it did not\. Found return value\: \(int\) 42',
@@ -994,30 +991,30 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testFindReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $collection = new Collection;
+        $collection = new Collection();
 
-        $this->assertNull($collection->find(function(){
+        $this->assertNull($collection->find(static function () {
             return false;
         }));
     }
 
     public function testFindWorksWithTypeHintedValueAndKey(): void
     {
-        $collection = new Collection(["foo", "bar", "baz"]);
+        $collection = new Collection(['foo', 'bar', 'baz']);
 
         $this->assertSame(
-            "baz",
-            $collection->find(function(string $v, int $k){
+            'baz',
+            $collection->find(static function (string $v, int $k) {
                 return 2 === $k;
             }),
         );
@@ -1028,7 +1025,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null]);
 
         try {
-            $collection->find(function(){
+            $collection->find(static function () {
                 return 42;
             });
         } catch (\Exception $e) {
@@ -1036,7 +1033,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>find\(',
@@ -1047,8 +1044,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -1057,7 +1054,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Call \$callback\(\(null\) null, \(int\) 0\) did not return a boolean, which it must\.',
@@ -1065,31 +1062,31 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testFirstReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $collection = new Collection;
+        $collection = new Collection();
 
         $this->assertNull($collection->first());
     }
 
     public function testGetThrowsExceptionWhenArgumentKeyIsInvalid(): void
     {
-        $collection = new Collection;
+        $collection = new Collection();
 
         try {
             $collection->get(null); /** @phpstan-ignore-line */
@@ -1097,7 +1094,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     '^',
                     'Argument \$key must be int or string, but it is not\.',
@@ -1109,17 +1106,17 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testHasThrowsExceptionWhenArgumentKeyIsInvalid(): void
     {
-        $collection = new Collection;
+        $collection = new Collection();
 
         try {
             $collection->has(null); /** @phpstan-ignore-line */
@@ -1127,7 +1124,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     '^',
                     'Argument \$key must be int or string, but it is not\.',
@@ -1139,12 +1136,12 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testIndexOfThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
@@ -1153,6 +1150,7 @@ class CollectionTest extends AbstractCollectionTestCase
         {
             /**
              * {@inheritDoc}
+             *
              * @override
              */
             public static function isElementAccepted($element): bool
@@ -1168,7 +1166,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by class@anonymous\/in\/.+\/%s\:\\d+\.',
@@ -1176,27 +1174,27 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
+                    preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testMaxHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
     {
         $collection = new Collection([null]);
-        $exception = new \Exception;
+        $exception = new \Exception();
 
         try {
-            $collection->max(function() use ($exception){
+            $collection->max(static function () use ($exception): \Exception {
                 throw $exception;
             });
         } catch (\Exception $e) {
@@ -1204,7 +1202,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>max\(',
@@ -1215,8 +1213,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -1225,15 +1223,15 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure when calling \$callback\(\(null\) null, \(int\) 0\)',
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -1242,12 +1240,12 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testMaxThrowsExceptionWhenCallbackDoesNotReturnAnInteger(): void
@@ -1255,7 +1253,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null]);
 
         try {
-            $collection->max(function(){
+            $collection->max(static function () {
                 return null;
             });
         } catch (\Exception $e) {
@@ -1263,7 +1261,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>max\(',
@@ -1274,8 +1272,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -1284,7 +1282,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Call \$callback\(\(null\) null, \(int\) 0\) must return int, but it did not\.',
@@ -1292,28 +1290,28 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testMinHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
     {
         $collection = new Collection([null]);
-        $exception = new \Exception;
+        $exception = new \Exception();
 
         try {
-            $collection->min(function() use ($exception){
+            $collection->min(static function () use ($exception): \Exception {
                 throw $exception;
             });
         } catch (\Exception $e) {
@@ -1321,7 +1319,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>min\(',
@@ -1332,8 +1330,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -1342,15 +1340,15 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure when calling \$callback\(\(null\) null, \(int\) 0\)',
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -1359,12 +1357,12 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testMinThrowsExceptionWhenCallbackDoesNotReturnAnInteger(): void
@@ -1372,7 +1370,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null]);
 
         try {
-            $collection->min(function(){
+            $collection->min(static function () {
                 return null;
             });
         } catch (\Exception $e) {
@@ -1380,7 +1378,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>min\(',
@@ -1391,8 +1389,8 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -1401,7 +1399,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Call \$callback\(\(null\) null, \(int\) 0\) must return int, but it did not\.',
@@ -1409,24 +1407,24 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testLastReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $collection = new Collection;
+        $collection = new Collection();
 
         $this->assertNull($collection->last());
     }
@@ -1438,55 +1436,55 @@ class CollectionTest extends AbstractCollectionTestCase
     {
         return [
             [
-                "Empty collection.",
+                'Empty collection.',
                 [],
                 [],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
             [
-                "1 single item collection.",
+                '1 single item collection.',
                 [$this->getSingleElement()],
                 [$this->getSingleElement()],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
             [
-                "Integer item collection, ascending, use first encountered.",
+                'Integer item collection, ascending, use first encountered.',
                 [0 => 1, 1 => 2, 3 => 3, 5 => 4],
-                [1,2,1,3,1,4],
-                function(int $value){
+                [1, 2, 1, 3, 1, 4],
+                static function (int $value): string {
                     return strval($value);
                 },
                 true,
             ],
             [
-                "Integer item collection, ascending, use last encountered.",
+                'Integer item collection, ascending, use last encountered.',
                 [1 => 2, 3 => 3, 4 => 1, 5 => 4],
-                [1,2,1,3,1,4],
-                function(int $value){
+                [1, 2, 1, 3, 1, 4],
+                static function (int $value): string {
                     return strval($value);
                 },
                 false,
             ],
             [
-                "Integer item collection, descending, use first encountered.",
+                'Integer item collection, descending, use first encountered.',
                 [0 => 4, 1 => 1, 2 => 3, 4 => 2],
-                [4,1,3,1,2,1],
-                function(int $value){
+                [4, 1, 3, 1, 2, 1],
+                static function (int $value): string {
                     return strval($value);
                 },
                 true,
             ],
             [
-                "Integer item collection, descending, use last encountered.",
+                'Integer item collection, descending, use last encountered.',
                 [0 => 4, 2 => 3, 4 => 2, 5 => 1],
-                [4,1,3,1,2,1],
-                function(int $value){
+                [4, 1, 3, 1, 2, 1],
+                static function (int $value): string {
                     return strval($value);
                 },
                 false,
@@ -1501,15 +1499,15 @@ class CollectionTest extends AbstractCollectionTestCase
     {
         return [
             [
-                "Integer keys. 0 in both, means #2 is appended as key 1.",
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
                 new Collection([0 => 3.1415, 1 => null]),
                 new Collection([0 => 2.7182, 1 => 42]),
-                function(
+                function (
                     Collection $collectionA,
                     Collection $collectionB,
                     Collection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(4, $collectionC, $message);
                     $this->assertSame(
                         [
@@ -1524,19 +1522,19 @@ class CollectionTest extends AbstractCollectionTestCase
                 },
             ],
             [
-                "Same name string keys. Will override.",
-                new Collection(["foo" => 3.1415, 1 => null]),
-                new Collection(["foo" => 2.7182, 1 => 42]),
-                function(
+                'Same name string keys. Will override.',
+                new Collection(['foo' => 3.1415, 1 => null]),
+                new Collection(['foo' => 2.7182, 1 => 42]),
+                function (
                     Collection $collectionA,
                     Collection $collectionB,
                     Collection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(3, $collectionC, $message);
                     $this->assertSame(
                         [
-                            "foo" => 2.7182,
+                            'foo' => 2.7182,
                             0 => null,
                             1 => 42
                         ],
@@ -1571,7 +1569,7 @@ class CollectionTest extends AbstractCollectionTestCase
     {
         return [
             42,
-            "foo" => 3.1415,
+            'foo' => 3.1415,
             42 => null,
             true,
         ];

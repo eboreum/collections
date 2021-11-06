@@ -1,15 +1,10 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
-use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
-use Eboreum\Collections\Collection;
-use Eboreum\Collections\Exception\InvalidArgumentException;
-use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\Object_\ExceptionCollection;
-use Test\Unit\Eboreum\Collections\AbstractTypeCollectionTestCase;
 
 class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
@@ -20,41 +15,41 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
     {
         return [
             [
-                "Empty collection.",
+                'Empty collection.',
                 [],
                 [],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => new \Exception("foo"),
+                    0 => new \Exception('foo'),
                 ];
 
                 return [
-                    "1 single item collection.",
+                    '1 single item collection.',
                     $elements,
                     $elements,
-                    function(\Exception $object){
+                    static function (\Exception $object): string {
                         return $object->getMessage();
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => new \Exception("A"),
-                    1 => new \Exception("B"),
-                    2 => new \Exception("C"),
-                    3 => new \Exception("B"),
-                    4 => new \Exception("D"),
-                    5 => new \Exception("B"),
+                    0 => new \Exception('A'),
+                    1 => new \Exception('B'),
+                    2 => new \Exception('C'),
+                    3 => new \Exception('B'),
+                    4 => new \Exception('D'),
+                    5 => new \Exception('B'),
                 ];
 
                 return [
-                    "Ascending, use first encountered.",
+                    'Ascending, use first encountered.',
                     [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -62,24 +57,24 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         4 => $elements[4],
                     ],
                     $elements,
-                    function(\Exception $object){
+                    static function (\Exception $object): string {
                         return $object->getMessage();
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => new \Exception("A"),
-                    1 => new \Exception("B"),
-                    2 => new \Exception("C"),
-                    3 => new \Exception("B"),
-                    4 => new \Exception("D"),
-                    5 => new \Exception("B"),
+                    0 => new \Exception('A'),
+                    1 => new \Exception('B'),
+                    2 => new \Exception('C'),
+                    3 => new \Exception('B'),
+                    4 => new \Exception('D'),
+                    5 => new \Exception('B'),
                 ];
 
                 return [
-                    "Ascending, use last encountered.",
+                    'Ascending, use last encountered.',
                     [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -87,24 +82,24 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         5 => $elements[5],
                     ],
                     $elements,
-                    function(\Exception $object){
+                    static function (\Exception $object): string {
                         return $object->getMessage();
                     },
                     false,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => new \Exception("D"),
-                    1 => new \Exception("B"),
-                    2 => new \Exception("C"),
-                    3 => new \Exception("B"),
-                    4 => new \Exception("A"),
-                    5 => new \Exception("B"),
+                    0 => new \Exception('D'),
+                    1 => new \Exception('B'),
+                    2 => new \Exception('C'),
+                    3 => new \Exception('B'),
+                    4 => new \Exception('A'),
+                    5 => new \Exception('B'),
                 ];
 
                 return [
-                    "Descending, use first encountered.",
+                    'Descending, use first encountered.',
                     [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -112,24 +107,24 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         4 => $elements[4],
                     ],
                     $elements,
-                    function(\Exception $object){
+                    static function (\Exception $object): string {
                         return $object->getMessage();
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
-                    0 => new \Exception("D"),
-                    1 => new \Exception("B"),
-                    2 => new \Exception("C"),
-                    3 => new \Exception("B"),
-                    4 => new \Exception("A"),
-                    5 => new \Exception("B"),
+                    0 => new \Exception('D'),
+                    1 => new \Exception('B'),
+                    2 => new \Exception('C'),
+                    3 => new \Exception('B'),
+                    4 => new \Exception('A'),
+                    5 => new \Exception('B'),
                 ];
 
                 return [
-                    "Descending, use last encountered.",
+                    'Descending, use last encountered.',
                     [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -137,7 +132,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         5 => $elements[5],
                     ],
                     $elements,
-                    function(\Exception $object){
+                    static function (\Exception $object): string {
                         return $object->getMessage();
                     },
                     false,
@@ -153,15 +148,15 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
     {
         return [
             [
-                "Integer keys. 0 in both, means #2 is appended as key 1.",
-                new ExceptionCollection([0 => new \Exception]),
-                new ExceptionCollection([0 => new \Exception]),
-                function(
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
+                new ExceptionCollection([0 => new \Exception()]),
+                new ExceptionCollection([0 => new \Exception()]),
+                function (
                     ExceptionCollection $collectionA,
                     ExceptionCollection $collectionB,
                     ExceptionCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(2, $collectionC, $message);
                     $this->assertSame([0, 1], $collectionC->getKeys(), $message);
                     $this->assertSame($collectionA->first(), $collectionC->first(), $message);
@@ -169,17 +164,17 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                 },
             ],
             [
-                "Same name string keys. Will override.",
-                new ExceptionCollection(["foo" => new \Exception]),
-                new ExceptionCollection(["foo" => new \Exception]),
-                function(
+                'Same name string keys. Will override.',
+                new ExceptionCollection(['foo' => new \Exception()]),
+                new ExceptionCollection(['foo' => new \Exception()]),
+                function (
                     ExceptionCollection $collectionA,
                     ExceptionCollection $collectionB,
                     ExceptionCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(["foo"], $collectionC->getKeys(), $message);
+                    $this->assertSame(['foo'], $collectionC->getKeys(), $message);
                     $this->assertNotSame($collectionA->first(), $collectionC->first(), $message);
                     $this->assertSame($collectionB->first(), $collectionC->first(), $message);
                     $this->assertSame($collectionB->last(), $collectionC->last(), $message);
@@ -201,7 +196,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
      */
     protected function getSingleElement()
     {
-        return new \Exception;
+        return new \Exception();
     }
 
     /**
@@ -210,10 +205,10 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
     protected function getMultipleElements(): array
     {
         return [
-            new \Exception,
-            "foo" => new \Exception,
-            42 => new \Exception,
-            new \Exception,
+            new \Exception(),
+            'foo' => new \Exception(),
+            42 => new \Exception(),
+            new \Exception(),
         ];
     }
 }

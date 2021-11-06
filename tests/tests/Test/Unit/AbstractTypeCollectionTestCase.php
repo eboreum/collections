@@ -1,12 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
 use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
-use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 
@@ -26,7 +25,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>withAdded\(',
@@ -37,9 +36,9 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -48,7 +47,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by \\\\%s\.',
@@ -56,18 +55,18 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithAddedMultipleThrowsExceptionWhenArgumentElementsContainsInvalidValues(): void
@@ -84,7 +83,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>withAddedMultiple\(',
@@ -97,9 +96,9 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -107,7 +106,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $currentException = $currentException->getPrevious();
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                implode("", [
+                implode('', [
                     '/',
                     '^',
                     'In argument \$elements, 1\/1 elements are invalid, including\: \[',
@@ -120,12 +119,12 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithMergedThrowsExceptionWhenArgumentCollectionBIsNotASubclassOfCollectionA(): void
@@ -141,7 +140,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s\-\>withMerged\(',
@@ -152,10 +151,10 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -164,7 +163,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$collection must be an instance of \\\\%s, but it is not\.',
@@ -172,19 +171,19 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithMergedThrowsExceptionWhenArgumentCollectionBIsASubclassOfCollectionAButElementIsNotAcceptedByCollectionA(): void
@@ -197,8 +196,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
         $reflectionProperty = null;
 
         do {
-            if ($reflectionObjectCurrent->hasProperty("elements")) {
-                $reflectionProperty = $reflectionObjectCurrent->getProperty("elements");
+            if ($reflectionObjectCurrent->hasProperty('elements')) {
+                $reflectionProperty = $reflectionObjectCurrent->getProperty('elements');
 
                 break;
             }
@@ -206,10 +205,9 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $reflectionObjectCurrent = $reflectionObjectCurrent->getParentClass();
         } while ($reflectionObjectCurrent);
 
-
         if (!$reflectionProperty) {
             throw new RuntimeException(sprintf(
-                "Somehow, a \ReflectionProperty could not be produced from \$handledCollectionClassName = %s",
+                'Somehow, a \ReflectionProperty could not be produced from $handledCollectionClassName = %s',
                 Caster::getInstance()->castTyped($handledCollectionClassName),
             ));
         }
@@ -224,7 +222,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s\-\>withMerged\(',
@@ -235,10 +233,10 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -247,27 +245,27 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$collection cannot be merged into the current collection, because 1\/1 elements',
-                        " are invalid, including\: \[0 \=\> \(null\) null\]",
+                        ' are invalid, including\: \[0 \=\> \(null\) null\]',
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithRemovedElementThrowsExceptionWhenArgumentElementIsNotAcceptedbyTheCollection(): void
@@ -282,7 +280,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s\-\>withRemovedElement\(',
@@ -293,9 +291,9 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -304,7 +302,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by \\\\%s\.',
@@ -312,18 +310,18 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 
     public function testWithSetThrowsExceptionWhenArgumentElementIsNotAcceptedbyTheCollection(): void
@@ -338,7 +336,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s\-\>withSet\(',
@@ -350,9 +348,9 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote($handledCollectionClassName, "/"),
-                    preg_quote(Collection::class, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -361,24 +359,24 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    implode("", [
+                    implode('', [
                         '/',
                         '^',
                         'Argument \$element is not accepted by \\\\%s\. Found\: \(null\) null',
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, "/"),
+                    preg_quote($handledCollectionClassName, '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertTrue(is_null($currentException));
+            $this->assertTrue(null === $currentException);
 
             return;
         }
 
-        $this->fail("Exception was never thrown.");
+        $this->fail('Exception was never thrown.');
     }
 }

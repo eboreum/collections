@@ -1,12 +1,9 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
-use Eboreum\Collections\Collection;
-use Eboreum\Collections\Exception\InvalidArgumentException;
-use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\ObjectCollection;
 
 class ObjectCollectionTest extends AbstractTypeCollectionTestCase
@@ -18,83 +15,83 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
     {
         return [
             [
-                "Empty collection.",
+                'Empty collection.',
                 [],
                 [],
-                function(){
-                    return "";
+                static function (): string {
+                    return '';
                 },
                 true,
             ],
-            (function(){
+            (static function (): array {
                 $elements = [
                     0 => new class
                     {
                         public function __toString(): string
                         {
-                            return "foo";
+                            return 'foo';
                         }
                     },
                 ];
 
                 return [
-                    "1 single item collection.",
+                    '1 single item collection.',
                     $elements,
                     $elements,
-                    function(object $object){
+                    static function (object $object): string {
                         return (string)$object;
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
                     0 => new class
                     {
                         public function __toString(): string
                         {
-                            return "a";
+                            return 'a';
                         }
                     },
                     1 => new class
                     {
                         public function __toString(): string
                         {
-                            return "b";
+                            return 'b';
                         }
                     },
                     2 => new class
                     {
                         public function __toString(): string
                         {
-                            return "c";
+                            return 'c';
                         }
                     },
                     3 => new class
                     {
                         public function __toString(): string
                         {
-                            return "b";
+                            return 'b';
                         }
                     },
                     4 => new class
                     {
                         public function __toString(): string
                         {
-                            return "d";
+                            return 'd';
                         }
                     },
                     5 => new class
                     {
                         public function __toString(): string
                         {
-                            return "b";
+                            return 'b';
                         }
                     },
                 ];
 
                 return [
-                    "Ascending, use first encountered.",
+                    'Ascending, use first encountered.',
                     [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -102,60 +99,60 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                         4 => $elements[4],
                     ],
                     $elements,
-                    function(object $object){
+                    static function (object $object): string {
                         return (string)$object;
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
                     0 => new class
                     {
                         public function __toString(): string
                         {
-                            return "a";
+                            return 'a';
                         }
                     },
                     1 => new class
                     {
                         public function __toString(): string
                         {
-                            return "b";
+                            return 'b';
                         }
                     },
                     2 => new class
                     {
                         public function __toString(): string
                         {
-                            return "c";
+                            return 'c';
                         }
                     },
                     3 => new class
                     {
                         public function __toString(): string
                         {
-                            return "b";
+                            return 'b';
                         }
                     },
                     4 => new class
                     {
                         public function __toString(): string
                         {
-                            return "d";
+                            return 'd';
                         }
                     },
                     5 => new class
                     {
                         public function __toString(): string
                         {
-                            return "b";
+                            return 'b';
                         }
                     },
                 ];
 
                 return [
-                    "Ascending, use last encountered.",
+                    'Ascending, use last encountered.',
                     [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -163,60 +160,60 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                         5 => $elements[5],
                     ],
                     $elements,
-                    function(object $object){
+                    static function (object $object): string {
                         return (string)$object;
                     },
                     false,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
                     0 => new class
                     {
                         public function __toString(): string
                         {
-                            return "d";
+                            return 'd';
                         }
                     },
                     1 => new class
                     {
                         public function __toString(): string
                         {
-                            return "a";
+                            return 'a';
                         }
                     },
                     2 => new class
                     {
                         public function __toString(): string
                         {
-                            return "c";
+                            return 'c';
                         }
                     },
                     3 => new class
                     {
                         public function __toString(): string
                         {
-                            return "a";
+                            return 'a';
                         }
                     },
                     4 => new class
                     {
                         public function __toString(): string
                         {
-                            return "b";
+                            return 'b';
                         }
                     },
                     5 => new class
                     {
                         public function __toString(): string
                         {
-                            return "a";
+                            return 'a';
                         }
                     },
                 ];
 
                 return [
-                    "Descending, use first encountered.",
+                    'Descending, use first encountered.',
                     [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -224,60 +221,60 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                         4 => $elements[4],
                     ],
                     $elements,
-                    function(object $object){
+                    static function (object $object): string {
                         return (string)$object;
                     },
                     true,
                 ];
             })(),
-            (function(){
+            (static function (): array {
                 $elements = [
                     0 => new class
                     {
                         public function __toString(): string
                         {
-                            return "d";
+                            return 'd';
                         }
                     },
                     1 => new class
                     {
                         public function __toString(): string
                         {
-                            return "a";
+                            return 'a';
                         }
                     },
                     2 => new class
                     {
                         public function __toString(): string
                         {
-                            return "c";
+                            return 'c';
                         }
                     },
                     3 => new class
                     {
                         public function __toString(): string
                         {
-                            return "a";
+                            return 'a';
                         }
                     },
                     4 => new class
                     {
                         public function __toString(): string
                         {
-                            return "b";
+                            return 'b';
                         }
                     },
                     5 => new class
                     {
                         public function __toString(): string
                         {
-                            return "a";
+                            return 'a';
                         }
                     },
                 ];
 
                 return [
-                    "Descending, use last encountered.",
+                    'Descending, use last encountered.',
                     [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -285,7 +282,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                         5 => $elements[5],
                     ],
                     $elements,
-                    function(object $object){
+                    static function (object $object): string {
                         return (string)$object;
                     },
                     false,
@@ -301,15 +298,15 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
     {
         return [
             [
-                "Integer keys. 0 in both, means #2 is appended as key 1.",
-                new ObjectCollection([0 => new \stdClass]),
-                new ObjectCollection([0 => new \DateTimeImmutable]),
-                function(
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
+                new ObjectCollection([0 => new \stdClass()]),
+                new ObjectCollection([0 => new \DateTimeImmutable()]),
+                function (
                     ObjectCollection $collectionA,
                     ObjectCollection $collectionB,
                     ObjectCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(2, $collectionC, $message);
                     $this->assertSame([0, 1], $collectionC->getKeys(), $message);
                     $this->assertSame($collectionA->first(), $collectionC->first(), $message);
@@ -317,17 +314,17 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                 },
             ],
             [
-                "Same name string keys. Will override.",
-                new ObjectCollection(["foo" => new \stdClass]),
-                new ObjectCollection(["foo" => new \DateTimeImmutable]),
-                function(
+                'Same name string keys. Will override.',
+                new ObjectCollection(['foo' => new \stdClass()]),
+                new ObjectCollection(['foo' => new \DateTimeImmutable()]),
+                function (
                     ObjectCollection $collectionA,
                     ObjectCollection $collectionB,
                     ObjectCollection $collectionC,
                     string $message
-                ){
+                ): void {
                     $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(["foo"], $collectionC->getKeys(), $message);
+                    $this->assertSame(['foo'], $collectionC->getKeys(), $message);
                     $this->assertNotSame($collectionA->first(), $collectionC->first(), $message);
                     $this->assertSame($collectionB->first(), $collectionC->first(), $message);
                     $this->assertSame($collectionB->last(), $collectionC->last(), $message);
@@ -349,7 +346,9 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
      */
     protected function getSingleElement()
     {
-        return new class {};
+        return new class
+        {
+        };
     }
 
     /**
@@ -358,10 +357,12 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
     protected function getMultipleElements(): array
     {
         return [
-            new \stdClass,
-            "foo" => new class {},
+            new \stdClass(),
+            'foo' => new class
+            {
+            },
             42 => dir(__DIR__),
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
         ];
     }
 }
