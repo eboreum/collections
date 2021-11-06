@@ -12,5 +12,4 @@ namespace Eboreum\Collections\Contract;
  */
 interface ImmutableObjectInterface
 {
-
 }

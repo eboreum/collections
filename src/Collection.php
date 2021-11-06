@@ -1,5 +1,7 @@
 <?php
 /**
+ * @codingStandardsIgnoreStart
+ *
  * This file is largely based on: @see https://github.com/doctrine/collections/blob/94918256daa6ac99c7e5774720c0e76f01936bda/lib/Doctrine/Common/Collections/ArrayCollection.php
  *
  * From the LICENSE file in doctrine/collections (@see https://github.com/doctrine/collections/blob/94918256daa6ac99c7e5774720c0e76f01936bda/LICENSE):
@@ -23,6 +25,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * @codingStandardsIgnoreEnd
  */
 
 declare(strict_types=1);
@@ -868,8 +872,11 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
 
     /**
      * {@inheritDoc}
+     *
+     * We use "codingStandardsIgnoreStart", because it reports $element is unused, and we know this, but it has to
+     * respect the method definition in CollectionInterface.
      */
-    public static function isElementAccepted($element): bool
+    public static function isElementAccepted($element): bool // @codingStandardsIgnoreLine
     {
         return true;
     }

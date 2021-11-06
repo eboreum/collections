@@ -198,9 +198,11 @@ class DateTimeImmutableCollection
     {
         $direction = ($isAscending ? 1 : -1);
 
-        return $this->toSortedByCallback(static function (DateTimeImmutable $a, DateTimeImmutable $b) use ($direction) {
-            return ($a->getTimestamp() - $b->getTimestamp()) * $direction;
-        });
+        return $this->toSortedByCallback(
+            static function (DateTimeImmutable $a, DateTimeImmutable $b) use ($direction): int {
+                return ($a->getTimestamp() - $b->getTimestamp()) * $direction;
+            }
+        );
     }
 
     /**

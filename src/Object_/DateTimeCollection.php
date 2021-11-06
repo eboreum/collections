@@ -198,7 +198,7 @@ class DateTimeCollection
     {
         $direction = ($isAscending ? 1 : -1);
 
-        return $this->toSortedByCallback(static function (DateTime $a, DateTime $b) use ($direction) {
+        return $this->toSortedByCallback(static function (DateTime $a, DateTime $b) use ($direction): int {
             return ($a->getTimestamp() - $b->getTimestamp()) * $direction;
         });
     }

@@ -14,5 +14,4 @@ namespace Eboreum\Collections\Contract;
  */
 interface GeneratedCollectionInterface extends CollectionInterface
 {
-
 }
