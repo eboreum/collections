@@ -124,17 +124,17 @@ class DateTimeImmutableCollection
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?DateTimeImmutable
+    public function maxByCallback(\Closure $callback): ?DateTimeImmutable
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?DateTimeImmutable
+    public function minByCallback(\Closure $callback): ?DateTimeImmutable
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

@@ -117,17 +117,17 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?Throwable
+    public function maxByCallback(\Closure $callback): ?Throwable
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?Throwable
+    public function minByCallback(\Closure $callback): ?Throwable
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

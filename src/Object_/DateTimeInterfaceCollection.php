@@ -124,17 +124,17 @@ class DateTimeInterfaceCollection
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?DateTimeInterface
+    public function maxByCallback(\Closure $callback): ?DateTimeInterface
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?DateTimeInterface
+    public function minByCallback(\Closure $callback): ?DateTimeInterface
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

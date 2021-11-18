@@ -337,7 +337,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      */
-    public function max(Closure $callback)
+    public function maxByCallback(Closure $callback)
     {
         $max = null;
         $element = null;
@@ -388,7 +388,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      */
-    public function min(Closure $callback)
+    public function minByCallback(Closure $callback)
     {
         $min = null;
         $element = null;

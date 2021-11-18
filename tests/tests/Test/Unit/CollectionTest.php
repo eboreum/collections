@@ -1188,13 +1188,13 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->fail('Exception was never thrown.');
     }
 
-    public function testMaxHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
+    public function testMaxByCallbackHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
     {
         $collection = new Collection([null]);
         $exception = new \Exception();
 
         try {
-            $collection->max(static function () use ($exception): \Exception {
+            $collection->maxByCallback(static function () use ($exception): \Exception {
                 throw $exception;
             });
         } catch (\Exception $e) {
@@ -1205,7 +1205,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in \\\\%s-\>max\(',
+                        'Failure in \\\\%s-\>maxByCallback\(',
                             '\$callback = \(object\) \\\\Closure\(\)',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',
@@ -1248,12 +1248,12 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->fail('Exception was never thrown.');
     }
 
-    public function testMaxThrowsExceptionWhenCallbackDoesNotReturnAnInteger(): void
+    public function testMaxByCallbackThrowsExceptionWhenCallbackDoesNotReturnAnInteger(): void
     {
         $collection = new Collection([null]);
 
         try {
-            $collection->max(static function () {
+            $collection->maxByCallback(static function () {
                 return null;
             });
         } catch (\Exception $e) {
@@ -1264,7 +1264,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in \\\\%s-\>max\(',
+                        'Failure in \\\\%s-\>maxByCallback\(',
                             '\$callback = \(object\) \\\\Closure\(\)',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',
@@ -1305,13 +1305,13 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->fail('Exception was never thrown.');
     }
 
-    public function testMinHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
+    public function testMinByCallbackHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
     {
         $collection = new Collection([null]);
         $exception = new \Exception();
 
         try {
-            $collection->min(static function () use ($exception): \Exception {
+            $collection->minByCallback(static function () use ($exception): \Exception {
                 throw $exception;
             });
         } catch (\Exception $e) {
@@ -1322,7 +1322,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in \\\\%s-\>min\(',
+                        'Failure in \\\\%s-\>minByCallback\(',
                             '\$callback = \(object\) \\\\Closure\(\)',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',
@@ -1365,12 +1365,12 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->fail('Exception was never thrown.');
     }
 
-    public function testMinThrowsExceptionWhenCallbackDoesNotReturnAnInteger(): void
+    public function testMinByCallbackThrowsExceptionWhenCallbackDoesNotReturnAnInteger(): void
     {
         $collection = new Collection([null]);
 
         try {
-            $collection->min(static function () {
+            $collection->minByCallback(static function () {
                 return null;
             });
         } catch (\Exception $e) {
@@ -1381,7 +1381,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in \\\\%s-\>min\(',
+                        'Failure in \\\\%s-\>minByCallback\(',
                             '\$callback = \(object\) \\\\Closure\(\)',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',

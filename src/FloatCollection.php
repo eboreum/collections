@@ -108,17 +108,17 @@ class FloatCollection extends Collection implements SortableCollectionInterface,
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?float
+    public function maxByCallback(\Closure $callback): ?float
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?float
+    public function minByCallback(\Closure $callback): ?float
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

@@ -117,17 +117,17 @@ class SplFileInfoCollection extends AbstractNamedClassOrInterfaceCollection impl
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?SplFileInfo
+    public function maxByCallback(\Closure $callback): ?SplFileInfo
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?SplFileInfo
+    public function minByCallback(\Closure $callback): ?SplFileInfo
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

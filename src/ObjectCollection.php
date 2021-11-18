@@ -110,17 +110,17 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?object
+    public function maxByCallback(\Closure $callback): ?object
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?object
+    public function minByCallback(\Closure $callback): ?object
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

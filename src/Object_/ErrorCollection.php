@@ -117,17 +117,17 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?Error
+    public function maxByCallback(\Closure $callback): ?Error
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?Error
+    public function minByCallback(\Closure $callback): ?Error
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

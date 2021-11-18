@@ -117,17 +117,17 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
     /**
      * {@inheritDoc}
      */
-    public function max(Closure $callback): ?Closure
+    public function maxByCallback(Closure $callback): ?Closure
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(Closure $callback): ?Closure
+    public function minByCallback(Closure $callback): ?Closure
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

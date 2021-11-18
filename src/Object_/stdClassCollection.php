@@ -117,17 +117,17 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?stdClass
+    public function maxByCallback(\Closure $callback): ?stdClass
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?stdClass
+    public function minByCallback(\Closure $callback): ?stdClass
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

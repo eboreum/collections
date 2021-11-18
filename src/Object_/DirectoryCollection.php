@@ -117,17 +117,17 @@ class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?Directory
+    public function maxByCallback(\Closure $callback): ?Directory
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?Directory
+    public function minByCallback(\Closure $callback): ?Directory
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

@@ -117,17 +117,17 @@ class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?Exception
+    public function maxByCallback(\Closure $callback): ?Exception
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?Exception
+    public function minByCallback(\Closure $callback): ?Exception
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

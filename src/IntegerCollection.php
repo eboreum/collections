@@ -108,17 +108,17 @@ class IntegerCollection extends Collection implements SortableCollectionInterfac
     /**
      * {@inheritDoc}
      */
-    public function max(\Closure $callback): ?int
+    public function maxByCallback(\Closure $callback): ?int
     {
-        return parent::max($callback);
+        return parent::maxByCallback($callback);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min(\Closure $callback): ?int
+    public function minByCallback(\Closure $callback): ?int
     {
-        return parent::min($callback);
+        return parent::minByCallback($callback);
     }
 
     /**

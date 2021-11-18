@@ -234,7 +234,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * @throws RuntimeException
      * @return mixed|null
      */
-    public function max(Closure $callback);
+    public function maxByCallback(Closure $callback);
 
     /**
      * Returns the element, which by the return value of the $callback argument, is considered to be the smallest in the
@@ -251,7 +251,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * @throws RuntimeException
      * @return mixed|null
      */
-    public function min(Closure $callback);
+    public function minByCallback(Closure $callback);
 
     /**
      * Returns the next element in the collection's elements. If empty, returns `null`. Moves the array pointer.

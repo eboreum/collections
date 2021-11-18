@@ -198,22 +198,22 @@ abstract class AbstractCollectionTestCase extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider_testMaxWorks
-     * @param mixed $expectedMax
+     * @dataProvider dataProvider_testMaxByCallbackWorks
+     * @param mixed $expectedMaxByCallback
      * @param array<int, mixed> $elements
      */
-    public function testMaxWorks($expectedMax, array $elements): void
+    public function testMaxByCallbackWorks($expectedMaxByCallback, array $elements): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collection = new $handledCollectionClassName($elements);
 
-        $this->assertSame($expectedMax, $collection->max(static function ($v, $k) {
+        $this->assertSame($expectedMaxByCallback, $collection->maxByCallback(static function ($v, $k) {
             return $k;
         }));
 
         $collection = new $handledCollectionClassName();
 
-        $this->assertNull($collection->max(static function () {
+        $this->assertNull($collection->maxByCallback(static function () {
             return 0;
         }));
     }
@@ -221,7 +221,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     /**
      * @return array<int, array{mixed, array<int, mixed>}>
      */
-    public function dataProvider_testMaxWorks(): array
+    public function dataProvider_testMaxByCallbackWorks(): array
     {
         return [
             (function (): array {
@@ -268,22 +268,22 @@ abstract class AbstractCollectionTestCase extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider_testMinWorks
-     * @param mixed $expectedMin
+     * @dataProvider dataProvider_testMinByCallbackWorks
+     * @param mixed $expectedMinByCallback
      * @param array<int, mixed> $elements
      */
-    public function testMinWorks($expectedMin, array $elements): void
+    public function testMinByCallbackWorks($expectedMinByCallback, array $elements): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collection = new $handledCollectionClassName($elements);
 
-        $this->assertSame($expectedMin, $collection->min(static function ($v, $k) {
+        $this->assertSame($expectedMinByCallback, $collection->minByCallback(static function ($v, $k) {
             return $k;
         }));
 
         $collection = new $handledCollectionClassName();
 
-        $this->assertNull($collection->min(static function () {
+        $this->assertNull($collection->minByCallback(static function () {
             return 0;
         }));
     }
@@ -291,7 +291,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     /**
      * @return array<int, array{mixed, array<int, mixed>}>
      */
-    public function dataProvider_testMinWorks(): array
+    public function dataProvider_testMinByCallbackWorks(): array
     {
         return [
             (function (): array {
