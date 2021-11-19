@@ -8,6 +8,142 @@ use Eboreum\Collections\Object_\DateTimeInterfaceCollection;
 
 class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
+    /**
+     * @dataProvider dataProvider_testMaxWorks
+     *
+     * @param array<int, \DateTimeInterface> $elements
+     */
+    public function testMaxWorks(?\DateTimeInterface $expected, array $elements): void
+    {
+        $dateTimeCollection = new DateTimeInterfaceCollection($elements);
+        $element = $dateTimeCollection->max();
+
+        $this->assertSame($expected, $element);
+    }
+
+    public function dataProvider_testMaxWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            (function(){
+                $elements = [new \DateTime('2021-02-01 12:34:57')];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTimeImmutable('2021-02-01 12:34:56'),
+                ];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTimeImmutable('2021-02-01 12:34:56'),
+                    new \DateTimeImmutable('2021-02-01 12:34:55'),
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTimeImmutable('2021-02-01 12:34:55'),
+                ];
+
+                return [
+                    $elements[3],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-01-01 00:00:00'),
+                    new \DateTimeImmutable('2020-01-01 00:00:00'),
+                    new \DateTime('2022-01-01 00:00:00'),
+                ];
+
+                return [
+                    $elements[2],
+                    $elements,
+                ];
+            })(),
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_testMinWorks
+     *
+     * @param array<int, \DateTimeInterface> $elements
+     */
+    public function testMinWorks(?\DateTimeInterface $expected, array $elements): void
+    {
+        $dateTimeCollection = new DateTimeInterfaceCollection($elements);
+        $element = $dateTimeCollection->min();
+
+        $this->assertSame($expected, $element);
+    }
+
+    public function dataProvider_testMinWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            (function(){
+                $elements = [new \DateTime('2021-02-01 12:34:57')];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTimeImmutable('2021-02-01 12:34:56'),
+                ];
+
+                return [
+                    $elements[1],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTimeImmutable('2021-02-01 12:34:57'),
+                    new \DateTime('2021-02-01 12:34:56'),
+                    new \DateTime('2021-02-01 12:34:55'),
+                    new \DateTimeImmutable('2021-02-01 12:34:57'),
+                    new \DateTimeImmutable('2021-02-01 12:34:55'),
+                ];
+
+                return [
+                    $elements[2],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTimeImmutable('2021-01-01 00:00:00'),
+                    new \DateTime('2020-01-01 00:00:00'),
+                    new \DateTime('2022-01-01 00:00:00'),
+                ];
+
+                return [
+                    $elements[1],
+                    $elements,
+                ];
+            })(),
+        ];
+    }
+
     public function testToSortedWorks(): void
     {
         $elements = [

@@ -8,6 +8,142 @@ use Eboreum\Collections\Object_\DateTimeCollection;
 
 class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
+    /**
+     * @dataProvider dataProvider_testMaxWorks
+     *
+     * @param array<int, \DateTime> $elements
+     */
+    public function testMaxWorks(?\DateTime $expected, array $elements): void
+    {
+        $dateTimeCollection = new DateTimeCollection($elements);
+        $element = $dateTimeCollection->max();
+
+        $this->assertSame($expected, $element);
+    }
+
+    public function dataProvider_testMaxWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            (function(){
+                $elements = [new \DateTime('2021-02-01 12:34:57')];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTime('2021-02-01 12:34:56'),
+                ];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTime('2021-02-01 12:34:56'),
+                    new \DateTime('2021-02-01 12:34:55'),
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTime('2021-02-01 12:34:55'),
+                ];
+
+                return [
+                    $elements[3],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-01-01 00:00:00'),
+                    new \DateTime('2020-01-01 00:00:00'),
+                    new \DateTime('2022-01-01 00:00:00'),
+                ];
+
+                return [
+                    $elements[2],
+                    $elements,
+                ];
+            })(),
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_testMinWorks
+     *
+     * @param array<int, \DateTime> $elements
+     */
+    public function testMinWorks(?\DateTime $expected, array $elements): void
+    {
+        $dateTimeCollection = new DateTimeCollection($elements);
+        $element = $dateTimeCollection->min();
+
+        $this->assertSame($expected, $element);
+    }
+
+    public function dataProvider_testMinWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            (function(){
+                $elements = [new \DateTime('2021-02-01 12:34:57')];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTime('2021-02-01 12:34:56'),
+                ];
+
+                return [
+                    $elements[1],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTime('2021-02-01 12:34:56'),
+                    new \DateTime('2021-02-01 12:34:55'),
+                    new \DateTime('2021-02-01 12:34:57'),
+                    new \DateTime('2021-02-01 12:34:55'),
+                ];
+
+                return [
+                    $elements[2],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    new \DateTime('2021-01-01 00:00:00'),
+                    new \DateTime('2020-01-01 00:00:00'),
+                    new \DateTime('2022-01-01 00:00:00'),
+                ];
+
+                return [
+                    $elements[1],
+                    $elements,
+                ];
+            })(),
+        ];
+    }
+
     public function testToSortedWorks(): void
     {
         $elements = [

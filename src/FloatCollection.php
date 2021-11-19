@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Eboreum\Collections\Contract\CollectionInterface;
+use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterface;
+use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
 
@@ -13,7 +15,13 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  *
  * Contains values of type float, exclusively.
  */
-class FloatCollection extends Collection implements SortableCollectionInterface, UniqueableCollectionInterface
+class FloatCollection
+    extends Collection
+    implements
+        MaximumableCollectionInterface,
+        MinimumableCollectionInterface,
+        SortableCollectionInterface,
+        UniqueableCollectionInterface
 {
     /**
      * {@inheritDoc}
@@ -108,9 +116,41 @@ class FloatCollection extends Collection implements SortableCollectionInterface,
     /**
      * {@inheritDoc}
      */
+    public function max(): ?float
+    {
+        if (!$this->elements) {
+            return null;
+        }
+
+        $float = max($this->elements);
+
+        assert(is_float($float)); // Should not be possible that $float is false, as we check for the empty array above
+
+        return $float;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function maxByCallback(\Closure $callback): ?float
     {
         return parent::maxByCallback($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function min(): ?float
+    {
+        if (!$this->elements) {
+            return null;
+        }
+
+        $float = min($this->elements);
+
+        assert(is_float($float)); // Should not be possible that $float is false, as we check for the empty array above
+
+        return $float;
     }
 
     /**

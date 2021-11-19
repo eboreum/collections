@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Eboreum\Collections\Contract\CollectionInterface;
+use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterface;
+use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
 
@@ -13,7 +15,13 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  *
  * Contains values of type integer (int), exclusively.
  */
-class IntegerCollection extends Collection implements SortableCollectionInterface, UniqueableCollectionInterface
+class IntegerCollection
+    extends Collection
+    implements
+        MaximumableCollectionInterface,
+        MinimumableCollectionInterface,
+        SortableCollectionInterface,
+        UniqueableCollectionInterface
 {
     /**
      * {@inheritDoc}
@@ -108,9 +116,41 @@ class IntegerCollection extends Collection implements SortableCollectionInterfac
     /**
      * {@inheritDoc}
      */
+    public function max(): ?int
+    {
+        if (!$this->elements) {
+            return null;
+        }
+
+        $int = max($this->elements);
+
+        assert(is_int($int)); // Should not be possible that $int is false, as we check for the empty array above
+
+        return $int;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function maxByCallback(\Closure $callback): ?int
     {
         return parent::maxByCallback($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function min(): ?int
+    {
+        if (!$this->elements) {
+            return null;
+        }
+
+        $int = min($this->elements);
+
+        assert(is_int($int)); // Should not be possible that $int is false, as we check for the empty array above
+
+        return $int;
     }
 
     /**

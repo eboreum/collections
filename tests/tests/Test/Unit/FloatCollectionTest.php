@@ -8,6 +8,142 @@ use Eboreum\Collections\FloatCollection;
 
 class FloatCollectionTest extends AbstractTypeCollectionTestCase
 {
+    /**
+     * @dataProvider dataProvider_testMaxWorks
+     *
+     * @param array<int, float> $elements
+     */
+    public function testMaxWorks(?float $expected, array $elements): void
+    {
+        $floatCollection = new FloatCollection($elements);
+        $element = $floatCollection->max();
+
+        $this->assertSame($expected, $element);
+    }
+
+    public function dataProvider_testMaxWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            (function(){
+                $elements = [3.14];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    3.15,
+                    3.14,
+                ];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    3.14,
+                    3.13,
+                    3.12,
+                    3.14,
+                    3.12,
+                ];
+
+                return [
+                    $elements[3],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    3.13,
+                    3.12,
+                    3.14,
+                ];
+
+                return [
+                    $elements[2],
+                    $elements,
+                ];
+            })(),
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_testMinWorks
+     *
+     * @param array<int, float> $elements
+     */
+    public function testMinWorks(?float $expected, array $elements): void
+    {
+        $floatCollection = new FloatCollection($elements);
+        $element = $floatCollection->min();
+
+        $this->assertSame($expected, $element);
+    }
+
+    public function dataProvider_testMinWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            (function(){
+                $elements = [3.14];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    3.15,
+                    3.14,
+                ];
+
+                return [
+                    $elements[1],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    3.16,
+                    3.15,
+                    3.14,
+                    3.16,
+                    3.14,
+                ];
+
+                return [
+                    $elements[2],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    3.15,
+                    3.14,
+                    3.16,
+                ];
+
+                return [
+                    $elements[1],
+                    $elements,
+                ];
+            })(),
+        ];
+    }
+
     public function testToSortedWorks(): void
     {
         $elements = [

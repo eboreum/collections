@@ -7,6 +7,8 @@ namespace Eboreum\Collections\Object_;
 use DateTimeImmutable;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
+use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterface;
+use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
 use Eboreum\Collections\Contract\GeneratedCollectionInterface;
@@ -19,6 +21,8 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 class DateTimeImmutableCollection
     extends AbstractNamedClassOrInterfaceCollection
     implements
+        MaximumableCollectionInterface,
+        MinimumableCollectionInterface,
         SortableCollectionInterface,
         UniqueableCollectionInterface,
         GeneratedCollectionInterface
@@ -124,9 +128,37 @@ class DateTimeImmutableCollection
     /**
      * {@inheritDoc}
      */
+    public function max(): ?DateTimeImmutable
+    {
+        if (!$this->elements) {
+            return null;
+        }
+
+        return $this->maxByCallback(static function (DateTimeImmutable $dateTimeImmutable): int {
+            return $dateTimeImmutable->getTimestamp();
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function maxByCallback(\Closure $callback): ?DateTimeImmutable
     {
         return parent::maxByCallback($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function min(): ?DateTimeImmutable
+    {
+        if (!$this->elements) {
+            return null;
+        }
+
+        return $this->minByCallback(static function (DateTimeImmutable $dateTimeImmutable): int {
+            return $dateTimeImmutable->getTimestamp();
+        });
     }
 
     /**

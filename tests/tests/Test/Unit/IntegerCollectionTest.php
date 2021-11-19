@@ -8,6 +8,142 @@ use Eboreum\Collections\IntegerCollection;
 
 class IntegerCollectionTest extends AbstractTypeCollectionTestCase
 {
+    /**
+     * @dataProvider dataProvider_testMaxWorks
+     *
+     * @param array<int, int> $elements
+     */
+    public function testMaxWorks(?int $expected, array $elements): void
+    {
+        $integerCollection = new IntegerCollection($elements);
+        $element = $integerCollection->max();
+
+        $this->assertSame($expected, $element);
+    }
+
+    public function dataProvider_testMaxWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            (function(){
+                $elements = [42];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    43,
+                    42,
+                ];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    42,
+                    41,
+                    40,
+                    42,
+                    40,
+                ];
+
+                return [
+                    $elements[3],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    41,
+                    40,
+                    42,
+                ];
+
+                return [
+                    $elements[2],
+                    $elements,
+                ];
+            })(),
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_testMinWorks
+     *
+     * @param array<int, int> $elements
+     */
+    public function testMinWorks(?int $expected, array $elements): void
+    {
+        $integerCollection = new IntegerCollection($elements);
+        $element = $integerCollection->min();
+
+        $this->assertSame($expected, $element);
+    }
+
+    public function dataProvider_testMinWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            (function(){
+                $elements = [42];
+
+                return [
+                    $elements[0],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    43,
+                    42,
+                ];
+
+                return [
+                    $elements[1],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    44,
+                    43,
+                    42,
+                    44,
+                    42,
+                ];
+
+                return [
+                    $elements[2],
+                    $elements,
+                ];
+            })(),
+            (function(){
+                $elements = [
+                    43,
+                    42,
+                    44,
+                ];
+
+                return [
+                    $elements[1],
+                    $elements,
+                ];
+            })(),
+        ];
+    }
+
     public function testToSortedWorks(): void
     {
         $elements = [
