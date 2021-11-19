@@ -83,6 +83,41 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      */
+    public function chunk(int $chunkSize): Collection
+    {
+        try {
+            if (false === ($chunkSize >= 1)) {
+                throw new RuntimeException(sprintf(
+                    'Argument $chunkSize must be >= 1, but it is not. Found: %s',
+                    Caster::getInstance()->castTyped($chunkSize),
+                ));
+            }
+
+            $collection = new self();
+
+            if ($this->elements) {
+                $chunks = array_chunk($this->elements, $chunkSize, true);
+
+                foreach ($chunks as $chunk) {
+                    $clone = clone $this;
+                    $clone->elements = $chunk;
+                    $collection = $collection->withAdded($clone);
+                }
+            }
+        } catch (\Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new \ReflectionMethod($this, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
+
+        return $collection;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function contains($element): bool
     {
         static::assertIsElementAccepted($element);

@@ -75,6 +75,16 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
     public static function isElementAccepted($element): bool;
 
     /**
+     * Must chunk the current collection into sub-collections, producing a new collection containing n collections of T,
+     * where T is the implementing class. Each sub-collection must be a clone of T.
+     *
+     * Corresponds to the core PHP function `array_chunk`.
+     *
+     * @see https://www.php.net/manual/en/function.array-chunk.php
+     */
+    public function chunk(int $chunkSize): CollectionInterface;
+
+    /**
      * Returns `true` when the collection contains the $element argument. Otherwise, returns `false`.
      * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
      *

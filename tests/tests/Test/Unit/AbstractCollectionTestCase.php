@@ -15,12 +15,142 @@ abstract class AbstractCollectionTestCase extends TestCase
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $elements = $this->getMultipleElements();
-        $dateTimeCollection = new $handledCollectionClassName($elements);
+        $collection = new $handledCollectionClassName($elements);
 
-        $this->assertCount(4, $dateTimeCollection);
-        $this->assertSame([0, 'foo', 42, 43], $dateTimeCollection->getKeys());
-        $this->assertSame($elements, $dateTimeCollection->toArray());
-        $this->assertSame(array_values($elements), $dateTimeCollection->toArrayValues());
+        $this->assertCount(4, $collection);
+        $this->assertSame([0, 'foo', 42, 43], $collection->getKeys());
+        $this->assertSame($elements, $collection->toArray());
+        $this->assertSame(array_values($elements), $collection->toArrayValues());
+    }
+
+    /**
+     * @dataProvider dataProvider_testChunkWorks
+     */
+    public function testChunkWorks(array $expected, array $elements, int $chunkSize): void
+    {
+        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName($elements);
+        $chunkedCollection = $collection->chunk($chunkSize);
+
+        $this->assertSame(count($expected), count($chunkedCollection));
+        $this->assertNotSame(get_class($collection), $chunkedCollection);
+
+        foreach ($chunkedCollection as $subcollection) {
+            $this->assertNotSame($collection, $subcollection);
+        }
+
+        $found = array_map(
+            static function (CollectionInterface $child) {
+                return $child->toArray();
+            },
+            $chunkedCollection->toArray(),
+        );
+
+        $this->assertSame($expected, $found);
+    }
+
+    /**
+     * @return array<int, array<mixed>, array<CollectionInterface>>
+     */
+    public function dataProvider_testChunkWorks(): array
+    {
+        return [
+            [
+                [],
+                [],
+                1,
+            ],
+            (function () {
+                $elements = $this->getMultipleElements();
+
+                return [
+                    [
+                        [
+                            0 => $elements[0],
+                        ],
+                        [
+                            'foo' => $elements['foo'],
+                        ],
+                        [
+                            42 => $elements[42],
+                        ],
+                        [
+                            43 => $elements[43],
+                        ],
+                    ],
+                    $elements,
+                    1,
+                ];
+            })(),
+            (function () {
+                $elements = $this->getMultipleElements();
+
+                return [
+                    [
+                        [
+                            0 => $elements[0],
+                            'foo' => $elements['foo'],
+                        ],
+                        [
+                            42 => $elements[42],
+                            43 => $elements[43],
+                        ],
+                    ],
+                    $elements,
+                    2,
+                ];
+            })(),
+            (function () {
+                $elements = $this->getMultipleElements();
+
+                return [
+                    [
+                        [
+                            0 => $elements[0],
+                            'foo' => $elements['foo'],
+                            42 => $elements[42],
+                        ],
+                        [
+                            43 => $elements[43],
+                        ],
+                    ],
+                    $elements,
+                    3,
+                ];
+            })(),
+            (function () {
+                $elements = $this->getMultipleElements();
+
+                return [
+                    [
+                        [
+                            0 => $elements[0],
+                            'foo' => $elements['foo'],
+                            42 => $elements[42],
+                            43 => $elements[43],
+                        ],
+                    ],
+                    $elements,
+                    4,
+                ];
+            })(),
+            (function () {
+                $elements = $this->getMultipleElements();
+
+                return [
+                    [
+                        [
+                            0 => $elements[0],
+                            'foo' => $elements['foo'],
+                            42 => $elements[42],
+                            43 => $elements[43],
+                        ],
+                    ],
+                    $elements,
+                    5,
+                ];
+            })(),
+        ];
     }
 
     public function testContainsWorks(): void
