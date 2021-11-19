@@ -98,7 +98,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Iterates over all elements in the current collection. Cannot break out of the loop. To do so, use the `every`
      * method instead.
      *
-     * Argument $callback may be called with the arguments:
+     * Argument $callback will receive the following arguments:
      *
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
@@ -113,7 +113,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Similar to the `each` method, in that it iterates over all elements in the current collection. However, it
      * differs from the `each` method in that the `every` methods allows for breaking out of the loop.
      *
-     * Argument $callback may be called with the arguments:
+     * Argument $callback will receive the following arguments:
      *
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
@@ -223,7 +223,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Returns the element, which by the return value of the $callback argument, is considered to be the greatest in the
      * collection. When collection is empty, `null` is returned.
      *
-     * Argument $callback may be called with the arguments:
+     * Argument $callback will receive the following arguments:
      *
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
@@ -240,7 +240,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Returns the element, which by the return value of the $callback argument, is considered to be the smallest in the
      * collection. When collection is empty, `null` is returned.
      *
-     * Argument $callback may be called with the arguments:
+     * Argument $callback will receive the following arguments:
      *
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
