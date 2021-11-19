@@ -336,25 +336,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return ObjectCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new class
-        {
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \stdClass(),
@@ -364,5 +346,23 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
             42 => dir(__DIR__),
             new \DateTimeImmutable(),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new class
+        {
+        };
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return ObjectCollection::class;
     }
 }

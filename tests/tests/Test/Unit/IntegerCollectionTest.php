@@ -211,8 +211,8 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
             ],
             [
                 '1 single item collection.',
-                [$this->getSingleElement()],
-                [$this->getSingleElement()],
+                [$this->createSingleElement()],
+                [$this->createSingleElement()],
                 static function (): string {
                     return '';
                 },
@@ -297,23 +297,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return IntegerCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return 42;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             -1,
@@ -321,5 +305,21 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
             42 => -3,
             42,
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return 42;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return IntegerCollection::class;
     }
 }

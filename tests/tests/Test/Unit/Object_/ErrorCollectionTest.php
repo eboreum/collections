@@ -186,23 +186,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return ErrorCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new \Error();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \Error(),
@@ -210,5 +194,21 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             42 => new \Error(),
             new \Error(),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new \Error();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return ErrorCollection::class;
     }
 }

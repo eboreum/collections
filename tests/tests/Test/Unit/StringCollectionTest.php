@@ -134,23 +134,7 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return StringCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return 'foo';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             'foo',
@@ -158,5 +142,21 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             42 => 'baz',
             'bim',
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return 'foo';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return StringCollection::class;
     }
 }

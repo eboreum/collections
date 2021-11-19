@@ -186,23 +186,7 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return ThrowableCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new \Exception();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \Exception(),
@@ -210,5 +194,21 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             42 => new \Error(),
             new \Exception(),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new \Exception();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return ThrowableCollection::class;
     }
 }

@@ -18,7 +18,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $handledClassName = $handledCollectionClassName::getHandledClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
 
         $collection = new $handledCollectionClassName($elements);
 

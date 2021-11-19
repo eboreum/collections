@@ -209,23 +209,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return DirectoryCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return dir(__DIR__);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             dir(__DIR__),
@@ -233,5 +217,21 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             42 => dir(__DIR__),
             dir(dirname(__DIR__)),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return dir(__DIR__);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return DirectoryCollection::class;
     }
 }

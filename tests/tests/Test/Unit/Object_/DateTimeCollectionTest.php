@@ -391,23 +391,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return DateTimeCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new \DateTime();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \DateTime(),
@@ -415,5 +399,21 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             42 => new \DateTime(),
             new \DateTime(),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new \DateTime();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return DateTimeCollection::class;
     }
 }

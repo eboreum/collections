@@ -186,23 +186,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return ExceptionCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new \Exception();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \Exception(),
@@ -210,5 +194,21 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             42 => new \Exception(),
             new \Exception(),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new \Exception();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return ExceptionCollection::class;
     }
 }

@@ -214,23 +214,7 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return stdClassCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new \stdClass();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \stdClass(),
@@ -238,5 +222,21 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             42 => new \stdClass(),
             new \stdClass(),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new \stdClass();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return stdClassCollection::class;
     }
 }

@@ -14,7 +14,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
     public function testWithAddedThrowsExceptionWhenArgumentElementIsNotAccepted(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
 
         $collection = new $handledCollectionClassName($elements);
 
@@ -72,7 +72,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
     public function testWithAddedMultipleThrowsExceptionWhenArgumentElementsContainsInvalidValues(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
 
         $collection = new $handledCollectionClassName($elements);
 

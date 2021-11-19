@@ -14,7 +14,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testBasics(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertCount(4, $collection);
@@ -61,7 +61,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 1,
             ],
             (function () {
-                $elements = $this->getMultipleElements();
+                $elements = $this->createMultipleElements();
 
                 return [
                     [
@@ -83,7 +83,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function () {
-                $elements = $this->getMultipleElements();
+                $elements = $this->createMultipleElements();
 
                 return [
                     [
@@ -101,7 +101,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function () {
-                $elements = $this->getMultipleElements();
+                $elements = $this->createMultipleElements();
 
                 return [
                     [
@@ -119,7 +119,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function () {
-                $elements = $this->getMultipleElements();
+                $elements = $this->createMultipleElements();
 
                 return [
                     [
@@ -135,7 +135,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function () {
-                $elements = $this->getMultipleElements();
+                $elements = $this->createMultipleElements();
 
                 return [
                     [
@@ -156,7 +156,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testContainsWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collectionA = new $handledCollectionClassName();
 
         $this->assertFalse($collectionA->contains($elements[0]));
@@ -175,7 +175,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testCurrentWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = array_values($this->getMultipleElements());
+        $elements = array_values($this->createMultipleElements());
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertSame($elements[0], $collection->current());
@@ -194,7 +194,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testFindWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertSame($elements[0], $collection->find(static function ($v, $k): bool {
@@ -227,7 +227,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testFirstWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertSame($elements[0], $collection->first());
@@ -252,7 +252,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testGetWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertNull($collection->get(-1));
@@ -265,7 +265,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testGetIteratorWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         foreach ([$collection, (array)$collection->getIterator()] as $c) {
@@ -281,7 +281,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testGetKeysWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertSame([0, 'foo', 42, 43], $collection->getKeys());
@@ -290,7 +290,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testHasWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertFalse($collection->has(-1));
@@ -304,7 +304,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testIndexOfWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $element = array_pop($elements);
         $collection = new $handledCollectionClassName($elements);
 
@@ -317,7 +317,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testLastWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertSame($elements[43], $collection->last());
@@ -356,13 +356,13 @@ abstract class AbstractCollectionTestCase extends TestCase
                     42 => null,
                     43 => null,
                 ],
-                $this->getMultipleElements(),
+                $this->createMultipleElements(),
                 static function () {
                     return null;
                 },
             ],
             (function () {
-                $elements = $this->getMultipleElements();
+                $elements = $this->createMultipleElements();
 
                 return [
                     $elements,
@@ -379,7 +379,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     42 => 42,
                     43 => 43,
                 ],
-                $this->getMultipleElements(),
+                $this->createMultipleElements(),
                 static function ($v, $k) {
                     return $k;
                 },
@@ -415,7 +415,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     {
         return [
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[0],
@@ -423,7 +423,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[1],
@@ -431,7 +431,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[2],
@@ -439,7 +439,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[3],
@@ -447,7 +447,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[3],
@@ -485,7 +485,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     {
         return [
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[0],
@@ -493,7 +493,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[0],
@@ -501,7 +501,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[0],
@@ -509,7 +509,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[0],
@@ -517,7 +517,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                 ];
             })(),
             (function (): array {
-                $elements = array_values($this->getMultipleElements());
+                $elements = array_values($this->createMultipleElements());
 
                 return [
                     $elements[0],
@@ -530,7 +530,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testNextWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         $this->assertSame($elements[0], $collection->current());
@@ -545,7 +545,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testToClearedWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collectionA = new $handledCollectionClassName($elements);
 
         $collectionB = $collectionA->toCleared();
@@ -562,7 +562,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testToReversedWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collectionA = new $handledCollectionClassName($elements);
 
         $collectionB = $collectionA->toReversed(true);
@@ -581,7 +581,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testToSequentialWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collectionA = new $handledCollectionClassName($elements);
 
         $collectionB = $collectionA->toSequential(true);
@@ -594,7 +594,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testToSortedByCallbackWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collectionA = new $handledCollectionClassName($elements);
 
         $collectionB = $collectionA->toSortedByCallback(static function () {
@@ -684,7 +684,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testToUniqueByCallbackHandlesExceptionGracefullyWhenAFailureInTheCallbackOccurs(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
         $exception = new \Exception();
 
@@ -747,7 +747,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testToUniqueByCallbackThrowsExceptionWhenCallbackDoesNotReturnAString(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collection = new $handledCollectionClassName($elements);
 
         try {
@@ -807,11 +807,11 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testWithAddedWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
 
         $collectionA = new $handledCollectionClassName($elements);
 
-        $element = $this->getSingleElement();
+        $element = $this->createSingleElement();
         $collectionB = $collectionA->withAdded($element);
 
         $this->assertNotSame($collectionA, $collectionB);
@@ -831,8 +831,8 @@ abstract class AbstractCollectionTestCase extends TestCase
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
 
-        $elementsA = array_slice($this->getMultipleElements(), 0, 2);
-        $elementsAdded = array_slice($this->getMultipleElements(), 2, 2);
+        $elementsA = array_slice($this->createMultipleElements(), 0, 2);
+        $elementsAdded = array_slice($this->createMultipleElements(), 2, 2);
         $collectionA = new $handledCollectionClassName($elementsA);
 
         $collectionB = $collectionA->withAddedMultiple($elementsAdded);
@@ -849,7 +849,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testWithFilteredWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
 
         $collectionA = new $handledCollectionClassName($elements);
 
@@ -891,7 +891,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testWithRemovedWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
 
         $collectionA = new $handledCollectionClassName($elements);
 
@@ -910,7 +910,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testWithRemovedElementWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $element = current($elements);
 
         $collectionA = new $handledCollectionClassName($elements);
@@ -926,7 +926,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testWithSetWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
 
         $collectionA = new $handledCollectionClassName($elements);
 
@@ -942,7 +942,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testWithSlicedWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->getMultipleElements();
+        $elements = $this->createMultipleElements();
         $collectionA = new $handledCollectionClassName($elements);
 
         $collectionB = $collectionA->withSliced(0);
@@ -989,10 +989,10 @@ abstract class AbstractCollectionTestCase extends TestCase
     /**
      * @return mixed
      */
-    abstract protected function getSingleElement();
+    abstract protected function createSingleElement();
 
     /**
      * @return array{0: mixed, foo: mixed, 42: mixed, 43: mixed}
      */
-    abstract protected function getMultipleElements(): array;
+    abstract protected function createMultipleElements(): array;
 }

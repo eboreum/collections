@@ -205,23 +205,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return SplFileInfoCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new \SplFileInfo(__FILE__);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \SplFileInfo(__FILE__),
@@ -229,5 +213,21 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
             42 => new \SplFileInfo(__FILE__),
             new \SplFileInfo(__FILE__),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new \SplFileInfo(__FILE__);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return SplFileInfoCollection::class;
     }
 }

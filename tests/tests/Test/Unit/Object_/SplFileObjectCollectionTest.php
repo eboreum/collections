@@ -206,23 +206,7 @@ class SplFileObjectCollectionTest extends AbstractNamedClassOrInterfaceCollectio
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return SplFileObjectCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new \SplFileObject(__FILE__);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \SplFileObject(__FILE__),
@@ -230,5 +214,21 @@ class SplFileObjectCollectionTest extends AbstractNamedClassOrInterfaceCollectio
             42 => new \SplFileObject(__FILE__),
             new \SplFileObject(__FILE__),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new \SplFileObject(__FILE__);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return SplFileObjectCollection::class;
     }
 }

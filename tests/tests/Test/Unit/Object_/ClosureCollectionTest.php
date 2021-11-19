@@ -252,25 +252,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return ClosureCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return static function (): void {
-            // Merely for test purposes
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             static function (): void {
@@ -286,5 +268,23 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                 // Merely for test purposes
             },
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return static function (): void {
+            // Merely for test purposes
+        };
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return ClosureCollection::class;
     }
 }

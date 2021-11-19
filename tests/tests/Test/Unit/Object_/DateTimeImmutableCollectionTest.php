@@ -390,23 +390,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     /**
      * {@inheritDoc}
      */
-    protected function getHandledCollectionClassName(): string
-    {
-        return DateTimeImmutableCollection::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getSingleElement()
-    {
-        return new \DateTimeImmutable();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMultipleElements(): array
+    protected function createMultipleElements(): array
     {
         return [
             new \DateTimeImmutable(),
@@ -414,5 +398,21 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             42 => new \DateTimeImmutable(),
             new \DateTimeImmutable(),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createSingleElement()
+    {
+        return new \DateTimeImmutable();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getHandledCollectionClassName(): string
+    {
+        return DateTimeImmutableCollection::class;
     }
 }
