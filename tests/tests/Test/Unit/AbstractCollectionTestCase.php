@@ -198,6 +198,66 @@ abstract class AbstractCollectionTestCase extends TestCase
     }
 
     /**
+     * @dataProvider dataProvider_testMapWorks
+     */
+    public function testMapWorks(array $expectedArray, array $elements, \Closure $callback): void
+    {
+        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName($elements);
+
+        $this->assertSame($expectedArray, $collection->map($callback));
+    }
+
+    /**
+     * @return array<int, array<mixed>, array<CollectionInterface>, \Closure>
+     */
+    public function dataProvider_testMapWorks(): array
+    {
+        return [
+            [
+                [],
+                [],
+                static function (): never {},
+            ],
+            [
+                [
+                    0 => null,
+                    'foo' => null,
+                    42 => null,
+                    43 => null,
+                ],
+                $this->getMultipleElements(),
+                static function () {
+                    return null;
+                },
+            ],
+            (function () {
+                $elements = $this->getMultipleElements();
+
+                return [
+                    $elements,
+                    $elements,
+                    static function ($v, $k) {
+                        return $v;
+                    },
+                ];
+            })(),
+            [
+                [
+                    0 => 0,
+                    'foo' => 'foo',
+                    42 => 42,
+                    43 => 43,
+                ],
+                $this->getMultipleElements(),
+                static function ($v, $k) {
+                    return $k;
+                },
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider dataProvider_testMaxByCallbackWorks
      * @param mixed $expectedMaxByCallback
      * @param array<int, mixed> $elements

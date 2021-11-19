@@ -220,6 +220,23 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
     public function last();
 
     /**
+     * Map the contents of the collection and return the mapped array.
+     *
+     * Corresponds largely to the core PHP function `array_map`. However, this implementation includes both value and
+     * key.
+     *
+     * @see https://www.php.net/manual/en/function.array-map.php
+     *
+     * Argument $callback will receive the following arguments:
+     *
+     *   - mixed $value: The current element's value.
+     *   - int|string $key: The current element's key.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function map(Closure $callback): array;
+
+    /**
      * Returns the element, which by the return value of the $callback argument, is considered to be the greatest in the
      * collection. When collection is empty, `null` is returned.
      *

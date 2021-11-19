@@ -337,6 +337,20 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      */
+    public function map(Closure $callback): array
+    {
+        $array = [];
+
+        foreach ($this->elements as $k => $v) {
+            $array[$k] = $callback($v, $k);
+        }
+
+        return $array;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function maxByCallback(Closure $callback)
     {
         $max = null;
