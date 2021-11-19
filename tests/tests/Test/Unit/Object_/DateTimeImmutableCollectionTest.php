@@ -21,6 +21,9 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
         $this->assertSame($expected, $element);
     }
 
+    /**
+     * @return array<int, array{\DateTimeImmutable|null, array<\DateTimeImmutable>}>
+     */
     public function dataProvider_testMaxWorks(): array
     {
         return [
@@ -89,6 +92,9 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
         $this->assertSame($expected, $element);
     }
 
+    /**
+     * @return array<int, array{\DateTimeImmutable|null, array<\DateTimeImmutable>}>
+     */
     public function dataProvider_testMinWorks(): array
     {
         return [

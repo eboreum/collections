@@ -25,6 +25,9 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     /**
      * @dataProvider dataProvider_testChunkWorks
+     *
+     * @param array<mixed> $expected
+     * @param array<mixed> $elements
      */
     public function testChunkWorks(array $expected, array $elements, int $chunkSize): void
     {
@@ -50,7 +53,7 @@ abstract class AbstractCollectionTestCase extends TestCase
     }
 
     /**
-     * @return array<int, array<mixed>, array<CollectionInterface>>
+     * @return array<int, array{array<mixed>, array<mixed>, int}>
      */
     public function dataProvider_testChunkWorks(): array
     {
@@ -329,17 +332,20 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     /**
      * @dataProvider dataProvider_testMapWorks
+     *
+     * @param array<mixed> $expected
+     * @param array<mixed> $elements
      */
-    public function testMapWorks(array $expectedArray, array $elements, \Closure $callback): void
+    public function testMapWorks(array $expected, array $elements, \Closure $callback): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collection = new $handledCollectionClassName($elements);
 
-        $this->assertSame($expectedArray, $collection->map($callback));
+        $this->assertSame($expected, $collection->map($callback));
     }
 
     /**
-     * @return array<int, array<mixed>, array<CollectionInterface>, \Closure>
+     * @return array<int, array{array<mixed>, array<mixed>, \Closure}>
      */
     public function dataProvider_testMapWorks(): array
     {

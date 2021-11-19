@@ -21,6 +21,9 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
         $this->assertSame($expected, $element);
     }
 
+    /**
+     * @return array<int, array{float|null, array<float>}>
+     */
     public function dataProvider_testMaxWorks(): array
     {
         return [
@@ -89,6 +92,9 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
         $this->assertSame($expected, $element);
     }
 
+    /**
+     * @return array<int, array{float|null, array<float>}>
+     */
     public function dataProvider_testMinWorks(): array
     {
         return [

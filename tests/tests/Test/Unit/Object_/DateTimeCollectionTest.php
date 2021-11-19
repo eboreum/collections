@@ -21,6 +21,9 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
         $this->assertSame($expected, $element);
     }
 
+    /**
+     * @return array<int, array{\DateTime|null, array<\DateTime>}>
+     */
     public function dataProvider_testMaxWorks(): array
     {
         return [
@@ -89,6 +92,9 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
         $this->assertSame($expected, $element);
     }
 
+    /**
+     * @return array<int, array{\DateTime|null, array<\DateTime>}>
+     */
     public function dataProvider_testMinWorks(): array
     {
         return [
