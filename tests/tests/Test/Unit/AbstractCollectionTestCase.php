@@ -156,6 +156,54 @@ abstract class AbstractCollectionTestCase extends TestCase
         ];
     }
 
+    public function testChunkThrowsExceptionWhenArgumentChunkSizeIsOutOfBounds(): void
+    {
+        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName();
+
+        try {
+            $collection->chunk(-1);
+        } catch (\Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                sprintf(
+                    implode('', [
+                        '/',
+                        '^',
+                        'Failure in (\\\\%s)-\>chunk\(',
+                            '\$chunkSize = \(int\) -1',
+                        '\) inside \(object\) \1 \{.+\}',
+                        '$',
+                        '/',
+                    ]),
+                    preg_quote($handledCollectionClassName, '/'),
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                implode('', [
+                    '/',
+                    '^',
+                    'Argument \$chunkSize must be \>\= 1, but it is not\. Found\: \(int\) \-1',
+                    '$',
+                    '/',
+                ]),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertTrue(null === $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
     public function testContainsWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
