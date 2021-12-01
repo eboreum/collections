@@ -162,6 +162,17 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
     public function first();
 
     /**
+     * Returns the first key – int or string – in the collection. If empty, returns `null`.
+     *
+     * Corresponds to the core PHP function `array_key_first`.
+     *
+     * @see https://www.php.net/manual/en/function.array-key-first.php
+     *
+     * @return int|string|null
+     */
+    public function firstKey();
+
+    /**
      * Returns the array keys for the elements in the current collection.
      *
      * Corresponds to the core PHP function `array_keys`.
@@ -228,6 +239,17 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * @return mixed|null
      */
     public function last();
+
+    /**
+     * Returns the first key – int or string – in the collection. If empty, returns `null`.
+     *
+     * Corresponds to the core PHP function `array_key_last`.
+     *
+     * @see https://www.php.net/manual/en/function.array-key-last.php
+     *
+     * @return int|string|null
+     */
+    public function lastKey();
 
     /**
      * Map the contents of the collection and return the mapped array.

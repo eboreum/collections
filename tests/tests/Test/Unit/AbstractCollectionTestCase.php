@@ -252,6 +252,29 @@ abstract class AbstractCollectionTestCase extends TestCase
         $this->assertNull($collection->first());
     }
 
+    public function testFirstKeyWorks(): void
+    {
+        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $elements = $this->createMultipleElements();
+
+        $this->assertSame(0, (new $handledCollectionClassName($elements))->firstKey());
+
+        $elements = [
+            'bar' => $this->createSingleElement(),
+            'foo' => $this->createSingleElement(),
+        ];
+
+        $this->assertSame('bar', (new $handledCollectionClassName($elements))->firstKey());
+    }
+
+    public function testFirstKeyReturnsNullWhenThereAreNoElementsInCollection(): void
+    {
+        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName();
+
+        $this->assertNull($collection->firstKey());
+    }
+
     public function testGetWorks(): void
     {
         $handledCollectionClassName = $this->getHandledCollectionClassName();
@@ -328,6 +351,29 @@ abstract class AbstractCollectionTestCase extends TestCase
         $this->assertSame(null, $collection->current());
         $this->assertSame($elements[43], $collection->last());
         $this->assertSame($elements[43], $collection->current());
+    }
+
+    public function testLastKeyWorks(): void
+    {
+        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $elements = $this->createMultipleElements();
+
+        $this->assertSame(43, (new $handledCollectionClassName($elements))->lastKey());
+
+        $elements = [
+            'bar' => $this->createSingleElement(),
+            'foo' => $this->createSingleElement(),
+        ];
+
+        $this->assertSame('foo', (new $handledCollectionClassName($elements))->lastKey());
+    }
+
+    public function testLastKeyReturnsNullWhenThereAreNoElementsInCollection(): void
+    {
+        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName();
+
+        $this->assertNull($collection->lastKey());
     }
 
     /**

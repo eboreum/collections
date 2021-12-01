@@ -280,6 +280,18 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      */
+    public function firstKey()
+    {
+        if (!$this->elements) {
+            return null;
+        }
+
+        return array_key_first($this->elements);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function get($key)
     {
         if (false === is_int($key) && false === is_string($key)) { /** @phpstan-ignore-line */
@@ -367,6 +379,18 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
         }
 
         return $this->elements[$key];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function lastKey()
+    {
+        if (!$this->elements) {
+            return null;
+        }
+
+        return array_key_last($this->elements);
     }
 
     /**
