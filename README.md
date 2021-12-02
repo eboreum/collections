@@ -36,7 +36,7 @@ Via GitHub:
 ## Test/development requirements
 
 ```json
-"phpstan/phpstan": "^0.12.99",
+"phpstan/phpstan": "^1.2",
 "phpunit/phpunit": "^9.5",
 "wikimedia/composer-merge-plugin": "^2.0"
 ```
