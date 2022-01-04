@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
+use Closure;
+use Eboreum\Collections\Collection;
 use Eboreum\Collections\StringCollection;
 
 class StringCollectionTest extends AbstractTypeCollectionTestCase
@@ -24,7 +26,16 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
 
+        assert(is_object($collectionA)); // Make phpstan happy
+        assert($handledCollectionClassName === get_class($collectionA)); // Make phpstan happy
+        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        assert(method_exists($collectionA, 'toUnique')); // Make phpstan happy
+
         $collectionB = $collectionA->toUnique($isUsingFirstEncounteredElement);
+
+        assert(is_object($collectionB)); // Make phpstan happy
+        assert($handledCollectionClassName === get_class($collectionB)); // Make phpstan happy
+        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
@@ -96,9 +107,12 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<array{string, StringCollection<string>, StringCollection<string>, Closure: void}>
      */
-    public function dataProvider_testWithMergedWorks(): array
+    public function dataProvider_testWithMergedWorks()
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',

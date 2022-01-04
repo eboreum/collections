@@ -12,6 +12,6 @@ namespace Eboreum\Collections\Contract;
  *
  * @see https://packagist.org/packages/eboreum/collection-class-generator
  */
-interface GeneratedCollectionInterface extends CollectionInterface
+interface GeneratedCollectionInterface
 {
 }

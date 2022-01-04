@@ -22,6 +22,8 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
 
         $collection = new $handledCollectionClassName($elements);
 
+        assert(is_a($collection, Collection::class)); // Make phpstan happy
+
         try {
             $collection->withAdded(null);
         } catch (\Exception $e) {
@@ -40,7 +42,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -48,6 +50,8 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -82,6 +86,8 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
         $handledClassName = $handledCollectionClassName::getHandledClassName();
         $collection = new $handledCollectionClassName();
 
+        assert(is_a($collection, Collection::class)); // Make phpstan happy
+
         try {
             $collection->withRemovedElement(null);
         } catch (\Exception $e) {
@@ -100,7 +106,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -108,6 +114,8 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections\Object_;
 
 use Eboreum\Collections\Object_\SplFileInfoCollection;
+use SplFileInfo;
 
 class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
@@ -25,17 +26,17 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
             ],
             (static function (): array {
                 $elements = [
-                    0 => new \SplFileInfo(__FILE__),
+                    0 => new SplFileInfo(__FILE__),
                 ];
 
-                $elements[0]->var = 'a'; /** @phpstan-ignore-line */
+                $elements[0]->var = 'a'; // @phpstan-ignore-line
 
                 return [
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\SplFileInfo $object): string {
-                        $var = $object->var; /** @phpstan-ignore-line */
+                    static function (SplFileInfo $object): string {
+                        $var = $object->var; // @phpstan-ignore-line
 
                         assert(is_string($var));
 
@@ -49,12 +50,12 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                     . '/resources/TestResource/Unit/Object_/SplFileInfoCollectionTest'
                     . '/dataProvider_testToUniqueByCallbackWorks';
                 $elements = [
-                    0 => new \SplFileInfo($basePath . '/A.txt'),
-                    1 => new \SplFileInfo($basePath . '/B.txt'),
-                    2 => new \SplFileInfo($basePath . '/C.txt'),
-                    3 => new \SplFileInfo($basePath . '/B.txt'),
-                    4 => new \SplFileInfo($basePath . '/D.txt'),
-                    5 => new \SplFileInfo($basePath . '/B.txt'),
+                    0 => new SplFileInfo($basePath . '/A.txt'),
+                    1 => new SplFileInfo($basePath . '/B.txt'),
+                    2 => new SplFileInfo($basePath . '/C.txt'),
+                    3 => new SplFileInfo($basePath . '/B.txt'),
+                    4 => new SplFileInfo($basePath . '/D.txt'),
+                    5 => new SplFileInfo($basePath . '/B.txt'),
                 ];
 
                 return [
@@ -66,7 +67,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\SplFileInfo $object): string {
+                    static function (SplFileInfo $object): string {
                         return $object->getFilename();
                     },
                     true,
@@ -78,12 +79,12 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                     . '/dataProvider_testToUniqueByCallbackWorks';
 
                 $elements = [
-                    0 => new \SplFileInfo($basePath . '/A.txt'),
-                    1 => new \SplFileInfo($basePath . '/B.txt'),
-                    2 => new \SplFileInfo($basePath . '/C.txt'),
-                    3 => new \SplFileInfo($basePath . '/B.txt'),
-                    4 => new \SplFileInfo($basePath . '/D.txt'),
-                    5 => new \SplFileInfo($basePath . '/B.txt'),
+                    0 => new SplFileInfo($basePath . '/A.txt'),
+                    1 => new SplFileInfo($basePath . '/B.txt'),
+                    2 => new SplFileInfo($basePath . '/C.txt'),
+                    3 => new SplFileInfo($basePath . '/B.txt'),
+                    4 => new SplFileInfo($basePath . '/D.txt'),
+                    5 => new SplFileInfo($basePath . '/B.txt'),
                 ];
 
                 return [
@@ -95,7 +96,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\SplFileInfo $object): string {
+                    static function (SplFileInfo $object): string {
                         return $object->getFilename();
                     },
                     false,
@@ -107,12 +108,12 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                     . '/dataProvider_testToUniqueByCallbackWorks';
 
                 $elements = [
-                    0 => new \SplFileInfo($basePath . '/D.txt'),
-                    1 => new \SplFileInfo($basePath . '/B.txt'),
-                    2 => new \SplFileInfo($basePath . '/C.txt'),
-                    3 => new \SplFileInfo($basePath . '/B.txt'),
-                    4 => new \SplFileInfo($basePath . '/A.txt'),
-                    5 => new \SplFileInfo($basePath . '/B.txt'),
+                    0 => new SplFileInfo($basePath . '/D.txt'),
+                    1 => new SplFileInfo($basePath . '/B.txt'),
+                    2 => new SplFileInfo($basePath . '/C.txt'),
+                    3 => new SplFileInfo($basePath . '/B.txt'),
+                    4 => new SplFileInfo($basePath . '/A.txt'),
+                    5 => new SplFileInfo($basePath . '/B.txt'),
                 ];
 
                 return [
@@ -124,7 +125,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\SplFileInfo $object): string {
+                    static function (SplFileInfo $object): string {
                         return $object->getFilename();
                     },
                     true,
@@ -136,12 +137,12 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                     . '/dataProvider_testToUniqueByCallbackWorks';
 
                 $elements = [
-                    0 => new \SplFileInfo($basePath . '/D.txt'),
-                    1 => new \SplFileInfo($basePath . '/B.txt'),
-                    2 => new \SplFileInfo($basePath . '/C.txt'),
-                    3 => new \SplFileInfo($basePath . '/B.txt'),
-                    4 => new \SplFileInfo($basePath . '/A.txt'),
-                    5 => new \SplFileInfo($basePath . '/B.txt'),
+                    0 => new SplFileInfo($basePath . '/D.txt'),
+                    1 => new SplFileInfo($basePath . '/B.txt'),
+                    2 => new SplFileInfo($basePath . '/C.txt'),
+                    3 => new SplFileInfo($basePath . '/B.txt'),
+                    4 => new SplFileInfo($basePath . '/A.txt'),
+                    5 => new SplFileInfo($basePath . '/B.txt'),
                 ];
 
                 return [
@@ -153,7 +154,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\SplFileInfo $object): string {
+                    static function (SplFileInfo $object): string {
                         return $object->getFilename();
                     },
                     false,
@@ -164,14 +165,17 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, SplFileInfoCollection<SplFileInfo>, SplFileInfoCollection<SplFileInfo>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new SplFileInfoCollection([0 => new \SplFileInfo(__FILE__)]),
-                new SplFileInfoCollection([0 => new \SplFileInfo(__FILE__)]),
+                new SplFileInfoCollection([0 => new SplFileInfo(__FILE__)]),
+                new SplFileInfoCollection([0 => new SplFileInfo(__FILE__)]),
                 function (
                     SplFileInfoCollection $collectionA,
                     SplFileInfoCollection $collectionB,
@@ -185,8 +189,8 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
             ],
             [
                 'Same name string keys. Will override.',
-                new SplFileInfoCollection(['foo' => new \SplFileInfo(__FILE__)]),
-                new SplFileInfoCollection(['foo' => new \SplFileInfo(__FILE__)]),
+                new SplFileInfoCollection(['foo' => new SplFileInfo(__FILE__)]),
+                new SplFileInfoCollection(['foo' => new SplFileInfo(__FILE__)]),
                 function (
                     SplFileInfoCollection $collectionA,
                     SplFileInfoCollection $collectionB,
@@ -204,23 +208,25 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<SplFileInfo>
      */
     protected function createMultipleElements(): array
     {
         return [
-            new \SplFileInfo(__FILE__),
-            'foo' => new \SplFileInfo(__FILE__),
-            42 => new \SplFileInfo(__FILE__),
-            new \SplFileInfo(__FILE__),
+            new SplFileInfo(__FILE__),
+            'foo' => new SplFileInfo(__FILE__),
+            42 => new SplFileInfo(__FILE__),
+            new SplFileInfo(__FILE__),
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): SplFileInfo
     {
-        return new \SplFileInfo(__FILE__);
+        return new SplFileInfo(__FILE__);
     }
 
     /**

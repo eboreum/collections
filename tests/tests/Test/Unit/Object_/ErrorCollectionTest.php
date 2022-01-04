@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections\Object_;
 
 use Eboreum\Collections\Object_\ErrorCollection;
+use Error;
 
 class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
@@ -25,14 +26,14 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             ],
             (static function (): array {
                 $elements = [
-                    0 => new \Error('foo'),
+                    0 => new Error('foo'),
                 ];
 
                 return [
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\Error $object): string {
+                    static function (Error $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -40,12 +41,12 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Error('A'),
-                    1 => new \Error('B'),
-                    2 => new \Error('C'),
-                    3 => new \Error('B'),
-                    4 => new \Error('D'),
-                    5 => new \Error('B'),
+                    0 => new Error('A'),
+                    1 => new Error('B'),
+                    2 => new Error('C'),
+                    3 => new Error('B'),
+                    4 => new Error('D'),
+                    5 => new Error('B'),
                 ];
 
                 return [
@@ -57,7 +58,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Error $object): string {
+                    static function (Error $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -65,12 +66,12 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Error('A'),
-                    1 => new \Error('B'),
-                    2 => new \Error('C'),
-                    3 => new \Error('B'),
-                    4 => new \Error('D'),
-                    5 => new \Error('B'),
+                    0 => new Error('A'),
+                    1 => new Error('B'),
+                    2 => new Error('C'),
+                    3 => new Error('B'),
+                    4 => new Error('D'),
+                    5 => new Error('B'),
                 ];
 
                 return [
@@ -82,7 +83,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Error $object): string {
+                    static function (Error $object): string {
                         return $object->getMessage();
                     },
                     false,
@@ -90,12 +91,12 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Error('D'),
-                    1 => new \Error('B'),
-                    2 => new \Error('C'),
-                    3 => new \Error('B'),
-                    4 => new \Error('A'),
-                    5 => new \Error('B'),
+                    0 => new Error('D'),
+                    1 => new Error('B'),
+                    2 => new Error('C'),
+                    3 => new Error('B'),
+                    4 => new Error('A'),
+                    5 => new Error('B'),
                 ];
 
                 return [
@@ -107,7 +108,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Error $object): string {
+                    static function (Error $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -115,12 +116,12 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Error('D'),
-                    1 => new \Error('B'),
-                    2 => new \Error('C'),
-                    3 => new \Error('B'),
-                    4 => new \Error('A'),
-                    5 => new \Error('B'),
+                    0 => new Error('D'),
+                    1 => new Error('B'),
+                    2 => new Error('C'),
+                    3 => new Error('B'),
+                    4 => new Error('A'),
+                    5 => new Error('B'),
                 ];
 
                 return [
@@ -132,7 +133,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Error $object): string {
+                    static function (Error $object): string {
                         return $object->getMessage();
                     },
                     false,
@@ -143,14 +144,17 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, ErrorCollection<Error>, ErrorCollection<Error>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new ErrorCollection([0 => new \Error()]),
-                new ErrorCollection([0 => new \Error()]),
+                new ErrorCollection([0 => new Error()]),
+                new ErrorCollection([0 => new Error()]),
                 function (
                     ErrorCollection $collectionA,
                     ErrorCollection $collectionB,
@@ -165,8 +169,8 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             ],
             [
                 'Same name string keys. Will override.',
-                new ErrorCollection(['foo' => new \Error()]),
-                new ErrorCollection(['foo' => new \Error()]),
+                new ErrorCollection(['foo' => new Error()]),
+                new ErrorCollection(['foo' => new Error()]),
                 function (
                     ErrorCollection $collectionA,
                     ErrorCollection $collectionB,
@@ -185,23 +189,25 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<Error>
      */
     protected function createMultipleElements(): array
     {
         return [
-            new \Error(),
-            'foo' => new \Error(),
-            42 => new \Error(),
-            new \Error(),
+            new Error(),
+            'foo' => new Error(),
+            42 => new Error(),
+            new Error(),
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): Error
     {
-        return new \Error();
+        return new Error();
     }
 
     /**

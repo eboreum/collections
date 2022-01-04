@@ -31,7 +31,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     return is_string($element);
                 }
             };
-        } catch (\Exception $e) {
+        } catch (\Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -39,18 +39,21 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in (class@anonymous\/in\/.+\/%s\:\d+)\-\>__construct\(',
+                        'Failure in \\\\%s\-\>__construct\(',
                             '\$elements = \(array\(5\)\) \[.+\] \(sample\)',
-                        '\) inside \(object\) \1 \{.+\}',
+                        '\) inside \(object\) class@anonymous\/in\/.+\/%s\:\d+ \{.+\}',
                         '$',
                         '/',
                     ]),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -172,7 +175,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in class@anonymous\/in\/.+\/%s\:+\d+-\>withAdded\(',
+                        'Failure in \\\\%s-\>withAdded\(',
                             '\$element = \(null\) null',
                         '\) inside \(object\) class@anonymous\/in\/.+\/%s\:+\d+ \{',
                             '\\\\%s\-\>\$elements = \(array\(3\)\) \[.+\]',
@@ -180,7 +183,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -188,6 +191,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -239,7 +244,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in class@anonymous\/in\/.+\/%s\:+\d+-\>withAddedMultiple\(',
+                        'Failure in \\\\%s-\>withAddedMultiple\(',
                             '\$elements = \(array\(2\)\) \[.+\]',
                         '\) inside \(object\) class@anonymous\/in\/.+\/%s\:+\d+ \{',
                             '\\\\%s\-\>\$elements = \(array\(3\)\) \[.+\]',
@@ -247,7 +252,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -255,6 +260,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -312,6 +319,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame('Exception', get_class($currentException));
             $this->assertSame('fail', $currentException->getMessage());
 
@@ -351,7 +360,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in class@anonymous\/in\/.+\/%s\:\d+\-\>withMerged\(',
+                        'Failure in \\\\%s\-\>withMerged\(',
                             '\$collection = \(object\) \\\\%s \{.+\}',
                         '\) inside \(object\) class@anonymous\/in\/.+\/%s\:\d+ \{',
                             '\\\\%s\-\>\$elements = \(array\(3\)\) \[.+\]',
@@ -359,7 +368,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
@@ -368,6 +377,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -401,7 +412,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null, true, 42, 'foo' => 'bar']);
 
         try {
-            $collection->withRemoved(null); /** @phpstan-ignore-line */
+            $collection->withRemoved(null); // @phpstan-ignore-line
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
@@ -451,7 +462,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in class@anonymous\/in\/.+\/%s\:\d+\-\>withRemovedElement\(',
+                        'Failure in \\\\%s\-\>withRemovedElement\(',
                             '\$element = \(null\) null',
                         '\) inside \(object\) class@anonymous\/in\/.+\/%s\:\d+ \{',
                             '\\\\%s\-\>\$elements = \(array\(3\)\) \[.+\]',
@@ -459,7 +470,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -467,6 +478,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -497,7 +510,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([true, 42, 'foo' => 'bar']);
 
         try {
-            $collection->withSet(null, null); /** @phpstan-ignore-line */
+            $collection->withSet(null, null); // @phpstan-ignore-line
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
@@ -522,6 +535,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -572,7 +587,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in class@anonymous\/in\/.+\/%s\:\d+\-\>withSet\(',
+                        'Failure in \\\\%s\-\>withSet\(',
                             '\$key = \(int\) 0',
                             ', \$element = \(null\) null',
                         '\) inside \(object\) class@anonymous\/in\/.+\/%s\:\d+ \{',
@@ -581,7 +596,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -589,6 +604,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -735,7 +752,7 @@ class CollectionTest extends AbstractCollectionTestCase
                 ],
                 [null, true, 42, 'foo' => 'bar'],
                 static function ($v, $k, object $carry): void {
-                    $carry->results[] = sprintf( /** @phpstan-ignore-line */
+                    $carry->results[] = sprintf( // @phpstan-ignore-line
                         '%s:%s',
                         gettype($k),
                         gettype($v),
@@ -754,7 +771,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         return false;
                     }
 
-                    $carry->results[] = sprintf( /** @phpstan-ignore-line */
+                    $carry->results[] = sprintf( // @phpstan-ignore-line
                         '%s:%s',
                         gettype($k),
                         gettype($v),
@@ -797,6 +814,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 implode('', [
@@ -809,6 +828,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -854,7 +875,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         return false;
                     }
 
-                    $carry->results[] = sprintf( /** @phpstan-ignore-line */
+                    $carry->results[] = sprintf( // @phpstan-ignore-line
                         '%s:%s',
                         gettype($k),
                         gettype($v),
@@ -865,7 +886,7 @@ class CollectionTest extends AbstractCollectionTestCase
                 ['integer:NULL'],
                 [null],
                 static function ($v, $k, object $carry) {
-                    $carry->results[] = sprintf( /** @phpstan-ignore-line */
+                    $carry->results[] = sprintf( // @phpstan-ignore-line
                         '%s:%s',
                         gettype($k),
                         gettype($v),
@@ -878,7 +899,7 @@ class CollectionTest extends AbstractCollectionTestCase
                 ['integer:NULL'],
                 [null],
                 static function ($v, $k, object $carry) {
-                    $carry->results[] = sprintf( /** @phpstan-ignore-line */
+                    $carry->results[] = sprintf( // @phpstan-ignore-line
                         '%s:%s',
                         gettype($k),
                         gettype($v),
@@ -923,6 +944,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 implode('', [
@@ -935,6 +958,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -978,6 +1003,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 implode('', [
@@ -1051,6 +1078,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -1089,7 +1118,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection();
 
         try {
-            $collection->get(null); /** @phpstan-ignore-line */
+            $collection->get(null); // @phpstan-ignore-line
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
@@ -1119,7 +1148,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection();
 
         try {
-            $collection->has(null); /** @phpstan-ignore-line */
+            $collection->has(null); // @phpstan-ignore-line
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
@@ -1220,6 +1249,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -1237,6 +1268,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -1279,6 +1312,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -1337,6 +1372,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -1354,6 +1391,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -1396,6 +1435,8 @@ class CollectionTest extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -1494,9 +1535,12 @@ class CollectionTest extends AbstractCollectionTestCase
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, Collection<mixed>, Collection<mixed>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',

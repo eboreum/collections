@@ -45,7 +45,8 @@ use Eboreum\Collections\Exception\RuntimeException;
  * Do NOT extend this interface with \ArrayAccess. This library exists to combat arbitrary arrays and this interface
  * is immutable, which \ArrayAccess would break.
  *
- * @extends \IteratorAggregate<int|string, mixed>
+ * @template T
+ * @extends \IteratorAggregate<int|string, T>
  */
 interface CollectionInterface extends ImmutableObjectInterface, \Countable, \IteratorAggregate
 {
@@ -75,12 +76,23 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
     public static function isElementAccepted($element): bool;
 
     /**
+     * @param array<int|string, T> $elements Must throw a RuntimeException when one or more elements are not accepted
+     *                                       by the implementing collection class.
+     * @throws RuntimeException
+     */
+    public function __construct(array $elements = []);
+
+    /**
      * Must chunk the current collection into sub-collections, producing a new collection containing n collections of T,
      * where T is the implementing class. Each sub-collection must be a clone of T.
      *
      * Corresponds to the core PHP function `array_chunk`.
      *
      * @see https://www.php.net/manual/en/function.array-chunk.php
+     *
+     * @param int<1, max> $chunkSize Must be > 0. Otherwise, a RuntimeException must be thrown.
+     * @throws RuntimeException
+     * @return CollectionInterface<T>
      */
     public function chunk(int $chunkSize): CollectionInterface;
 
@@ -88,7 +100,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Returns `true` when the collection contains the $element argument. Otherwise, returns `false`.
      * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
      *
-     * @param mixed $element
+     * @param T $element
      * @throws RuntimeException
      */
     public function contains($element): bool;
@@ -100,7 +112,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @see https://www.php.net/manual/en/function.current.php
      *
-     * @return mixed|null
+     * @return T|null
      */
     public function current();
 
@@ -146,7 +158,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * @param Closure $callback This closure will be called with arguments `mixed $v` and `int|string $k`, where $v is
      *                          an element contained in the current collection and $k is the element's respective key.
      * @throws RuntimeException
-     * @return mixed|null
+     * @return T|null
      */
     public function find(Closure $callback);
 
@@ -157,7 +169,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @see https://www.php.net/manual/en/function.reset.php
      *
-     * @return mixed|null
+     * @return T|null
      */
     public function first();
 
@@ -189,7 +201,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param int|string $key
      * @throws InvalidArgumentException
-     * @return mixed|null
+     * @return T|null
      */
     public function get($key);
 
@@ -211,7 +223,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @see https://www.php.net/manual/en/function.array-search.php
      *
-     * @param mixed $element
+     * @param T $element
      * @throws InvalidArgumentException
      * @return int|string|null
      */
@@ -236,7 +248,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @see https://www.php.net/manual/en/function.end.php
      *
-     * @return mixed|null
+     * @return T|null
      */
     public function last();
 
@@ -264,7 +276,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
      *
-     * @return array<int|string, mixed>
+     * @return array<int|string, T>
      */
     public function map(Closure $callback): array;
 
@@ -281,7 +293,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * to be thrown.
      *
      * @throws RuntimeException
-     * @return mixed|null
+     * @return T|null
      */
     public function maxByCallback(Closure $callback);
 
@@ -298,7 +310,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * to be thrown.
      *
      * @throws RuntimeException
-     * @return mixed|null
+     * @return T|null
      */
     public function minByCallback(Closure $callback);
 
@@ -309,14 +321,14 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @see https://www.php.net/manual/en/function.next.php
      *
-     * @return mixed|null
+     * @return T|null
      */
     public function next();
 
     /**
      * Return the collection's elements "as is"; keys and values intact.
      *
-     * @return array<int|string, mixed>
+     * @return array<int|string, T>
      */
     public function toArray(): array;
 
@@ -325,7 +337,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @see https://www.php.net/manual/en/function.array-values.php
      *
-     * @return array<int, mixed>
+     * @return array<int, T>
      */
     public function toArrayValues(): array;
 
@@ -333,7 +345,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Remove all elements from a clone of the current collection.
      * Must return a clone.
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toCleared(): self;
 
@@ -345,7 +357,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @see https://www.php.net/manual/en/function.array-values.php
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toSequential(): self;
 
@@ -358,7 +370,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *                               the `array_reverse` function.
      *                               When `true`, array keys are preserved. Otherwise, they are not (i.e. becoming
      *                               sequential).
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toReversed(bool $isPreservingKeys = true): self;
 
@@ -376,7 +388,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Must return a clone.
      *
      * @throws RuntimeException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toSortedByCallback(Closure $callback): self;
 
@@ -400,7 +412,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *                                          resulting collection. Otherwise, only the last element will exist in the
      *                                          resulting collection.
      * @throws RuntimeException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): self;
 
@@ -408,9 +420,9 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Add an element to the end of a clone of the current collection.
      * Must return a clone.
      *
-     * @param mixed $element
+     * @param T $element
      * @throws RuntimeException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withAdded($element): self;
 
@@ -418,9 +430,9 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Add multiple elements to the end of a clone of the current collection. Array keys are not preserved.
      * Must return a clone.
      *
-     * @param array<int|string, mixed> $elements
+     * @param array<int|string, T> $elements
      * @throws RuntimeException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withAddedMultiple(array $elements): self;
 
@@ -430,7 +442,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Must return a clone.
      *
      * @throws RuntimeException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withFiltered(Closure $callback): self;
 
@@ -439,9 +451,9 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * argument.
      * Must return a clone.
      *
-     * @param CollectionInterface<int|string, mixed> $collection
+     * @param CollectionInterface<T> $collection
      * @throws RuntimeException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withMerged(CollectionInterface $collection): self;
 
@@ -452,7 +464,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param int|string $key
      * @throws InvalidArgumentException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withRemoved($key): self;
 
@@ -461,9 +473,9 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Must return a clone.
      * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
      *
-     * @param mixed $element
+     * @param T $element
      * @throws RuntimeException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withRemovedElement($element): self;
 
@@ -473,9 +485,9 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
      *
      * @param int|string $key
-     * @param mixed $element
+     * @param T $element
      * @throws RuntimeException
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withSet($key, $element): self;
 
@@ -486,7 +498,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * Must return a clone.
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withSliced(int $offset, ?int $length = null): self;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections\Object_;
 
 use Eboreum\Collections\Object_\ExceptionCollection;
+use Exception;
 
 class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
@@ -25,14 +26,14 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             ],
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('foo'),
+                    0 => new Exception('foo'),
                 ];
 
                 return [
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\Exception $object): string {
+                    static function (Exception $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -40,12 +41,12 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('A'),
-                    1 => new \Exception('B'),
-                    2 => new \Exception('C'),
-                    3 => new \Exception('B'),
-                    4 => new \Exception('D'),
-                    5 => new \Exception('B'),
+                    0 => new Exception('A'),
+                    1 => new Exception('B'),
+                    2 => new Exception('C'),
+                    3 => new Exception('B'),
+                    4 => new Exception('D'),
+                    5 => new Exception('B'),
                 ];
 
                 return [
@@ -57,7 +58,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Exception $object): string {
+                    static function (Exception $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -65,12 +66,12 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('A'),
-                    1 => new \Exception('B'),
-                    2 => new \Exception('C'),
-                    3 => new \Exception('B'),
-                    4 => new \Exception('D'),
-                    5 => new \Exception('B'),
+                    0 => new Exception('A'),
+                    1 => new Exception('B'),
+                    2 => new Exception('C'),
+                    3 => new Exception('B'),
+                    4 => new Exception('D'),
+                    5 => new Exception('B'),
                 ];
 
                 return [
@@ -82,7 +83,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Exception $object): string {
+                    static function (Exception $object): string {
                         return $object->getMessage();
                     },
                     false,
@@ -90,12 +91,12 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('D'),
-                    1 => new \Exception('B'),
-                    2 => new \Exception('C'),
-                    3 => new \Exception('B'),
-                    4 => new \Exception('A'),
-                    5 => new \Exception('B'),
+                    0 => new Exception('D'),
+                    1 => new Exception('B'),
+                    2 => new Exception('C'),
+                    3 => new Exception('B'),
+                    4 => new Exception('A'),
+                    5 => new Exception('B'),
                 ];
 
                 return [
@@ -107,7 +108,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Exception $object): string {
+                    static function (Exception $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -115,12 +116,12 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('D'),
-                    1 => new \Exception('B'),
-                    2 => new \Exception('C'),
-                    3 => new \Exception('B'),
-                    4 => new \Exception('A'),
-                    5 => new \Exception('B'),
+                    0 => new Exception('D'),
+                    1 => new Exception('B'),
+                    2 => new Exception('C'),
+                    3 => new Exception('B'),
+                    4 => new Exception('A'),
+                    5 => new Exception('B'),
                 ];
 
                 return [
@@ -132,7 +133,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Exception $object): string {
+                    static function (Exception $object): string {
                         return $object->getMessage();
                     },
                     false,
@@ -143,14 +144,17 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, ExceptionCollection<Exception>, ExceptionCollection<Exception>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new ExceptionCollection([0 => new \Exception()]),
-                new ExceptionCollection([0 => new \Exception()]),
+                new ExceptionCollection([0 => new Exception()]),
+                new ExceptionCollection([0 => new Exception()]),
                 function (
                     ExceptionCollection $collectionA,
                     ExceptionCollection $collectionB,
@@ -165,8 +169,8 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             ],
             [
                 'Same name string keys. Will override.',
-                new ExceptionCollection(['foo' => new \Exception()]),
-                new ExceptionCollection(['foo' => new \Exception()]),
+                new ExceptionCollection(['foo' => new Exception()]),
+                new ExceptionCollection(['foo' => new Exception()]),
                 function (
                     ExceptionCollection $collectionA,
                     ExceptionCollection $collectionB,
@@ -185,23 +189,25 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<Exception>
      */
     protected function createMultipleElements(): array
     {
         return [
-            new \Exception(),
-            'foo' => new \Exception(),
-            42 => new \Exception(),
-            new \Exception(),
+            new Exception(),
+            'foo' => new Exception(),
+            42 => new Exception(),
+            new Exception(),
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): Exception
     {
-        return new \Exception();
+        return new Exception();
     }
 
     /**

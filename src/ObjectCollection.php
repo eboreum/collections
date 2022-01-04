@@ -14,23 +14,14 @@ use Eboreum\Collections\Contract\CollectionInterface;
  * If you need a collection of a specific instance, please consider using one of the premade named object collections,
  * found under \Eboreum\Collections\Object_, or create your own custom object collection by extending
  * \Eboreum\Collections\Abstraction\AbstractNamedObjectCollection.
+ *
+ * @template T2 of object
+ * @extends Collection<T2>
  */
 class ObjectCollection extends Collection
 {
     /**
      * {@inheritDoc}
-     *
-     * @param object $element
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        parent::assertIsElementAccepted($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param object $element
      */
     public static function isElementAccepted($element): bool
     {
@@ -40,7 +31,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, object> $elements
+     * @param array<int|string, T2> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -50,7 +41,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      *
-     * @param object $element
+     * @param T2 $element
      */
     public function contains($element): bool
     {
@@ -92,7 +83,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      *
-     * @param object $element
+     * @param T2 $element
      */
     public function indexOf($element)
     {
@@ -129,150 +120,5 @@ class ObjectCollection extends Collection
     public function next(): ?object
     {
         return parent::next();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int|string, object>
-     */
-    public function toArray(): array
-    {
-        return parent::toArray();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, object>
-     */
-    public function toArrayValues(): array
-    {
-        return parent::toArrayValues();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, object>
-     */
-    public function toCleared(): self
-    {
-        return parent::toCleared();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, object>
-     */
-    public function toReversed(bool $isPreservingKeys = true): self
-    {
-        return parent::toReversed($isPreservingKeys);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, object>
-     */
-    public function toSequential(): self
-    {
-        return parent::toSequential();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, object>
-     */
-    public function toSortedByCallback(\Closure $callback): self
-    {
-        return parent::toSortedByCallback($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, object>
-     */
-    public function toUniqueByCallback(\Closure $callback, bool $isUsingFirstEncounteredElement = true): self
-    {
-        return parent::toUniqueByCallback($callback, $isUsingFirstEncounteredElement);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param object $element
-     * @return static<int|string, object>
-     */
-    public function withAdded($element): self
-    {
-        return parent::withAdded($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, object> $elements
-     * @return static<int|string, object>
-     */
-    public function withAddedMultiple(array $elements): self
-    {
-        return parent::withAddedMultiple($elements);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, object>
-     */
-    public function withFiltered(\Closure $callback): self
-    {
-        return parent::withFiltered($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param ObjectCollection<int|string, object> $collection
-     * @return static<int|string, object>
-     */
-    public function withMerged(CollectionInterface $collection): self
-    {
-        return parent::withMerged($collection);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, object>
-     */
-    public function withRemoved($key): self
-    {
-        return parent::withRemoved($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param object $element
-     * @return static<int|string, object>
-     */
-    public function withRemovedElement($element): self
-    {
-        return parent::withRemovedElement($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param object $element
-     * @return static<int|string, object>
-     */
-    public function withSet($key, $element): self
-    {
-        return parent::withSet($key, $element);
     }
 }

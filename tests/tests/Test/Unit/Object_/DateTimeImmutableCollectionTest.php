@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
+use DateTimeImmutable;
 use Eboreum\Collections\Object_\DateTimeImmutableCollection;
 
 class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
@@ -11,9 +12,9 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     /**
      * @dataProvider dataProvider_testMaxWorks
      *
-     * @param array<int, \DateTimeImmutable> $elements
+     * @param array<int, DateTimeImmutable> $elements
      */
-    public function testMaxWorks(?\DateTimeImmutable $expected, array $elements): void
+    public function testMaxWorks(?DateTimeImmutable $expected, array $elements): void
     {
         $dateTimeImmutableCollection = new DateTimeImmutableCollection($elements);
         $element = $dateTimeImmutableCollection->max();
@@ -22,7 +23,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     }
 
     /**
-     * @return array<int, array{\DateTimeImmutable|null, array<\DateTimeImmutable>}>
+     * @return array<int, array{DateTimeImmutable|null, array<DateTimeImmutable>}>
      */
     public function dataProvider_testMaxWorks(): array
     {
@@ -32,7 +33,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
                 [],
             ],
             (function(){
-                $elements = [new \DateTimeImmutable('2021-02-01 12:34:57')];
+                $elements = [new DateTimeImmutable('2021-02-01 12:34:57')];
 
                 return [
                     $elements[0],
@@ -41,8 +42,8 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (function(){
                 $elements = [
-                    new \DateTimeImmutable('2021-02-01 12:34:57'),
-                    new \DateTimeImmutable('2021-02-01 12:34:56'),
+                    new DateTimeImmutable('2021-02-01 12:34:57'),
+                    new DateTimeImmutable('2021-02-01 12:34:56'),
                 ];
 
                 return [
@@ -52,11 +53,11 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (function(){
                 $elements = [
-                    new \DateTimeImmutable('2021-02-01 12:34:57'),
-                    new \DateTimeImmutable('2021-02-01 12:34:56'),
-                    new \DateTimeImmutable('2021-02-01 12:34:55'),
-                    new \DateTimeImmutable('2021-02-01 12:34:57'),
-                    new \DateTimeImmutable('2021-02-01 12:34:55'),
+                    new DateTimeImmutable('2021-02-01 12:34:57'),
+                    new DateTimeImmutable('2021-02-01 12:34:56'),
+                    new DateTimeImmutable('2021-02-01 12:34:55'),
+                    new DateTimeImmutable('2021-02-01 12:34:57'),
+                    new DateTimeImmutable('2021-02-01 12:34:55'),
                 ];
 
                 return [
@@ -66,9 +67,9 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (function(){
                 $elements = [
-                    new \DateTimeImmutable('2021-01-01 00:00:00'),
-                    new \DateTimeImmutable('2020-01-01 00:00:00'),
-                    new \DateTimeImmutable('2022-01-01 00:00:00'),
+                    new DateTimeImmutable('2021-01-01 00:00:00'),
+                    new DateTimeImmutable('2020-01-01 00:00:00'),
+                    new DateTimeImmutable('2022-01-01 00:00:00'),
                 ];
 
                 return [
@@ -82,9 +83,9 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     /**
      * @dataProvider dataProvider_testMinWorks
      *
-     * @param array<int, \DateTimeImmutable> $elements
+     * @param array<int, DateTimeImmutable> $elements
      */
-    public function testMinWorks(?\DateTimeImmutable $expected, array $elements): void
+    public function testMinWorks(?DateTimeImmutable $expected, array $elements): void
     {
         $dateTimeImmutableCollection = new DateTimeImmutableCollection($elements);
         $element = $dateTimeImmutableCollection->min();
@@ -93,7 +94,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     }
 
     /**
-     * @return array<int, array{\DateTimeImmutable|null, array<\DateTimeImmutable>}>
+     * @return array<int, array{DateTimeImmutable|null, array<DateTimeImmutable>}>
      */
     public function dataProvider_testMinWorks(): array
     {
@@ -103,7 +104,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
                 [],
             ],
             (function(){
-                $elements = [new \DateTimeImmutable('2021-02-01 12:34:57')];
+                $elements = [new DateTimeImmutable('2021-02-01 12:34:57')];
 
                 return [
                     $elements[0],
@@ -112,8 +113,8 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (function(){
                 $elements = [
-                    new \DateTimeImmutable('2021-02-01 12:34:57'),
-                    new \DateTimeImmutable('2021-02-01 12:34:56'),
+                    new DateTimeImmutable('2021-02-01 12:34:57'),
+                    new DateTimeImmutable('2021-02-01 12:34:56'),
                 ];
 
                 return [
@@ -123,11 +124,11 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (function(){
                 $elements = [
-                    new \DateTimeImmutable('2021-02-01 12:34:57'),
-                    new \DateTimeImmutable('2021-02-01 12:34:56'),
-                    new \DateTimeImmutable('2021-02-01 12:34:55'),
-                    new \DateTimeImmutable('2021-02-01 12:34:57'),
-                    new \DateTimeImmutable('2021-02-01 12:34:55'),
+                    new DateTimeImmutable('2021-02-01 12:34:57'),
+                    new DateTimeImmutable('2021-02-01 12:34:56'),
+                    new DateTimeImmutable('2021-02-01 12:34:55'),
+                    new DateTimeImmutable('2021-02-01 12:34:57'),
+                    new DateTimeImmutable('2021-02-01 12:34:55'),
                 ];
 
                 return [
@@ -137,9 +138,9 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (function(){
                 $elements = [
-                    new \DateTimeImmutable('2021-01-01 00:00:00'),
-                    new \DateTimeImmutable('2020-01-01 00:00:00'),
-                    new \DateTimeImmutable('2022-01-01 00:00:00'),
+                    new DateTimeImmutable('2021-01-01 00:00:00'),
+                    new DateTimeImmutable('2020-01-01 00:00:00'),
+                    new DateTimeImmutable('2022-01-01 00:00:00'),
                 ];
 
                 return [
@@ -153,11 +154,11 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     public function testToSortedWorks(): void
     {
         $elements = [
-            new \DateTimeImmutable('2021-02-01 12:34:57'),
-            new \DateTimeImmutable('2021-02-01 12:34:56'),
-            new \DateTimeImmutable('2021-02-01 12:34:55'),
-            new \DateTimeImmutable('2021-01-01 12:34:57'),
-            new \DateTimeImmutable('2021-03-01 12:34:55'),
+            new DateTimeImmutable('2021-02-01 12:34:57'),
+            new DateTimeImmutable('2021-02-01 12:34:56'),
+            new DateTimeImmutable('2021-02-01 12:34:55'),
+            new DateTimeImmutable('2021-01-01 12:34:57'),
+            new DateTimeImmutable('2021-03-01 12:34:55'),
         ];
 
         $dateTimeImmutableCollectionA = new DateTimeImmutableCollection($elements);
@@ -180,13 +181,13 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     public function testToUniqueWorks(): void
     {
         $elements = [
-            new \DateTimeImmutable('2021-02-01 12:34:57'),
-            new \DateTimeImmutable('2021-02-01 12:34:56'),
-            new \DateTimeImmutable('2021-02-01 12:34:55'),
-            new \DateTimeImmutable('2021-01-01 12:34:57'),
-            new \DateTimeImmutable('2021-03-01 12:34:55'),
-            new \DateTimeImmutable('2021-02-01 12:34:55'),
-            new \DateTimeImmutable('2021-02-01 12:34:57'),
+            new DateTimeImmutable('2021-02-01 12:34:57'),
+            new DateTimeImmutable('2021-02-01 12:34:56'),
+            new DateTimeImmutable('2021-02-01 12:34:55'),
+            new DateTimeImmutable('2021-01-01 12:34:57'),
+            new DateTimeImmutable('2021-03-01 12:34:55'),
+            new DateTimeImmutable('2021-02-01 12:34:55'),
+            new DateTimeImmutable('2021-02-01 12:34:57'),
         ];
 
         $dateTimeImmutableCollectionA = new DateTimeImmutableCollection($elements);
@@ -236,14 +237,14 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             ],
             (static function (): array {
                 $elements = [
-                    0 => new \DateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                    0 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
                 ];
 
                 return [
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\DateTimeImmutable $object): string {
+                    static function (DateTimeImmutable $object): string {
                         return $object->format('c');
                     },
                     true,
@@ -251,12 +252,12 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                    1 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    2 => new \DateTimeImmutable('2021-01-01 00:00:02+01:00'),
-                    3 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    4 => new \DateTimeImmutable('2021-01-01 00:00:03+01:00'),
-                    5 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    0 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                    1 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    2 => new DateTimeImmutable('2021-01-01 00:00:02+01:00'),
+                    3 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    4 => new DateTimeImmutable('2021-01-01 00:00:03+01:00'),
+                    5 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
                 ];
 
                 return [
@@ -268,7 +269,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\DateTimeImmutable $object): string {
+                    static function (DateTimeImmutable $object): string {
                         return $object->format('c');
                     },
                     true,
@@ -276,12 +277,12 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                    1 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    2 => new \DateTimeImmutable('2021-01-01 00:00:02+01:00'),
-                    3 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    4 => new \DateTimeImmutable('2021-01-01 00:00:03+01:00'),
-                    5 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    0 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                    1 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    2 => new DateTimeImmutable('2021-01-01 00:00:02+01:00'),
+                    3 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    4 => new DateTimeImmutable('2021-01-01 00:00:03+01:00'),
+                    5 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
                 ];
 
                 return [
@@ -293,7 +294,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\DateTimeImmutable $object): string {
+                    static function (DateTimeImmutable $object): string {
                         return $object->format('c');
                     },
                     false,
@@ -301,12 +302,12 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \DateTimeImmutable('2021-01-01 00:00:03+01:00'),
-                    1 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    2 => new \DateTimeImmutable('2021-01-01 00:00:02+01:00'),
-                    3 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    4 => new \DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                    5 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    0 => new DateTimeImmutable('2021-01-01 00:00:03+01:00'),
+                    1 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    2 => new DateTimeImmutable('2021-01-01 00:00:02+01:00'),
+                    3 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    4 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                    5 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
                 ];
 
                 return [
@@ -318,7 +319,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\DateTimeImmutable $object): string {
+                    static function (DateTimeImmutable $object): string {
                         return $object->format('c');
                     },
                     true,
@@ -326,12 +327,12 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \DateTimeImmutable('2021-01-01 00:00:03+01:00'),
-                    1 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    2 => new \DateTimeImmutable('2021-01-01 00:00:02+01:00'),
-                    3 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    4 => new \DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                    5 => new \DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    0 => new DateTimeImmutable('2021-01-01 00:00:03+01:00'),
+                    1 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    2 => new DateTimeImmutable('2021-01-01 00:00:02+01:00'),
+                    3 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    4 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                    5 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
                 ];
 
                 return [
@@ -343,7 +344,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\DateTimeImmutable $object): string {
+                    static function (DateTimeImmutable $object): string {
                         return $object->format('c');
                     },
                     false,
@@ -354,14 +355,17 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, DateTimeImmutableCollection<DateTimeImmutable>, DateTimeImmutableCollection<DateTimeImmutable>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new DateTimeImmutableCollection([0 => new \DateTimeImmutable()]),
-                new DateTimeImmutableCollection([0 => new \DateTimeImmutable()]),
+                new DateTimeImmutableCollection([0 => new DateTimeImmutable()]),
+                new DateTimeImmutableCollection([0 => new DateTimeImmutable()]),
                 function (
                     DateTimeImmutableCollection $collectionA,
                     DateTimeImmutableCollection $collectionB,
@@ -375,8 +379,8 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
             ],
             [
                 'Same name string keys. Will override.',
-                new DateTimeImmutableCollection(['foo' => new \DateTimeImmutable()]),
-                new DateTimeImmutableCollection(['foo' => new \DateTimeImmutable()]),
+                new DateTimeImmutableCollection(['foo' => new DateTimeImmutable()]),
+                new DateTimeImmutableCollection(['foo' => new DateTimeImmutable()]),
                 function (
                     DateTimeImmutableCollection $collectionA,
                     DateTimeImmutableCollection $collectionB,
@@ -395,23 +399,25 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<DateTimeImmutable>
      */
     protected function createMultipleElements(): array
     {
         return [
-            new \DateTimeImmutable(),
-            'foo' => new \DateTimeImmutable(),
-            42 => new \DateTimeImmutable(),
-            new \DateTimeImmutable(),
+            new DateTimeImmutable(),
+            'foo' => new DateTimeImmutable(),
+            42 => new DateTimeImmutable(),
+            new DateTimeImmutable(),
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): DateTimeImmutable
     {
-        return new \DateTimeImmutable();
+        return new DateTimeImmutable();
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
+use Closure;
 use Eboreum\Collections\Object_\ClosureCollection;
 
 class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
@@ -34,7 +35,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\Closure $closure) {
+                    static function (Closure $closure) {
                         return $closure();
                     },
                     true,
@@ -71,7 +72,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Closure $closure) {
+                    static function (Closure $closure) {
                         return $closure();
                     },
                     true,
@@ -108,7 +109,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Closure $closure) {
+                    static function (Closure $closure) {
                         return $closure();
                     },
                     false,
@@ -145,7 +146,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Closure $closure) {
+                    static function (Closure $closure) {
                         return $closure();
                     },
                     true,
@@ -182,7 +183,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Closure $closure) {
+                    static function (Closure $closure) {
                         return $closure();
                     },
                     false,
@@ -193,9 +194,12 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, ClosureCollection<Closure>, ClosureCollection<Closure>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
@@ -251,6 +255,8 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<Closure>
      */
     protected function createMultipleElements(): array
     {
@@ -273,7 +279,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): Closure
     {
         return static function (): void {
             // Merely for test purposes

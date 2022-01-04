@@ -12,7 +12,7 @@ Wish you had generics in PHP? This library provides a sensible means of managing
 
 ```json
 "php": ">=7.4",
-"eboreum/caster": "^0.0.2"
+"eboreum/caster": "^0.0.3"
 ```
 
 For more information, see the [`composer.json`](composer.json) file.
@@ -36,7 +36,7 @@ Via GitHub:
 ## Test/development requirements
 
 ```json
-"phpstan/phpstan": "^0.12.99",
+"phpstan/phpstan": "^1.3",
 "phpunit/phpunit": "^9.5",
 "wikimedia/composer-merge-plugin": "^2.0"
 ```

@@ -14,6 +14,13 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  * {@inheritDoc}
  *
  * Contains values of type float, exclusively.
+ *
+ * @template T2 of float
+ * @extends Collection<T2>
+ * @implements MaximumableCollectionInterface<T2>
+ * @implements MinimumableCollectionInterface<T2>
+ * @implements SortableCollectionInterface<T2>
+ * @implements UniqueableCollectionInterface<T2>
  */
 class FloatCollection
     extends Collection
@@ -25,18 +32,6 @@ class FloatCollection
 {
     /**
      * {@inheritDoc}
-     *
-     * @param float $element
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        parent::assertIsElementAccepted($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $element
      */
     public static function isElementAccepted($element): bool
     {
@@ -46,7 +41,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, float> $elements
+     * @param array<int|string, T2> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -56,7 +51,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      *
-     * @param float $element
+     * @param T2 $element
      */
     public function contains($element): bool
     {
@@ -98,7 +93,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      *
-     * @param float $element
+     * @param T2 $element
      */
     public function indexOf($element)
     {
@@ -172,172 +167,37 @@ class FloatCollection
     /**
      * {@inheritDoc}
      *
-     * @return array<int|string, float>
-     */
-    public function toArray(): array
-    {
-        return parent::toArray();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, float>
-     */
-    public function toArrayValues(): array
-    {
-        return parent::toArrayValues();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, float>
-     */
-    public function toCleared(): self
-    {
-        return parent::toCleared();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, float>
-     */
-    public function toReversed(bool $isPreservingKeys = true): self
-    {
-        return parent::toReversed($isPreservingKeys);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, float>
-     */
-    public function toSequential(): self
-    {
-        return parent::toSequential();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, float>
+     * @return static<T2>
      */
     public function toSorted(bool $isAscending = true): self
     {
         $direction = ($isAscending ? 1 : -1);
 
-        return $this->toSortedByCallback(static function (float $a, float $b) use ($direction) {
+        $collection = $this->toSortedByCallback(static function (float $a, float $b) use ($direction) {
             return ($a - $b) * $direction;
         });
+
+        assert(is_a($collection, __CLASS__)); // Make phpstan happy
+
+        return $collection;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, float>
-     */
-    public function toSortedByCallback(\Closure $callback): self
-    {
-        return parent::toSortedByCallback($callback);
-    }
-
-    /**
-     * {@inheritDoc}
+     * @return static<T2>
      */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): self
     {
-        return $this->toUniqueByCallback(
+        $collection = $this->toUniqueByCallback(
             static function (float $element) {
                 return (string)$element;
             },
             $isUsingFirstEncounteredElement,
         );
-    }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, float>
-     */
-    public function toUniqueByCallback(\Closure $callback, bool $isUsingFirstEncounteredElement = true): self
-    {
-        return parent::toUniqueByCallback($callback, $isUsingFirstEncounteredElement);
-    }
+        assert(is_a($collection, __CLASS__)); // Make phpstan happy
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $element
-     * @return static<int|string, float>
-     */
-    public function withAdded($element): self
-    {
-        return parent::withAdded($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, float> $elements
-     * @return static<int|string, float>
-     */
-    public function withAddedMultiple(array $elements): self
-    {
-        return parent::withAddedMultiple($elements);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, float>
-     */
-    public function withFiltered(\Closure $callback): self
-    {
-        return parent::withFiltered($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param FloatCollection<int|string, float> $collection
-     * @return static<int|string, float>
-     */
-    public function withMerged(CollectionInterface $collection): self
-    {
-        return parent::withMerged($collection);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, float>
-     */
-    public function withRemoved($key): self
-    {
-        return parent::withRemoved($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $element
-     * @return static<int|string, float>
-     */
-    public function withRemovedElement($element): self
-    {
-        return parent::withRemovedElement($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param float $element
-     * @return static<int|string, float>
-     */
-    public function withSet($key, $element): self
-    {
-        return parent::withSet($key, $element);
+        return $collection;
     }
 }

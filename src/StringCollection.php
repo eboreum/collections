@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections;
 
+use Closure;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
 
@@ -11,23 +12,15 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  * {@inheritDoc}
  *
  * Contains values of type string, exclusively.
+ *
+ * @template T2 of string
+ * @extends Collection<T2>
+ * @implements UniqueableCollectionInterface<T2>
  */
 class StringCollection extends Collection implements UniqueableCollectionInterface
 {
     /**
      * {@inheritDoc}
-     *
-     * @param string $element
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        parent::assertIsElementAccepted($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $element
      */
     public static function isElementAccepted($element): bool
     {
@@ -37,7 +30,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, string> $elements
+     * @param array<int|string, T2> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -47,7 +40,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      *
-     * @param string $element
+     * @param T2 $element
      */
     public function contains($element): bool
     {
@@ -89,7 +82,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      *
-     * @param string $element
+     * @param T2 $element
      */
     public function indexOf($element)
     {
@@ -131,158 +124,22 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      *
-     * @return array<int|string, string>
-     */
-    public function toArray(): array
-    {
-        return parent::toArray();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, string>
-     */
-    public function toArrayValues(): array
-    {
-        return parent::toArrayValues();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, string>
-     */
-    public function toCleared(): self
-    {
-        return parent::toCleared();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, string>
-     */
-    public function toReversed(bool $isPreservingKeys = true): self
-    {
-        return parent::toReversed($isPreservingKeys);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, string>
-     */
-    public function toSequential(): self
-    {
-        return parent::toSequential();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, string>
-     */
-    public function toSortedByCallback(\Closure $callback): self
-    {
-        return parent::toSortedByCallback($callback);
-    }
-
-    /**
-     * {@inheritDoc}
+     * @return static<T2>
      */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): self
     {
-        return $this->toUniqueByCallback(
+        $collection = $this->toUniqueByCallback(
+            /**
+             * @return array<T2>
+             */
             static function (string $element) {
                 return $element;
             },
             $isUsingFirstEncounteredElement,
         );
-    }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, string>
-     */
-    public function toUniqueByCallback(\Closure $callback, bool $isUsingFirstEncounteredElement = true): self
-    {
-        return parent::toUniqueByCallback($callback, $isUsingFirstEncounteredElement);
-    }
+        assert(is_a($collection, __CLASS__)); // Make phpstan happy
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $element
-     * @return static<int|string, string>
-     */
-    public function withAdded($element): self
-    {
-        return parent::withAdded($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, string> $elements
-     * @return static<int|string, string>
-     */
-    public function withAddedMultiple(array $elements): self
-    {
-        return parent::withAddedMultiple($elements);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, string>
-     */
-    public function withFiltered(\Closure $callback): self
-    {
-        return parent::withFiltered($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param StringCollection<int|string, string> $collection
-     * @return static<int|string, string>
-     */
-    public function withMerged(CollectionInterface $collection): self
-    {
-        return parent::withMerged($collection);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, string>
-     */
-    public function withRemoved($key): self
-    {
-        return parent::withRemoved($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $element
-     * @return static<int|string, string>
-     */
-    public function withRemovedElement($element): self
-    {
-        return parent::withRemovedElement($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $element
-     * @return static<int|string, string>
-     */
-    public function withSet($key, $element): self
-    {
-        return parent::withSet($key, $element);
+        return $collection;
     }
 }

@@ -17,6 +17,13 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  * {@inheritDoc}
  *
  * A collection which contains instances of DateTimeImmutable, exclusively.
+ *
+ * @template T3 of DateTimeImmutable
+ * @extends AbstractNamedClassOrInterfaceCollection<T3>
+ * @implements MaximumableCollectionInterface<T3>
+ * @implements MinimumableCollectionInterface<T3>
+ * @implements SortableCollectionInterface<T3>
+ * @implements UniqueableCollectionInterface<T3>
  */
 class DateTimeImmutableCollection
     extends AbstractNamedClassOrInterfaceCollection
@@ -29,16 +36,6 @@ class DateTimeImmutableCollection
 {
     /**
      * {@inheritDoc}
-     *
-     * @param DateTimeImmutable $element
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        parent::assertIsElementAccepted($element);
-    }
-
-    /**
-     * {@inheritDoc}
      */
     public static function getHandledClassName(): string
     {
@@ -48,17 +45,7 @@ class DateTimeImmutableCollection
     /**
      * {@inheritDoc}
      *
-     * @param DateTimeImmutable $element
-     */
-    public static function isElementAccepted($element): bool
-    {
-        return parent::isElementAccepted($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, DateTimeImmutable> $elements
+     * @param array<int|string, T3> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -68,7 +55,7 @@ class DateTimeImmutableCollection
     /**
      * {@inheritDoc}
      *
-     * @param DateTimeImmutable $element
+     * @param T3 $element
      */
     public function contains($element): bool
     {
@@ -86,9 +73,9 @@ class DateTimeImmutableCollection
     /**
      * {@inheritDoc}
      */
-    public function find(\Closure $callback): ?DateTimeImmutable
+    public function find($key): ?DateTimeImmutable
     {
-        return parent::find($callback);
+        return parent::find($key);
     }
 
     /**
@@ -101,16 +88,8 @@ class DateTimeImmutableCollection
 
     /**
      * {@inheritDoc}
-     */
-    public function get($key): ?DateTimeImmutable
-    {
-        return parent::get($key);
-    }
-
-    /**
-     * {@inheritDoc}
      *
-     * @param DateTimeImmutable $element
+     * @param T3 $element
      */
     public function indexOf($element)
     {
@@ -180,169 +159,39 @@ class DateTimeImmutableCollection
     /**
      * {@inheritDoc}
      *
-     * @return array<int|string, DateTimeImmutable>
-     */
-    public function toArray(): array
-    {
-        return parent::toArray();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, DateTimeImmutable>
-     */
-    public function toArrayValues(): array
-    {
-        return parent::toArrayValues();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toCleared(): self
-    {
-        return parent::toCleared();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toReversed(bool $isPreservingKeys = true): self
-    {
-        return parent::toReversed($isPreservingKeys);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toSequential(): self
-    {
-        return parent::toSequential();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, DateTimeImmutable>
+     * @return static<T3>
      */
     public function toSorted(bool $isAscending = true): self
     {
         $direction = ($isAscending ? 1 : -1);
 
-        return $this->toSortedByCallback(
+        $collection = $this->toSortedByCallback(
             static function (DateTimeImmutable $a, DateTimeImmutable $b) use ($direction): int {
                 return ($a->getTimestamp() - $b->getTimestamp()) * $direction;
             }
         );
+
+        assert(is_a($collection, __CLASS__));
+
+        return $collection;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, DateTimeImmutable>
-     */
-    public function toSortedByCallback(\Closure $callback): self
-    {
-        return parent::toSortedByCallback($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, DateTimeImmutable>
+     * @return static<T3>
      */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): self
     {
-        return $this->toUniqueByCallback(
+        $collection = $this->toUniqueByCallback(
             static function (DateTimeImmutable $element) {
                 return (string)$element->getTimestamp();
             },
             $isUsingFirstEncounteredElement,
         );
-    }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, DateTimeImmutable>
-     */
-    public function toUniqueByCallback(\Closure $callback, bool $isUsingFirstEncounteredElement = true): self
-    {
-        return parent::toUniqueByCallback($callback, $isUsingFirstEncounteredElement);
-    }
+        assert(is_a($collection, __CLASS__));
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param DateTimeImmutable $element
-     */
-    public function withAdded($element): self
-    {
-        return parent::withAdded($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, DateTimeImmutable> $elements
-     */
-    public function withAddedMultiple(array $elements): self
-    {
-        return parent::withAddedMultiple($elements);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withFiltered(\Closure $callback): self
-    {
-        return parent::withFiltered($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param DateTimeImmutableCollection $collection
-     */
-    public function withMerged(CollectionInterface $collection): self
-    {
-        return parent::withMerged($collection);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withRemoved($key): self
-    {
-        return parent::withRemoved($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param DateTimeImmutable $element
-     */
-    public function withRemovedElement($element): self
-    {
-        return parent::withRemovedElement($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param DateTimeImmutable $element
-     */
-    public function withSet($key, $element): self
-    {
-        return parent::withSet($key, $element);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withSliced(int $offset, ?int $length = null): self
-    {
-        return parent::withSliced($offset, $length);
+        return $collection;
     }
 }

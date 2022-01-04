@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections\Object_;
 
 use Eboreum\Collections\Object_\stdClassCollection;
+use stdClass;
 
 class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
@@ -25,7 +26,7 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             ],
             (static function (): array {
                 $elements = [
-                    0 => new \stdClass(),
+                    0 => new stdClass(),
                 ];
 
                 $elements[0]->var = 'a';
@@ -34,7 +35,7 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\stdClass $object) {
+                    static function (stdClass $object) {
                         return $object->var;
                     },
                     true,
@@ -42,12 +43,12 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \stdClass(),
-                    1 => new \stdClass(),
-                    2 => new \stdClass(),
-                    3 => new \stdClass(),
-                    4 => new \stdClass(),
-                    5 => new \stdClass(),
+                    0 => new stdClass(),
+                    1 => new stdClass(),
+                    2 => new stdClass(),
+                    3 => new stdClass(),
+                    4 => new stdClass(),
+                    5 => new stdClass(),
                 ];
 
                 $elements[0]->var = 'a';
@@ -66,7 +67,7 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\stdClass $object) {
+                    static function (stdClass $object) {
                         return $object->var;
                     },
                     true,
@@ -74,12 +75,12 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \stdClass(),
-                    1 => new \stdClass(),
-                    2 => new \stdClass(),
-                    3 => new \stdClass(),
-                    4 => new \stdClass(),
-                    5 => new \stdClass(),
+                    0 => new stdClass(),
+                    1 => new stdClass(),
+                    2 => new stdClass(),
+                    3 => new stdClass(),
+                    4 => new stdClass(),
+                    5 => new stdClass(),
                 ];
 
                 $elements[0]->var = 'a';
@@ -98,7 +99,7 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\stdClass $object) {
+                    static function (stdClass $object) {
                         return $object->var;
                     },
                     false,
@@ -106,12 +107,12 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \stdClass(),
-                    1 => new \stdClass(),
-                    2 => new \stdClass(),
-                    3 => new \stdClass(),
-                    4 => new \stdClass(),
-                    5 => new \stdClass(),
+                    0 => new stdClass(),
+                    1 => new stdClass(),
+                    2 => new stdClass(),
+                    3 => new stdClass(),
+                    4 => new stdClass(),
+                    5 => new stdClass(),
                 ];
 
                 $elements[0]->var = 'd';
@@ -130,7 +131,7 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\stdClass $object) {
+                    static function (stdClass $object) {
                         return $object->var;
                     },
                     true,
@@ -138,12 +139,12 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \stdClass(),
-                    1 => new \stdClass(),
-                    2 => new \stdClass(),
-                    3 => new \stdClass(),
-                    4 => new \stdClass(),
-                    5 => new \stdClass(),
+                    0 => new stdClass(),
+                    1 => new stdClass(),
+                    2 => new stdClass(),
+                    3 => new stdClass(),
+                    4 => new stdClass(),
+                    5 => new stdClass(),
                 ];
 
                 $elements[0]->var = 'd';
@@ -162,7 +163,7 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\stdClass $object) {
+                    static function (stdClass $object) {
                         return $object->var;
                     },
                     false,
@@ -173,14 +174,17 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, stdClassCollection<stdClass>, stdClassCollection<stdClass>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new stdClassCollection([0 => new \stdClass()]),
-                new stdClassCollection([0 => new \stdClass()]),
+                new stdClassCollection([0 => new stdClass()]),
+                new stdClassCollection([0 => new stdClass()]),
                 function (
                     stdClassCollection $collectionA,
                     stdClassCollection $collectionB,
@@ -194,8 +198,8 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             ],
             [
                 'Same name string keys. Will override.',
-                new stdClassCollection(['foo' => new \stdClass()]),
-                new stdClassCollection(['foo' => new \stdClass()]),
+                new stdClassCollection(['foo' => new stdClass()]),
+                new stdClassCollection(['foo' => new stdClass()]),
                 function (
                     stdClassCollection $collectionA,
                     stdClassCollection $collectionB,
@@ -213,23 +217,25 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<stdClass>
      */
     protected function createMultipleElements(): array
     {
         return [
-            new \stdClass(),
-            'foo' => new \stdClass(),
-            42 => new \stdClass(),
-            new \stdClass(),
+            new stdClass(),
+            'foo' => new stdClass(),
+            42 => new stdClass(),
+            new stdClass(),
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): stdClass
     {
-        return new \stdClass();
+        return new stdClass();
     }
 
     /**

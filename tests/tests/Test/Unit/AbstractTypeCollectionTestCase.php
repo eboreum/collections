@@ -18,6 +18,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
         $collection = new $handledCollectionClassName($elements);
 
+        assert(is_a($collection, Collection::class)); // Make phpstan happy
+
         try {
             $collection->withAdded(null);
         } catch (\Exception $e) {
@@ -36,7 +38,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -44,6 +46,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -76,6 +80,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
         $collection = new $handledCollectionClassName($elements);
 
+        assert(is_a($collection, Collection::class)); // Make phpstan happy
+
         try {
             $collection->withAddedMultiple([null]);
         } catch (\Exception $e) {
@@ -96,7 +102,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -104,6 +110,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 implode('', [
@@ -133,6 +141,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
         $collectionA = new $handledCollectionClassName();
         $collectionB = new Collection();
 
+        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+
         try {
             $collectionA->withMerged($collectionB);
         } catch (\Exception $e) {
@@ -151,7 +161,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(Collection::class, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote(Collection::class, '/'),
@@ -160,6 +170,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -215,6 +227,9 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($collectionB, [null]);
 
+        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+
         try {
             $collectionA->withMerged($collectionB);
         } catch (\Exception $e) {
@@ -233,7 +248,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote(Collection::class, '/'),
@@ -242,6 +257,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -273,6 +290,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
+        assert(is_a($collection, Collection::class)); // Make phpstan happy
+
         try {
             $collection->withRemovedElement(null);
         } catch (\Exception $e) {
@@ -291,7 +310,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -299,6 +318,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(
@@ -329,6 +350,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
+        assert(is_a($collection, Collection::class)); // Make phpstan happy
+
         try {
             $collection->withSet(0, null);
         } catch (\Exception $e) {
@@ -348,7 +371,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote($handledCollectionClassName, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote($handledCollectionClassName, '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -356,6 +379,8 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(

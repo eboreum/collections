@@ -13,19 +13,12 @@ use Throwable;
  * {@inheritDoc}
  *
  * A collection which contains instances of Throwable, exclusively.
+ *
+ * @template T3 of Throwable
+ * @extends AbstractNamedClassOrInterfaceCollection<T3>
  */
 class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     *
-     * @param Throwable $element
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        parent::assertIsElementAccepted($element);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -37,17 +30,7 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      *
-     * @param Throwable $element
-     */
-    public static function isElementAccepted($element): bool
-    {
-        return parent::isElementAccepted($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, Throwable> $elements
+     * @param array<int|string, T3> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -57,7 +40,7 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      *
-     * @param Throwable $element
+     * @param T3 $element
      */
     public function contains($element): bool
     {
@@ -75,9 +58,9 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      */
-    public function find(\Closure $callback): ?Throwable
+    public function find($key): ?Throwable
     {
-        return parent::find($callback);
+        return parent::find($key);
     }
 
     /**
@@ -90,16 +73,8 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
 
     /**
      * {@inheritDoc}
-     */
-    public function get($key): ?Throwable
-    {
-        return parent::get($key);
-    }
-
-    /**
-     * {@inheritDoc}
      *
-     * @param Throwable $element
+     * @param T3 $element
      */
     public function indexOf($element)
     {
@@ -136,141 +111,5 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
     public function next(): ?Throwable
     {
         return parent::next();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int|string, Throwable>
-     */
-    public function toArray(): array
-    {
-        return parent::toArray();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, Throwable>
-     */
-    public function toArrayValues(): array
-    {
-        return parent::toArrayValues();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return static<int|string, Throwable>
-     */
-    public function toCleared(): self
-    {
-        return parent::toCleared();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toReversed(bool $isPreservingKeys = true): self
-    {
-        return parent::toReversed($isPreservingKeys);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toSequential(): self
-    {
-        return parent::toSequential();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toSortedByCallback(\Closure $callback): self
-    {
-        return parent::toSortedByCallback($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toUniqueByCallback(\Closure $callback, bool $isUsingFirstEncounteredElement = true): self
-    {
-        return parent::toUniqueByCallback($callback, $isUsingFirstEncounteredElement);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param Throwable $element
-     */
-    public function withAdded($element): self
-    {
-        return parent::withAdded($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, Throwable> $elements
-     */
-    public function withAddedMultiple(array $elements): self
-    {
-        return parent::withAddedMultiple($elements);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withFiltered(\Closure $callback): self
-    {
-        return parent::withFiltered($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param ThrowableCollection $collection
-     */
-    public function withMerged(CollectionInterface $collection): self
-    {
-        return parent::withMerged($collection);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withRemoved($key): self
-    {
-        return parent::withRemoved($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param Throwable $element
-     */
-    public function withRemovedElement($element): self
-    {
-        return parent::withRemovedElement($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param Throwable $element
-     */
-    public function withSet($key, $element): self
-    {
-        return parent::withSet($key, $element);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withSliced(int $offset, ?int $length = null): self
-    {
-        return parent::withSliced($offset, $length);
     }
 }

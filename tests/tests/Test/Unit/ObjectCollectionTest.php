@@ -293,9 +293,12 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, ObjectCollection<object>, ObjectCollection<object>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
+use DateTime;
 use Eboreum\Collections\Object_\DateTimeCollection;
 
 class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
@@ -11,9 +12,9 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     /**
      * @dataProvider dataProvider_testMaxWorks
      *
-     * @param array<int, \DateTime> $elements
+     * @param array<int, DateTime> $elements
      */
-    public function testMaxWorks(?\DateTime $expected, array $elements): void
+    public function testMaxWorks(?DateTime $expected, array $elements): void
     {
         $dateTimeCollection = new DateTimeCollection($elements);
         $element = $dateTimeCollection->max();
@@ -22,7 +23,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     }
 
     /**
-     * @return array<int, array{\DateTime|null, array<\DateTime>}>
+     * @return array<int, array{DateTime|null, array<DateTime>}>
      */
     public function dataProvider_testMaxWorks(): array
     {
@@ -32,7 +33,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                 [],
             ],
             (function(){
-                $elements = [new \DateTime('2021-02-01 12:34:57')];
+                $elements = [new DateTime('2021-02-01 12:34:57')];
 
                 return [
                     $elements[0],
@@ -41,8 +42,8 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (function(){
                 $elements = [
-                    new \DateTime('2021-02-01 12:34:57'),
-                    new \DateTime('2021-02-01 12:34:56'),
+                    new DateTime('2021-02-01 12:34:57'),
+                    new DateTime('2021-02-01 12:34:56'),
                 ];
 
                 return [
@@ -52,11 +53,11 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (function(){
                 $elements = [
-                    new \DateTime('2021-02-01 12:34:57'),
-                    new \DateTime('2021-02-01 12:34:56'),
-                    new \DateTime('2021-02-01 12:34:55'),
-                    new \DateTime('2021-02-01 12:34:57'),
-                    new \DateTime('2021-02-01 12:34:55'),
+                    new DateTime('2021-02-01 12:34:57'),
+                    new DateTime('2021-02-01 12:34:56'),
+                    new DateTime('2021-02-01 12:34:55'),
+                    new DateTime('2021-02-01 12:34:57'),
+                    new DateTime('2021-02-01 12:34:55'),
                 ];
 
                 return [
@@ -66,9 +67,9 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (function(){
                 $elements = [
-                    new \DateTime('2021-01-01 00:00:00'),
-                    new \DateTime('2020-01-01 00:00:00'),
-                    new \DateTime('2022-01-01 00:00:00'),
+                    new DateTime('2021-01-01 00:00:00'),
+                    new DateTime('2020-01-01 00:00:00'),
+                    new DateTime('2022-01-01 00:00:00'),
                 ];
 
                 return [
@@ -82,9 +83,9 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     /**
      * @dataProvider dataProvider_testMinWorks
      *
-     * @param array<int, \DateTime> $elements
+     * @param array<int, DateTime> $elements
      */
-    public function testMinWorks(?\DateTime $expected, array $elements): void
+    public function testMinWorks(?DateTime $expected, array $elements): void
     {
         $dateTimeCollection = new DateTimeCollection($elements);
         $element = $dateTimeCollection->min();
@@ -93,7 +94,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     }
 
     /**
-     * @return array<int, array{\DateTime|null, array<\DateTime>}>
+     * @return array<int, array{DateTime|null, array<DateTime>}>
      */
     public function dataProvider_testMinWorks(): array
     {
@@ -103,7 +104,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                 [],
             ],
             (function(){
-                $elements = [new \DateTime('2021-02-01 12:34:57')];
+                $elements = [new DateTime('2021-02-01 12:34:57')];
 
                 return [
                     $elements[0],
@@ -112,8 +113,8 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (function(){
                 $elements = [
-                    new \DateTime('2021-02-01 12:34:57'),
-                    new \DateTime('2021-02-01 12:34:56'),
+                    new DateTime('2021-02-01 12:34:57'),
+                    new DateTime('2021-02-01 12:34:56'),
                 ];
 
                 return [
@@ -123,11 +124,11 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (function(){
                 $elements = [
-                    new \DateTime('2021-02-01 12:34:57'),
-                    new \DateTime('2021-02-01 12:34:56'),
-                    new \DateTime('2021-02-01 12:34:55'),
-                    new \DateTime('2021-02-01 12:34:57'),
-                    new \DateTime('2021-02-01 12:34:55'),
+                    new DateTime('2021-02-01 12:34:57'),
+                    new DateTime('2021-02-01 12:34:56'),
+                    new DateTime('2021-02-01 12:34:55'),
+                    new DateTime('2021-02-01 12:34:57'),
+                    new DateTime('2021-02-01 12:34:55'),
                 ];
 
                 return [
@@ -137,9 +138,9 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (function(){
                 $elements = [
-                    new \DateTime('2021-01-01 00:00:00'),
-                    new \DateTime('2020-01-01 00:00:00'),
-                    new \DateTime('2022-01-01 00:00:00'),
+                    new DateTime('2021-01-01 00:00:00'),
+                    new DateTime('2020-01-01 00:00:00'),
+                    new DateTime('2022-01-01 00:00:00'),
                 ];
 
                 return [
@@ -153,11 +154,11 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     public function testToSortedWorks(): void
     {
         $elements = [
-            new \DateTime('2021-02-01 12:34:57'),
-            new \DateTime('2021-02-01 12:34:56'),
-            new \DateTime('2021-02-01 12:34:55'),
-            new \DateTime('2021-01-01 12:34:57'),
-            new \DateTime('2021-03-01 12:34:55'),
+            new DateTime('2021-02-01 12:34:57'),
+            new DateTime('2021-02-01 12:34:56'),
+            new DateTime('2021-02-01 12:34:55'),
+            new DateTime('2021-01-01 12:34:57'),
+            new DateTime('2021-03-01 12:34:55'),
         ];
 
         $dateTimeCollectionA = new DateTimeCollection($elements);
@@ -180,13 +181,13 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     public function testToUniqueWorks(): void
     {
         $elements = [
-            new \DateTime('2021-02-01 12:34:57'),
-            new \DateTime('2021-02-01 12:34:56'),
-            new \DateTime('2021-02-01 12:34:55'),
-            new \DateTime('2021-01-01 12:34:57'),
-            new \DateTime('2021-03-01 12:34:55'),
-            new \DateTime('2021-02-01 12:34:55'),
-            new \DateTime('2021-02-01 12:34:57'),
+            new DateTime('2021-02-01 12:34:57'),
+            new DateTime('2021-02-01 12:34:56'),
+            new DateTime('2021-02-01 12:34:55'),
+            new DateTime('2021-01-01 12:34:57'),
+            new DateTime('2021-03-01 12:34:55'),
+            new DateTime('2021-02-01 12:34:55'),
+            new DateTime('2021-02-01 12:34:57'),
         ];
 
         $dateTimeCollectionA = new DateTimeCollection($elements);
@@ -236,14 +237,14 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             ],
             (static function (): array {
                 $elements = [
-                    0 => new \DateTime('2021-01-01 00:00:00+01:00'),
+                    0 => new DateTime('2021-01-01 00:00:00+01:00'),
                 ];
 
                 return [
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\DateTime $object): string {
+                    static function (DateTime $object): string {
                         return $object->format('c');
                     },
                     true,
@@ -251,12 +252,12 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \DateTime('2021-01-01 00:00:00+01:00'),
-                    1 => new \DateTime('2021-01-01 00:00:01+01:00'),
-                    2 => new \DateTime('2021-01-01 00:00:02+01:00'),
-                    3 => new \DateTime('2021-01-01 00:00:01+01:00'),
-                    4 => new \DateTime('2021-01-01 00:00:03+01:00'),
-                    5 => new \DateTime('2021-01-01 00:00:01+01:00'),
+                    0 => new DateTime('2021-01-01 00:00:00+01:00'),
+                    1 => new DateTime('2021-01-01 00:00:01+01:00'),
+                    2 => new DateTime('2021-01-01 00:00:02+01:00'),
+                    3 => new DateTime('2021-01-01 00:00:01+01:00'),
+                    4 => new DateTime('2021-01-01 00:00:03+01:00'),
+                    5 => new DateTime('2021-01-01 00:00:01+01:00'),
                 ];
 
                 return [
@@ -268,7 +269,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\DateTime $object): string {
+                    static function (DateTime $object): string {
                         return $object->format('c');
                     },
                     true,
@@ -276,12 +277,12 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \DateTime('2021-01-01 00:00:00+01:00'),
-                    1 => new \DateTime('2021-01-01 00:00:01+01:00'),
-                    2 => new \DateTime('2021-01-01 00:00:02+01:00'),
-                    3 => new \DateTime('2021-01-01 00:00:01+01:00'),
-                    4 => new \DateTime('2021-01-01 00:00:03+01:00'),
-                    5 => new \DateTime('2021-01-01 00:00:01+01:00'),
+                    0 => new DateTime('2021-01-01 00:00:00+01:00'),
+                    1 => new DateTime('2021-01-01 00:00:01+01:00'),
+                    2 => new DateTime('2021-01-01 00:00:02+01:00'),
+                    3 => new DateTime('2021-01-01 00:00:01+01:00'),
+                    4 => new DateTime('2021-01-01 00:00:03+01:00'),
+                    5 => new DateTime('2021-01-01 00:00:01+01:00'),
                 ];
 
                 return [
@@ -293,7 +294,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\DateTime $object): string {
+                    static function (DateTime $object): string {
                         return $object->format('c');
                     },
                     false,
@@ -301,12 +302,12 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \DateTime('2021-01-01 00:00:03+01:00'),
-                    1 => new \DateTime('2021-01-01 00:00:01+01:00'),
-                    2 => new \DateTime('2021-01-01 00:00:02+01:00'),
-                    3 => new \DateTime('2021-01-01 00:00:01+01:00'),
-                    4 => new \DateTime('2021-01-01 00:00:00+01:00'),
-                    5 => new \DateTime('2021-01-01 00:00:01+01:00'),
+                    0 => new DateTime('2021-01-01 00:00:03+01:00'),
+                    1 => new DateTime('2021-01-01 00:00:01+01:00'),
+                    2 => new DateTime('2021-01-01 00:00:02+01:00'),
+                    3 => new DateTime('2021-01-01 00:00:01+01:00'),
+                    4 => new DateTime('2021-01-01 00:00:00+01:00'),
+                    5 => new DateTime('2021-01-01 00:00:01+01:00'),
                 ];
 
                 return [
@@ -318,7 +319,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\DateTime $object): string {
+                    static function (DateTime $object): string {
                         return $object->format('c');
                     },
                     true,
@@ -326,12 +327,12 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \DateTime('2021-01-01 00:00:03+01:00'),
-                    1 => new \DateTime('2021-01-01 00:00:01+01:00'),
-                    2 => new \DateTime('2021-01-01 00:00:02+01:00'),
-                    3 => new \DateTime('2021-01-01 00:00:01+01:00'),
-                    4 => new \DateTime('2021-01-01 00:00:00+01:00'),
-                    5 => new \DateTime('2021-01-01 00:00:01+01:00'),
+                    0 => new DateTime('2021-01-01 00:00:03+01:00'),
+                    1 => new DateTime('2021-01-01 00:00:01+01:00'),
+                    2 => new DateTime('2021-01-01 00:00:02+01:00'),
+                    3 => new DateTime('2021-01-01 00:00:01+01:00'),
+                    4 => new DateTime('2021-01-01 00:00:00+01:00'),
+                    5 => new DateTime('2021-01-01 00:00:01+01:00'),
                 ];
 
                 return [
@@ -343,7 +344,7 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\DateTime $object): string {
+                    static function (DateTime $object): string {
                         return $object->format('c');
                     },
                     false,
@@ -354,14 +355,17 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, DateTimeCollection<DateTime>, DateTimeCollection<DateTime>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new DateTimeCollection([0 => new \DateTime()]),
-                new DateTimeCollection([0 => new \DateTime()]),
+                new DateTimeCollection([0 => new DateTime()]),
+                new DateTimeCollection([0 => new DateTime()]),
                 function (
                     DateTimeCollection $collectionA,
                     DateTimeCollection $collectionB,
@@ -376,8 +380,8 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             ],
             [
                 'Same name string keys. Will override.',
-                new DateTimeCollection(['foo' => new \DateTime()]),
-                new DateTimeCollection(['foo' => new \DateTime()]),
+                new DateTimeCollection(['foo' => new DateTime()]),
+                new DateTimeCollection(['foo' => new DateTime()]),
                 function (
                     DateTimeCollection $collectionA,
                     DateTimeCollection $collectionB,
@@ -396,23 +400,25 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<DateTime>
      */
     protected function createMultipleElements(): array
     {
         return [
-            new \DateTime(),
-            'foo' => new \DateTime(),
-            42 => new \DateTime(),
-            new \DateTime(),
+            new DateTime(),
+            'foo' => new DateTime(),
+            42 => new DateTime(),
+            new DateTime(),
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): DateTime
     {
-        return new \DateTime();
+        return new DateTime();
     }
 
     /**

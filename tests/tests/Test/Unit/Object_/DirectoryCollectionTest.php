@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
+use Directory;
 use Eboreum\Collections\Object_\DirectoryCollection;
+use RuntimeException;
 
 class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
@@ -143,9 +145,12 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, DirectoryCollection<Directory>, DirectoryCollection<Directory>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
@@ -208,23 +213,25 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<Directory>
      */
     protected function createMultipleElements(): array
     {
         return [
-            dir(__DIR__),
-            'foo' => dir(dirname(__DIR__)),
-            42 => dir(__DIR__),
-            dir(dirname(__DIR__)),
+            $this->createDirectoryFromPath(__DIR__),
+            'foo' => $this->createDirectoryFromPath(__DIR__),
+            42 => $this->createDirectoryFromPath(__DIR__),
+            $this->createDirectoryFromPath(__DIR__),
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): Directory
     {
-        return dir(__DIR__);
+        return $this->createDirectoryFromPath(__DIR__);
     }
 
     /**
@@ -233,5 +240,24 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
     protected function getHandledCollectionClassName(): string
     {
         return DirectoryCollection::class;
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    private function createDirectoryFromPath(string $path): Directory
+    {
+        if (false === is_dir($path)) {
+            throw new RuntimeException(sprintf(
+                'A directory does not exist on path: %s',
+                $path,
+            ));
+        }
+
+        $directory = dir($path);
+
+        assert(is_object($directory));
+
+        return $directory;
     }
 }

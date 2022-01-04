@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
+use Eboreum\Collections\Collection;
 use Eboreum\Collections\FloatCollection;
 
 class FloatCollectionTest extends AbstractTypeCollectionTestCase
@@ -193,7 +194,16 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
         $handledCollectionClassName = $this->getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
 
+        assert(is_object($collectionA)); // Make phpstan happy
+        assert(is_a($collectionA, $handledCollectionClassName)); // Make phpstan happy
+        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        assert(method_exists($collectionA, 'toUnique')); // Make phpstan happy
+
         $collectionB = $collectionA->toUnique($isUsingFirstEncounteredElement);
+
+        assert(is_object($collectionB)); // Make phpstan happy
+        assert(is_a($collectionB, $handledCollectionClassName)); // Make phpstan happy
+        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
@@ -265,9 +275,12 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, FloatCollection<float>, FloatCollection<float>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',

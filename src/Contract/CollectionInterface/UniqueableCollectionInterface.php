@@ -11,6 +11,9 @@ use Eboreum\Collections\Contract\CollectionInterface;
  *
  * Denotes that the implementing collection class may be made unique (immutably) using internaly logic within the
  * collection, exclusively.
+ *
+ * @template T
+ * @extends CollectionInterface<T>
  */
 interface UniqueableCollectionInterface extends CollectionInterface
 {
@@ -19,6 +22,8 @@ interface UniqueableCollectionInterface extends CollectionInterface
      *
      * Internal logic – exclusively – must handle how uniqueness is considered. This may be achieved using the method
      * `toUniqueByCallback`.
+     *
+     * @return static<T>
      */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): self;
 }

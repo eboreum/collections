@@ -9,13 +9,8 @@ namespace Eboreum\Collections\Contract;
  *
  * The implementing class will only ever contain values being objects of a certain class or subclass thereof.
  */
-interface ObjectCollectionInterface extends CollectionInterface
+interface ObjectCollectionInterface
 {
-    /**
-     * @param array<int|string, object> $elements
-     */
-    public function __construct(array $elements = []);
-
     /**
      * Must return the name of the class being handled. E.g. "stdClass", in which case, it is recommended naming the
      * implementing class "stdClassCollection".

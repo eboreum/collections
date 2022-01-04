@@ -28,7 +28,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                     return 'IDontExist6f27c77df211460d95103a19491ac2dc'; // @phpstan-ignore-line
                 }
             };
-        } catch (\Exception $e) {
+        } catch (\Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -36,7 +36,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in class@anonymous\/in\/.+\/%s:+\d+-\>__construct\(',
+                        'Failure in \\\\%s-\>__construct\(',
                             '\$elements = \(array\(0\)\) \[\]',
                         '\) inside \(object\) class@anonymous\/in\/.+\/%s:+\d+ \{',
                             '\\\\%s\-\>\$elements = \(uninitialized\)',
@@ -44,7 +44,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -97,7 +97,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                     return 'stdClass';
                 }
             };
-        } catch (\Exception $e) {
+        } catch (\Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -105,7 +105,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in class@anonymous\/in\/.+\/%s:+\d+-\>__construct\(',
+                        'Failure in \\\\%s-\>__construct\(',
                             '\$elements = \(array\(4\)\) \[',
                                 '\(int\) 0 => \(object\) \\\\stdClass',
                                 ', \(int\) 1 => \(object\) \\\\DateTime \("2021\-01\-01T00\:00\:00\+00\:00"\)',
@@ -118,7 +118,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
                 ),
@@ -196,7 +196,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in class@anonymous\/in\/.+\/%s\:+\d+-\>withMerged\(',
+                        'Failure in \\\\%s-\>withMerged\(',
                             '\$collection = \(object\) class@anonymous\/in\/.+\/%s\:\d+ \{.+\}',
                         '\) inside \(object\) class@anonymous\/in\/.+\/%s\:+\d+ \{',
                             '\\\\%s\-\>\$elements = \(array\(2\)\) \[.+\]',
@@ -204,7 +204,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
@@ -213,6 +213,8 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
                 sprintf(

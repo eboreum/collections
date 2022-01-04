@@ -10,6 +10,9 @@ use Eboreum\Collections\Contract\CollectionInterface;
  * {@inheritDoc}
  *
  * Denotes that the implementing collection class has a means of determining a minimum value within the collection.
+ *
+ * @template T
+ * @extends CollectionInterface<T>
  */
 interface MinimumableCollectionInterface extends CollectionInterface
 {

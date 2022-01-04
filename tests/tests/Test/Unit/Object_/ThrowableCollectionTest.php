@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections\Object_;
 
 use Eboreum\Collections\Object_\ThrowableCollection;
+use Error;
+use Exception;
+use Throwable;
 
 class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
 {
@@ -25,7 +28,7 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             ],
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('foo'),
+                    0 => new Exception('foo'),
                 ];
 
                 return [
@@ -40,12 +43,12 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('A'),
-                    1 => new \Error('B'),
-                    2 => new \Error('C'),
-                    3 => new \Exception('B'),
-                    4 => new \Exception('D'),
-                    5 => new \Error('B'),
+                    0 => new Exception('A'),
+                    1 => new Error('B'),
+                    2 => new Error('C'),
+                    3 => new Exception('B'),
+                    4 => new Exception('D'),
+                    5 => new Error('B'),
                 ];
 
                 return [
@@ -65,12 +68,12 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('A'),
-                    1 => new \Error('B'),
-                    2 => new \Error('C'),
-                    3 => new \Exception('B'),
-                    4 => new \Exception('D'),
-                    5 => new \Error('B'),
+                    0 => new Exception('A'),
+                    1 => new Error('B'),
+                    2 => new Error('C'),
+                    3 => new Exception('B'),
+                    4 => new Exception('D'),
+                    5 => new Error('B'),
                 ];
 
                 return [
@@ -90,12 +93,12 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('D'),
-                    1 => new \Error('B'),
-                    2 => new \Error('C'),
-                    3 => new \Exception('B'),
-                    4 => new \Exception('A'),
-                    5 => new \Error('B'),
+                    0 => new Exception('D'),
+                    1 => new Error('B'),
+                    2 => new Error('C'),
+                    3 => new Exception('B'),
+                    4 => new Exception('A'),
+                    5 => new Error('B'),
                 ];
 
                 return [
@@ -115,12 +118,12 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             })(),
             (static function (): array {
                 $elements = [
-                    0 => new \Exception('D'),
-                    1 => new \Error('B'),
-                    2 => new \Error('C'),
-                    3 => new \Exception('B'),
-                    4 => new \Exception('A'),
-                    5 => new \Error('B'),
+                    0 => new Exception('D'),
+                    1 => new Error('B'),
+                    2 => new Error('C'),
+                    3 => new Exception('B'),
+                    4 => new Exception('A'),
+                    5 => new Error('B'),
                 ];
 
                 return [
@@ -143,14 +146,17 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, array{string, ThrowableCollection<Throwable>, ThrowableCollection<Throwable>, Closure: void}>
      */
     public function dataProvider_testWithMergedWorks(): array
     {
+        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new ThrowableCollection([0 => new \Exception()]),
-                new ThrowableCollection([0 => new \Error()]),
+                new ThrowableCollection([0 => new Exception()]),
+                new ThrowableCollection([0 => new Error()]),
                 function (
                     ThrowableCollection $collectionA,
                     ThrowableCollection $collectionB,
@@ -165,8 +171,8 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             ],
             [
                 'Same name string keys. Will override.',
-                new ThrowableCollection(['foo' => new \Exception()]),
-                new ThrowableCollection(['foo' => new \Error()]),
+                new ThrowableCollection(['foo' => new Exception()]),
+                new ThrowableCollection(['foo' => new Error()]),
                 function (
                     ThrowableCollection $collectionA,
                     ThrowableCollection $collectionB,
@@ -185,23 +191,25 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<Throwable>
      */
     protected function createMultipleElements(): array
     {
         return [
-            new \Exception(),
-            'foo' => new \Error(),
-            42 => new \Error(),
-            new \Exception(),
+            new Exception(),
+            'foo' => new Error(),
+            42 => new Error(),
+            new Exception(),
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function createSingleElement()
+    protected function createSingleElement(): Throwable
     {
-        return new \Exception();
+        return new Exception();
     }
 
     /**

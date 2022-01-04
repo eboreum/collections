@@ -13,19 +13,12 @@ use stdClass;
  * {@inheritDoc}
  *
  * A collection which contains instances of stdClass, exclusively.
+ *
+ * @template T3 of stdClass
+ * @extends AbstractNamedClassOrInterfaceCollection<T3>
  */
 class stdClassCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     *
-     * @param stdClass $element
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        parent::assertIsElementAccepted($element);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -37,17 +30,7 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
     /**
      * {@inheritDoc}
      *
-     * @param stdClass $element
-     */
-    public static function isElementAccepted($element): bool
-    {
-        return parent::isElementAccepted($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, stdClass> $elements
+     * @param array<int|string, T3> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -57,7 +40,7 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
     /**
      * {@inheritDoc}
      *
-     * @param stdClass $element
+     * @param T3 $element
      */
     public function contains($element): bool
     {
@@ -75,9 +58,9 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
     /**
      * {@inheritDoc}
      */
-    public function find(\Closure $callback): ?stdClass
+    public function find($key): ?stdClass
     {
-        return parent::find($callback);
+        return parent::find($key);
     }
 
     /**
@@ -90,16 +73,8 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
 
     /**
      * {@inheritDoc}
-     */
-    public function get($key): ?stdClass
-    {
-        return parent::get($key);
-    }
-
-    /**
-     * {@inheritDoc}
      *
-     * @param stdClass $element
+     * @param T3 $element
      */
     public function indexOf($element)
     {
@@ -136,139 +111,5 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
     public function next(): ?stdClass
     {
         return parent::next();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int|string, stdClass>
-     */
-    public function toArray(): array
-    {
-        return parent::toArray();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, stdClass>
-     */
-    public function toArrayValues(): array
-    {
-        return parent::toArrayValues();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toCleared(): self
-    {
-        return parent::toCleared();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toReversed(bool $isPreservingKeys = true): self
-    {
-        return parent::toReversed($isPreservingKeys);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toSequential(): self
-    {
-        return parent::toSequential();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toSortedByCallback(\Closure $callback): self
-    {
-        return parent::toSortedByCallback($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toUniqueByCallback(\Closure $callback, bool $isUsingFirstEncounteredElement = true): self
-    {
-        return parent::toUniqueByCallback($callback, $isUsingFirstEncounteredElement);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param stdClass $element
-     */
-    public function withAdded($element): self
-    {
-        return parent::withAdded($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param array<int|string, stdClass> $elements
-     */
-    public function withAddedMultiple(array $elements): self
-    {
-        return parent::withAddedMultiple($elements);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withFiltered(\Closure $callback): self
-    {
-        return parent::withFiltered($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param stdClassCollection<int|string, stdClass> $collection
-     */
-    public function withMerged(CollectionInterface $collection): self
-    {
-        return parent::withMerged($collection);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withRemoved($key): self
-    {
-        return parent::withRemoved($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param stdClass $element
-     */
-    public function withRemovedElement($element): self
-    {
-        return parent::withRemovedElement($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param stdClass $element
-     */
-    public function withSet($key, $element): self
-    {
-        return parent::withSet($key, $element);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function withSliced(int $offset, ?int $length = null): self
-    {
-        return parent::withSliced($offset, $length);
     }
 }

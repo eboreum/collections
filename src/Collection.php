@@ -43,18 +43,20 @@ use Eboreum\Exceptional\ExceptionMessageGenerator;
 
 /**
  * {@inheritDoc}
+ *
+ * @template T
+ * @implements CollectionInterface<T>
  */
 class Collection implements CollectionInterface, DebugIdentifierAnnotationInterface
 {
     /**
      * @DebugIdentifier
-     * @var array<int|string, mixed>
+     * @var array<int|string, T>
      */
     protected array $elements;
 
     /**
-     * @param array<int|string, mixed> $elements
-     * @throws RuntimeException
+     * {@inheritDoc}
      */
     public function __construct(array $elements = [])
     {
@@ -83,17 +85,17 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      */
-    public function chunk(int $chunkSize): Collection
+    public function chunk(int $chunkSize): CollectionInterface
     {
         try {
-            if (false === ($chunkSize >= 1)) {
+            if (false == ($chunkSize >= 1)) { // @phpstan-ignore-line
                 throw new RuntimeException(sprintf(
                     'Argument $chunkSize must be >= 1, but it is not. Found: %s',
                     Caster::getInstance()->castTyped($chunkSize),
                 ));
             }
 
-            $collection = new self();
+            $collection = new Collection();
 
             if ($this->elements) {
                 $chunks = array_chunk($this->elements, $chunkSize, true);
@@ -294,7 +296,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
      */
     public function get($key)
     {
-        if (false === is_int($key) && false === is_string($key)) { /** @phpstan-ignore-line */
+        if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
             throw new InvalidArgumentException(sprintf(
                 'Argument $key must be int or string, but it is not. Found: %s',
                 Caster::getInstance()->castTyped($key),
@@ -319,7 +321,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return \ArrayIterator<int|string, mixed>
+     * @return \ArrayIterator<int|string, T>
      */
     public function getIterator(): \ArrayIterator
     {
@@ -331,7 +333,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
      */
     public function has($key): bool
     {
-        if (false === is_int($key) && false === is_string($key)) { /** @phpstan-ignore-line */
+        if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
             throw new InvalidArgumentException(sprintf(
                 'Argument $key must be int or string, but it is not. Found: %s',
                 Caster::getInstance()->castTyped($key),
@@ -517,7 +519,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
         next($this->elements);
         $key = key($this->elements);
 
-        if (array_key_exists($key, $this->elements)) {
+        if (is_scalar($key) && array_key_exists($key, $this->elements)) {
             return $this->elements[$key];
         }
 
@@ -543,7 +545,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toCleared(): self
     {
@@ -556,7 +558,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toReversed(bool $isPreservingKeys = true): self
     {
@@ -569,7 +571,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toSequential(): self
     {
@@ -582,7 +584,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toSortedByCallback(Closure $callback): self
     {
@@ -603,7 +605,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): self
     {
@@ -672,7 +674,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withAdded($element): self
     {
@@ -695,7 +697,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withAddedMultiple(array $elements): self
     {
@@ -730,7 +732,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withFiltered(Closure $callback): self
     {
@@ -755,7 +757,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withMerged(CollectionInterface $collection): self
     {
@@ -801,11 +803,11 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withRemoved($key): self
     {
-        if (false === is_int($key) && false === is_string($key)) { /** @phpstan-ignore-line */
+        if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
             throw new InvalidArgumentException(sprintf(
                 'Argument $key must be int or string, but it is not. Found: %s',
                 Caster::getInstance()->castTyped($key),
@@ -822,7 +824,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withRemovedElement($element): self
     {
@@ -849,14 +851,14 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withSet($key, $element): self
     {
         try {
             $errorMessages = [];
 
-            if (false === is_int($key) && false === is_string($key)) { /** @phpstan-ignore-line */
+            if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
                 $errorMessages[] = sprintf(
                     'Argument $key must be int or string, but it is not. Found: %s',
                     Caster::getInstance()->castTyped($key),
@@ -891,7 +893,7 @@ class Collection implements CollectionInterface, DebugIdentifierAnnotationInterf
     /**
      * {@inheritDoc}
      *
-     * @return static<int|string, mixed>
+     * @return static<T>
      */
     public function withSliced(int $offset, ?int $length = null): self
     {
