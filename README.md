@@ -6,12 +6,13 @@ Wish you had generics in PHP? This library provides a sensible means of managing
 [comment]: # (The README.md is generated using `script/generate-readme.php`)
 
 
+Comes fully equipped with [phpstan](https://packagist.org/packages/phpstan/phpstan) generics annotations. For details, see: https://phpstan.org/blog/generics-in-php-using-phpdocs
 
 <a name="requirements"></a>
 # Requirements
 
 ```json
-"php": ">=7.4",
+"php": "^7.4 || ^8.0",
 "eboreum/caster": "^0.0.3"
 ```
 
@@ -29,7 +30,98 @@ Via GitHub:
 
 # Fundamentals
 
-# Examples
+This library has two core components:
+
+ 1. The class `Eboreum\Collections\Collection`.
+ 2. The interface `Eboreum\Collections\Contract\CollectionInterface`.
+
+`Eboreum\Collections\Collection` by itself imposes no restrictions and may used for storing any data type. It can be thought of as a fancy array. However, it has two crucial differences and advantages over simple arrays: It's **immutable** and it's **type hinted**, including annotations for generics ([https://phpstan.org/blog/generics-in-php-using-phpdocs](https://phpstan.org/blog/generics-in-php-using-phpdocs)).
+
+The true power of this library shows once you start making collection classes, extending `Eboreum\Collections\Collection`, which have restrictions.
+
+This library comes equipped with the following simple data type collection classes:
+
+- `Eboreum\Collections\FloatCollection`: A collection, which only ever contains float numbers.
+- `Eboreum\Collections\IntegerCollection`: A collection, which only ever contains integers.
+- `Eboreum\Collections\ObjectCollection`: A collection, which only ever contains objects – any objects. More on how to make collections for specific class instances below.
+- `Eboreum\Collections\StringCollection`: A collection, which only ever contains strings.
+
+The real shine comes when we start making restrictions on the contents of the collection classes, for instance **restrictions on specific classes**.
+
+This library has the following **predefined class collections**:
+
+ - `\Eboreum\Collections\Object_\ClosureCollection`: A collection, which may and will only ever contain instances of `\Closure`.
+ - `\Eboreum\Collections\Object_\DateTimeCollection`: A collection, which may and will only ever contain instances of `\DateTime`.
+ - `\Eboreum\Collections\Object_\DateTimeImmutableCollection`: A collection, which may and will only ever contain instances of `\DateTimeImmutable`.
+ - `\Eboreum\Collections\Object_\DateTimeInterfaceCollection`: A collection, which may and will only ever contain instances of `\DateTimeInterface`.
+ - `\Eboreum\Collections\Object_\DirectoryCollection`: A collection, which may and will only ever contain instances of `\Directory`.
+ - `\Eboreum\Collections\Object_\ErrorCollection`: A collection, which may and will only ever contain instances of `\Error`.
+ - `\Eboreum\Collections\Object_\ExceptionCollection`: A collection, which may and will only ever contain instances of `\Exception`.
+ - `\Eboreum\Collections\Object_\SplFileInfoCollection`: A collection, which may and will only ever contain instances of `\SplFileInfo`.
+ - `\Eboreum\Collections\Object_\SplFileObjectCollection`: A collection, which may and will only ever contain instances of `\SplFileObject`.
+ - `\Eboreum\Collections\Object_\ThrowableCollection`: A collection, which may and will only ever contain instances of `\Throwable`.
+ - `\Eboreum\Collections\Object_\stdClassCollection`: A collection, which may and will only ever contain instances of `\stdClass`.
+
+
+You may use the above files as inspiration on how to build your own specific class collections. However, this process can be automated; read more about automation further down.
+
+The above classes utilize the abstract class `\Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection` and subsequently the interface `\Eboreum\Collections\Contract\ObjectCollectionInterface`.
+
+## Automating writing of collection classes
+
+Writing tens or even hundreds of collection classes, which essentially have the same structure, is tedious. This process can be automated by utilizing [https://packagist.org/packages/eboreum/collection-class-generator](https://packagist.org/packages/eboreum/collection-class-generator), which will write all desired collection classes for you, directly into in your own project to one or more locations of your choosing. It even comes with opt-in writing of unit tests ([https://packagist.org/packages/phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit))!
+
+## Make collections for anything – not just classes
+
+You may make restrictions for anything – not just classes – including unions ([https://php.watch/versions/8.0/union-types](https://php.watch/versions/8.0/union-types)). Essentially, you merely have to override the `isElementAccepted` method in the collection class you are implementing.
+
+Need something that will accept both integers and float numbers (a union)?
+
+Simply do the following:
+
+```php
+/**
+ * {@inheritDoc}
+ */
+public static function isElementAccepted($element): bool
+{
+    return is_int($element) || is_float($element);
+}
+```
+
+Do remember: If you utilize phpstan, you should also add and/or update the `@template` and its references throughout your custom collection class.
+
+You should also override methods such as `current`, `find`, `first`, etc. with a suitable return type. For instance:
+
+PHP ^8.0:
+
+```php
+/**
+ * {@inheritDoc}
+ */
+public function current(): int|float|int
+{
+    // ...
+}
+```
+
+PHP ^7.4:
+
+```php
+/**
+ * {@inheritDoc}
+ *
+ * @return int|float|int
+ */
+public function current()
+{
+    // ...
+}
+```
+
+Notice: Intersection types ([https://php.watch/versions/8.1/intersection-types](https://php.watch/versions/8.1/intersection-types)) are **not supported** as they are not supported by PHP 8 due to https://wiki.php.net/rfc/nullable_intersection_types having been declined.
+
+The reason is that methods such as `current`, `find`, `first`, etc. cannot have nullable return types when handling intersections.
 
 # Tests
 
@@ -53,6 +145,16 @@ php ../vendor/bin/phpunit
 # License & Disclaimer
 
 See [`LICENSE`](LICENSE) file. Basically: Use this library at your own risk.
+
+# Contributing
+
+We prefer that you create a ticket and or a pull request at https://github.com/eboreum/collections, and have a discussion about a feature or bug here.
+
+## No `\ArrayAccess`!
+
+This library does not and will not utilize `\ArrayAccess` ([https://www.php.net/manual/en/class.arrayaccess.php](https://www.php.net/manual/en/class.arrayaccess.php)).
+
+It goes against the immutable nature of this library, it's a little bit evil, and it makes code unnecessarily obscure.
 
 # Credits
 
