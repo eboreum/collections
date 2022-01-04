@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections\Object_;
 
+use Closure;
 use Directory;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
@@ -92,7 +93,7 @@ class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?Directory
+    public function maxByCallback(Closure $callback): ?Directory
     {
         return parent::maxByCallback($callback);
     }
@@ -100,7 +101,7 @@ class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?Directory
+    public function minByCallback(Closure $callback): ?Directory
     {
         return parent::minByCallback($callback);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections\Object_;
 
+use Closure;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\GeneratedCollectionInterface;
@@ -92,7 +93,7 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?Error
+    public function maxByCallback(Closure $callback): ?Error
     {
         return parent::maxByCallback($callback);
     }
@@ -100,7 +101,7 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?Error
+    public function minByCallback(Closure $callback): ?Error
     {
         return parent::minByCallback($callback);
     }

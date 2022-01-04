@@ -122,7 +122,7 @@ class DateTimeCollection
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?DateTime
+    public function maxByCallback(Closure $callback): ?DateTime
     {
         return parent::maxByCallback($callback);
     }
@@ -144,7 +144,7 @@ class DateTimeCollection
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?DateTime
+    public function minByCallback(Closure $callback): ?DateTime
     {
         return parent::minByCallback($callback);
     }

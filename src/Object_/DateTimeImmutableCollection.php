@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections\Object_;
 
+use Closure;
 use DateTimeImmutable;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
@@ -121,7 +122,7 @@ class DateTimeImmutableCollection
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?DateTimeImmutable
+    public function maxByCallback(Closure $callback): ?DateTimeImmutable
     {
         return parent::maxByCallback($callback);
     }
@@ -143,7 +144,7 @@ class DateTimeImmutableCollection
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?DateTimeImmutable
+    public function minByCallback(Closure $callback): ?DateTimeImmutable
     {
         return parent::minByCallback($callback);
     }

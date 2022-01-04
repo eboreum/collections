@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections\Object_;
 
+use Closure;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\GeneratedCollectionInterface;
@@ -92,7 +93,7 @@ class SplFileInfoCollection extends AbstractNamedClassOrInterfaceCollection impl
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?SplFileInfo
+    public function maxByCallback(Closure $callback): ?SplFileInfo
     {
         return parent::maxByCallback($callback);
     }
@@ -100,7 +101,7 @@ class SplFileInfoCollection extends AbstractNamedClassOrInterfaceCollection impl
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?SplFileInfo
+    public function minByCallback(Closure $callback): ?SplFileInfo
     {
         return parent::minByCallback($callback);
     }

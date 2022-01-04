@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections\Object_;
 
+use Closure;
 use DateTimeInterface;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
@@ -121,7 +122,7 @@ class DateTimeInterfaceCollection
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?DateTimeInterface
+    public function maxByCallback(Closure $callback): ?DateTimeInterface
     {
         return parent::maxByCallback($callback);
     }
@@ -143,7 +144,7 @@ class DateTimeInterfaceCollection
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?DateTimeInterface
+    public function minByCallback(Closure $callback): ?DateTimeInterface
     {
         return parent::minByCallback($callback);
     }
