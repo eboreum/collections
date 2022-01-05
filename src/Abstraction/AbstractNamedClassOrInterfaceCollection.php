@@ -37,6 +37,8 @@ abstract class AbstractNamedClassOrInterfaceCollection extends Collection implem
                     static::getHandledClassName(),
                 ));
             }
+
+            parent::__construct($elements);
         } catch (\Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
@@ -44,8 +46,6 @@ abstract class AbstractNamedClassOrInterfaceCollection extends Collection implem
                 func_get_args(),
             ), 0, $t);
         }
-
-        parent::__construct($elements);
     }
 
     /**

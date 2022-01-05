@@ -118,6 +118,33 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
+                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
+                    preg_quote(basename(__FILE__), '/'),
+                    preg_quote(Collection::class, '/'),
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                sprintf(
+                    implode('', [
+                        '/',
+                        '^',
+                        'Failure in \\\\%s-\>__construct\(',
+                            '\$elements = \(array\(4\)\) \[',
+                                '\(int\) 0 => \(object\) \\\\stdClass',
+                                ', \(int\) 1 => \(object\) \\\\DateTime \("2021\-01\-01T00\:00\:00\+00\:00"\)',
+                                ', \(int\) 2 => \(object\) \\\\stdClass',
+                                ', \.\.\. and 1 more element',
+                            '\] \(sample\)',
+                        '\) inside \(object\) class@anonymous\/in\/.+\/%s:+\d+ \{',
+                            '\\\\%s\-\>\$elements = \(uninitialized\)',
+                        '\}',
+                        '$',
+                        '/',
+                    ]),
                     preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
