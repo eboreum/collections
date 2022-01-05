@@ -118,7 +118,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                         '$',
                         '/',
                     ]),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
+                    preg_quote(Collection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
                 ),

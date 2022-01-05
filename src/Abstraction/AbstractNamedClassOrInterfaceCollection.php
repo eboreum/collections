@@ -40,7 +40,7 @@ abstract class AbstractNamedClassOrInterfaceCollection extends Collection implem
         } catch (\Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod($this, __FUNCTION__),
+                new \ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }

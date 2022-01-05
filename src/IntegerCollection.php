@@ -177,7 +177,7 @@ class IntegerCollection
             return ($a - $b) * $direction;
         });
 
-        assert(is_a($collection, __CLASS__)); // Make phpstan happy
+        assert(is_a($collection, self::class)); // Make phpstan happy
 
         return $collection;
     }
@@ -196,7 +196,7 @@ class IntegerCollection
             $isUsingFirstEncounteredElement,
         );
 
-        assert(is_a($collection, __CLASS__)); // Make phpstan happy
+        assert(is_a($collection, self::class)); // Make phpstan happy
 
         return $collection;
     }

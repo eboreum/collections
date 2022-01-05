@@ -172,7 +172,7 @@ class DateTimeImmutableCollection
             }
         );
 
-        assert(is_a($collection, __CLASS__));
+        assert(is_a($collection, self::class));
 
         return $collection;
     }
@@ -191,7 +191,7 @@ class DateTimeImmutableCollection
             $isUsingFirstEncounteredElement,
         );
 
-        assert(is_a($collection, __CLASS__));
+        assert(is_a($collection, self::class));
 
         return $collection;
     }

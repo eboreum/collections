@@ -172,7 +172,7 @@ class DateTimeCollection
             }
         );
 
-        assert(is_a($collection, __CLASS__));
+        assert(is_a($collection, self::class));
 
         return $collection;
     }
@@ -191,7 +191,7 @@ class DateTimeCollection
             $isUsingFirstEncounteredElement,
         );
 
-        assert(is_a($collection, __CLASS__));
+        assert(is_a($collection, self::class));
 
         return $collection;
     }

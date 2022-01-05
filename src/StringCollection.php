@@ -138,7 +138,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
             $isUsingFirstEncounteredElement,
         );
 
-        assert(is_a($collection, __CLASS__)); // Make phpstan happy
+        assert(is_a($collection, self::class)); // Make phpstan happy
 
         return $collection;
     }
