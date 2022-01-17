@@ -10,7 +10,7 @@ use Eboreum\Caster\Collection\Formatter\ObjectFormatterCollection;
 use Eboreum\Caster\Contract\CharacterEncodingInterface;
 use Eboreum\Caster\Formatter\Object_\ClosureFormatter;
 use Eboreum\Caster\Formatter\Object_\DateTimeInterfaceFormatter;
-use Eboreum\Caster\Formatter\Object_\DebugIdentifierAnnotationInterfaceFormatter;
+use Eboreum\Caster\Formatter\Object_\DebugIdentifierAttributeInterfaceFormatter;
 use Eboreum\Caster\Formatter\Object_\DirectoryFormatter;
 use Eboreum\Caster\Formatter\Object_\TextuallyIdentifiableInterfaceFormatter;
 use Eboreum\Caster\Formatter\Object_\ThrowableFormatter;
@@ -35,7 +35,7 @@ class Caster extends EboreumCaster
 
         $caster = $caster->withCustomObjectFormatterCollection(new ObjectFormatterCollection(...[
             new TextuallyIdentifiableInterfaceFormatter(),
-            new DebugIdentifierAnnotationInterfaceFormatter(),
+            new DebugIdentifierAttributeInterfaceFormatter(),
             new ClosureFormatter(),
             new DirectoryFormatter(),
             new DateTimeInterfaceFormatter(),

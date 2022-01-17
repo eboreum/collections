@@ -34,8 +34,8 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Closure;
-use Eboreum\Caster\Annotation\DebugIdentifier;
-use Eboreum\Caster\Contract\DebugIdentifierAnnotationInterface;
+use Eboreum\Caster\Attribute\DebugIdentifier;
+use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
@@ -47,12 +47,12 @@ use Eboreum\Exceptional\ExceptionMessageGenerator;
  * @template T
  * @implements CollectionInterface<T>
  */
-class Collection implements CollectionInterface, DebugIdentifierAnnotationInterface
+class Collection implements CollectionInterface, DebugIdentifierAttributeInterface
 {
     /**
-     * @DebugIdentifier
      * @var array<int|string, T>
      */
+    #[DebugIdentifier]
     protected array $elements;
 
     /**

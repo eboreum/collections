@@ -12,8 +12,8 @@ Comes fully equipped with [phpstan](https://packagist.org/packages/phpstan/phpst
 # Requirements
 
 ```json
-"php": "^7.4 || ^8.0",
-"eboreum/caster": "^0.0.3"
+"php": "^8.0",
+"eboreum/caster": "dev-main"
 ```
 
 For more information, see the [`composer.json`](composer.json) file.
@@ -128,7 +128,7 @@ The reason is that methods such as `current`, `find`, `first`, etc. cannot have 
 ## Test/development requirements
 
 ```json
-"phpstan/phpstan": "^1.3",
+"phpstan/phpstan": "^1.4",
 "phpunit/phpunit": "^9.5",
 "wikimedia/composer-merge-plugin": "^2.0"
 ```
