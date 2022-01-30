@@ -33,7 +33,7 @@ class Caster extends EboreumCaster
 
         $caster = new self($characterEncoding);
 
-        $caster = $caster->withCustomObjectFormatterCollection(new ObjectFormatterCollection(...[
+        $caster = $caster->withCustomObjectFormatterCollection(new ObjectFormatterCollection([
             new TextuallyIdentifiableInterfaceFormatter(),
             new DebugIdentifierAttributeInterfaceFormatter(),
             new ClosureFormatter(),

@@ -9,7 +9,11 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 $srcFolderPath = dirname(__DIR__, 2) . '/src';
 $count = 0;
 
-foreach (glob($srcFolderPath . '/Object_/*Collection.php') as $filePathAbsolute) {
+$absoluteFilePaths = glob($srcFolderPath . '/Object_/*Collection.php');
+
+assert(is_array($absoluteFilePaths));
+
+foreach ($absoluteFilePaths as $filePathAbsolute) {
     $filePathRelative = substr($filePathAbsolute, strlen($srcFolderPath) + 1);
     $className = sprintf(
         'Eboreum\\Collections\\%s',
