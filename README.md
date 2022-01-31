@@ -1,6 +1,11 @@
 Eboreum/Collections: Moving PHP closer towards generics
 ===============================
 
+![License](https://img.shields.io/packagist/l/eboreum/collections.svg)
+![Build Status](https://app.travis-ci.com/eboreum/collections.svg?branch=main)
+![codecov](https://codecov.io/gh/eboreum/collections/branch/main/graph/badge.svg)
+![PHPStan](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg?style=flat)
+
 Wish you had generics in PHP? This library provides a sensible means of managing collections of data (i.e. arrays with restrictions), immutably, until such a time that PHP generics are bestowed upon us.
 
 [comment]: # (The README.md is generated using `script/generate-readme.php`)

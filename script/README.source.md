@@ -1,6 +1,11 @@
 Eboreum/Collections: Moving PHP closer towards generics
 ===============================
 
+![License](https://img.shields.io/packagist/l/eboreum/collections.svg)
+![Build Status](https://app.travis-ci.com/eboreum/collections.svg?branch=main)
+![codecov](https://codecov.io/gh/eboreum/collections/branch/main/graph/badge.svg)
+%run "script/make-readme/make-phpstan-badge.php"%
+
 %composer.json.description%
 
 Comes fully equipped with [phpstan](https://packagist.org/packages/phpstan/phpstan) generics annotations. For details, see: https://phpstan.org/blog/generics-in-php-using-phpdocs
