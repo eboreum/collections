@@ -21,6 +21,7 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  *
  * @template T3 of DateTimeImmutable
  * @extends AbstractNamedClassOrInterfaceCollection<T3>
+ * @implements GeneratedCollectionInterface<T3>
  * @implements MaximumableCollectionInterface<T3>
  * @implements MinimumableCollectionInterface<T3>
  * @implements SortableCollectionInterface<T3>
@@ -29,11 +30,11 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 class DateTimeImmutableCollection
     extends AbstractNamedClassOrInterfaceCollection
     implements
+        GeneratedCollectionInterface,
         MaximumableCollectionInterface,
         MinimumableCollectionInterface,
         SortableCollectionInterface,
-        UniqueableCollectionInterface,
-        GeneratedCollectionInterface
+        UniqueableCollectionInterface
 {
     /**
      * {@inheritDoc}
@@ -89,10 +90,18 @@ class DateTimeImmutableCollection
 
     /**
      * {@inheritDoc}
+     */
+    public function get(int|string $key): ?DateTimeImmutable
+    {
+        return parent::get($key);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param T3 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

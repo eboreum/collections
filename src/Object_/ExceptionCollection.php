@@ -17,6 +17,7 @@ use Exception;
  *
  * @template T3 of Exception
  * @extends AbstractNamedClassOrInterfaceCollection<T3>
+ * @implements GeneratedCollectionInterface<T3>
  */
 class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -74,10 +75,18 @@ class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implem
 
     /**
      * {@inheritDoc}
+     */
+    public function get(int|string $key): ?Exception
+    {
+        return parent::get($key);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param T3 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

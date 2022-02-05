@@ -74,7 +74,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      */
-    public function get($key): ?string
+    public function get(int|string $key): ?string
     {
         return parent::get($key);
     }
@@ -84,7 +84,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
      *
      * @param T2 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

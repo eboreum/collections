@@ -17,6 +17,7 @@ use SplFileInfo;
  *
  * @template T3 of SplFileInfo
  * @extends AbstractNamedClassOrInterfaceCollection<T3>
+ * @implements GeneratedCollectionInterface<T3>
  */
 class SplFileInfoCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -74,10 +75,18 @@ class SplFileInfoCollection extends AbstractNamedClassOrInterfaceCollection impl
 
     /**
      * {@inheritDoc}
+     */
+    public function get(int|string $key): ?SplFileInfo
+    {
+        return parent::get($key);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param T3 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

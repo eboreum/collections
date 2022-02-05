@@ -75,7 +75,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      */
-    public function get($key): ?object
+    public function get(int|string $key): ?object
     {
         return parent::get($key);
     }
@@ -85,7 +85,7 @@ class ObjectCollection extends Collection
      *
      * @param T2 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

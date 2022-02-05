@@ -17,6 +17,7 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  *
  * @template T3 of Directory
  * @extends AbstractNamedClassOrInterfaceCollection<T3>
+ * @implements GeneratedCollectionInterface<T3>
  */
 class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -74,10 +75,18 @@ class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implem
 
     /**
      * {@inheritDoc}
+     */
+    public function get(int|string $key): ?Directory
+    {
+        return parent::get($key);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param T3 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

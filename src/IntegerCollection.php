@@ -85,7 +85,7 @@ class IntegerCollection
     /**
      * {@inheritDoc}
      */
-    public function get($key): ?int
+    public function get(int|string $key): ?int
     {
         return parent::get($key);
     }
@@ -95,7 +95,7 @@ class IntegerCollection
      *
      * @param T2 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

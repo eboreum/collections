@@ -1125,66 +1125,6 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->assertNull($collection->first());
     }
 
-    public function testGetThrowsExceptionWhenArgumentKeyIsInvalid(): void
-    {
-        $collection = new Collection();
-
-        try {
-            $collection->get(null); // @phpstan-ignore-line
-        } catch (\Exception $e) {
-            $currentException = $e;
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
-                implode('', [
-                    '/',
-                    '^',
-                    'Argument \$key must be int or string, but it is not\.',
-                    ' Found\: \(null\) null',
-                    '$',
-                    '/',
-                ]),
-                $currentException->getMessage(),
-            );
-
-            $currentException = $currentException->getPrevious();
-            $this->assertTrue(null === $currentException);
-
-            return;
-        }
-
-        $this->fail('Exception was never thrown.');
-    }
-
-    public function testHasThrowsExceptionWhenArgumentKeyIsInvalid(): void
-    {
-        $collection = new Collection();
-
-        try {
-            $collection->has(null); // @phpstan-ignore-line
-        } catch (\Exception $e) {
-            $currentException = $e;
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
-                implode('', [
-                    '/',
-                    '^',
-                    'Argument \$key must be int or string, but it is not\.',
-                    ' Found\: \(null\) null',
-                    '$',
-                    '/',
-                ]),
-                $currentException->getMessage(),
-            );
-
-            $currentException = $currentException->getPrevious();
-            $this->assertTrue(null === $currentException);
-
-            return;
-        }
-
-        $this->fail('Exception was never thrown.');
-    }
-
     public function testIndexOfThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
     {
         $collection = new class extends Collection

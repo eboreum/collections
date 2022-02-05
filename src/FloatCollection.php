@@ -85,7 +85,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      */
-    public function get($key): ?float
+    public function get(int|string $key): ?float
     {
         return parent::get($key);
     }
@@ -95,7 +95,7 @@ class FloatCollection
      *
      * @param T2 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

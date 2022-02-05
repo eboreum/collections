@@ -282,7 +282,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     /**
      * {@inheritDoc}
      */
-    public function firstKey()
+    public function firstKey(): int|string|null
     {
         if (!$this->elements) {
             return null;
@@ -294,7 +294,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     /**
      * {@inheritDoc}
      */
-    public function get($key)
+    public function get(int|string $key)
     {
         if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
             throw new InvalidArgumentException(sprintf(
@@ -331,22 +331,15 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     /**
      * {@inheritDoc}
      */
-    public function has($key): bool
+    public function has(int|string $key): bool
     {
-        if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
-            throw new InvalidArgumentException(sprintf(
-                'Argument $key must be int or string, but it is not. Found: %s',
-                Caster::getInstance()->castTyped($key),
-            ));
-        }
-
         return array_key_exists($key, $this->elements);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         static::assertIsElementAccepted($element);
 
@@ -362,7 +355,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     /**
      * {@inheritDoc}
      */
-    public function key()
+    public function key(): int|string|null
     {
         return key($this->elements);
     }
@@ -386,7 +379,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     /**
      * {@inheritDoc}
      */
-    public function lastKey()
+    public function lastKey(): int|string|null
     {
         if (!$this->elements) {
             return null;

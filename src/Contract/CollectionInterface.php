@@ -150,10 +150,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Corresponds to the core PHP function `array_key_first`.
      *
      * @see https://www.php.net/manual/en/function.array-key-first.php
-     *
-     * @return int|string|null
      */
-    public function firstKey();
+    public function firstKey(): int|string|null;
 
     /**
      * Returns the array keys for the elements in the current collection.
@@ -170,21 +168,19 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Returns the element at the $key position in the collection's elements. If key does not exist, returns `null`.
      * Must throw a RuntimeException when argument $key is invalid.
      *
-     * @param int|string $key
      * @throws InvalidArgumentException
      * @return T|null
      */
-    public function get($key);
+    public function get(int|string $key);
 
     /**
      * Returns `true`, if the argument $key exists as an array key in the collection's elements. Otherwise, returns
      * `false`.
      * Must throw a RuntimeException when argument $key is invalid.
      *
-     * @param int|string $key
      * @throws InvalidArgumentException
      */
-    public function has($key): bool;
+    public function has(int|string $key): bool;
 
     /**
      * Returns `true`, if the argument $key exists as an array key in the collection's elements. Otherwise, returns
@@ -196,9 +192,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param T $element
      * @throws InvalidArgumentException
-     * @return int|string|null
      */
-    public function indexOf($element);
+    public function indexOf($element): int|string|null;
 
     /**
      * Returns the key for the current element (array pointer) in the collection's elements. If key does not exist,
@@ -207,10 +202,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Corresponds to the core PHP function `key`.
      *
      * @see https://www.php.net/manual/en/function.key.php
-     *
-     * @return int|string|null
      */
-    public function key();
+    public function key(): int|string|null;
 
     /**
      * Returns the last element in the collection's elements. If empty, returns `null`. Moves the array pointer.
@@ -229,10 +222,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Corresponds to the core PHP function `array_key_last`.
      *
      * @see https://www.php.net/manual/en/function.array-key-last.php
-     *
-     * @return int|string|null
      */
-    public function lastKey();
+    public function lastKey(): int|string|null;
 
     /**
      * Map the contents of the collection and return the mapped array.

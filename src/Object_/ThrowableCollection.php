@@ -17,6 +17,7 @@ use Throwable;
  *
  * @template T3 of Throwable
  * @extends AbstractNamedClassOrInterfaceCollection<T3>
+ * @implements GeneratedCollectionInterface<T3>
  */
 class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -74,10 +75,18 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
 
     /**
      * {@inheritDoc}
+     */
+    public function get(int|string $key): ?Throwable
+    {
+        return parent::get($key);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param T3 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

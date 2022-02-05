@@ -17,6 +17,7 @@ use Error;
  *
  * @template T3 of Error
  * @extends AbstractNamedClassOrInterfaceCollection<T3>
+ * @implements GeneratedCollectionInterface<T3>
  */
 class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -74,10 +75,18 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
 
     /**
      * {@inheritDoc}
+     */
+    public function get(int|string $key): ?Error
+    {
+        return parent::get($key);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param T3 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }

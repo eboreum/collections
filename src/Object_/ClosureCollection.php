@@ -16,6 +16,7 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  *
  * @template T3 of Closure
  * @extends AbstractNamedClassOrInterfaceCollection<T3>
+ * @implements GeneratedCollectionInterface<T3>
  */
 class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -74,7 +75,7 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
     /**
      * {@inheritDoc}
      */
-    public function get($key): ?Closure
+    public function get(int|string $key): ?Closure
     {
         return parent::get($key);
     }
@@ -84,7 +85,7 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
      *
      * @param T3 $element
      */
-    public function indexOf($element)
+    public function indexOf($element): int|string|null
     {
         return parent::indexOf($element);
     }
