@@ -261,18 +261,14 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Argument \$collection cannot be merged into the current collection, because 1\/1 elements',
-                        ' are invalid, including\: \[0 \=\> \(null\) null\]',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
+                implode('', [
+                    '/',
+                    '^',
+                    'Argument \$collection cannot be merged into the current collection, because 1\/1 elements',
+                    ' are invalid, including\: \[0 \=\> \(null\) null\]',
+                    '$',
+                    '/',
+                ]),
                 $currentException->getMessage(),
             );
 

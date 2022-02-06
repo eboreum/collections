@@ -269,18 +269,15 @@ class CollectionTest extends AbstractCollectionTestCase
             assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'In argument \$elements, 1\/2 elements are invalid, including\: \[',
-                            '0 \=\> \(null\) null',
-                        '\]',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(basename(__FILE__), '/'),
-                ),
+                implode('', [
+                    '/',
+                    '^',
+                    'In argument \$elements, 1\/2 elements are invalid, including\: \[',
+                        '0 \=\> \(null\) null',
+                    '\]',
+                    '$',
+                    '/',
+                ]),
                 $currentException->getMessage(),
             );
 
@@ -548,17 +545,14 @@ class CollectionTest extends AbstractCollectionTestCase
             assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Argument \$key must be int or string, but it is not\.',
-                        ' Found\: \(null\) null',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(basename(__FILE__), '/'),
-                ),
+                implode('', [
+                    '/',
+                    '^',
+                    'Argument \$key must be int or string, but it is not\.',
+                    ' Found\: \(null\) null',
+                    '$',
+                    '/',
+                ]),
                 $currentException->getMessage(),
             );
 
@@ -1094,18 +1088,14 @@ class CollectionTest extends AbstractCollectionTestCase
             assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Call \$callback\(\(null\) null, \(int\) 0\) did not return a boolean, which it must\.',
-                        ' Found return value\: \(int\) 42',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
+                implode('', [
+                    '/',
+                    '^',
+                    'Call \$callback\(\(null\) null, \(int\) 0\) did not return a boolean, which it must\.',
+                    ' Found return value\: \(int\) 42',
+                    '$',
+                    '/',
+                ]),
                 $currentException->getMessage(),
             );
 
@@ -1206,17 +1196,13 @@ class CollectionTest extends AbstractCollectionTestCase
             assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure when calling \$callback\(\(null\) null, \(int\) 0\)',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
+                implode('', [
+                    '/',
+                    '^',
+                    'Failure when calling \$callback\(\(null\) null, \(int\) 0\)',
+                    '$',
+                    '/',
+                ]),
                 $currentException->getMessage(),
             );
 
@@ -1269,18 +1255,14 @@ class CollectionTest extends AbstractCollectionTestCase
             assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Call \$callback\(\(null\) null, \(int\) 0\) must return int, but it did not\.',
-                        ' Found return value\: \(null\) null',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
+                implode('', [
+                    '/',
+                    '^',
+                    'Call \$callback\(\(null\) null, \(int\) 0\) must return int, but it did not\.',
+                    ' Found return value\: \(null\) null',
+                    '$',
+                    '/',
+                ]),
                 $currentException->getMessage(),
             );
 
@@ -1329,17 +1311,13 @@ class CollectionTest extends AbstractCollectionTestCase
             assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure when calling \$callback\(\(null\) null, \(int\) 0\)',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
+                implode('', [
+                    '/',
+                    '^',
+                    'Failure when calling \$callback\(\(null\) null, \(int\) 0\)',
+                    '$',
+                    '/',
+                ]),
                 $currentException->getMessage(),
             );
 
@@ -1392,18 +1370,14 @@ class CollectionTest extends AbstractCollectionTestCase
             assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Call \$callback\(\(null\) null, \(int\) 0\) must return int, but it did not\.',
-                        ' Found return value\: \(null\) null',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
+                implode('', [
+                    '/',
+                    '^',
+                    'Call \$callback\(\(null\) null, \(int\) 0\) must return int, but it did not\.',
+                    ' Found return value\: \(null\) null',
+                    '$',
+                    '/',
+                ]),
                 $currentException->getMessage(),
             );
 
