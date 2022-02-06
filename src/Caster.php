@@ -45,7 +45,7 @@ class Caster extends EboreumCaster
         return $caster;
     }
 
-    public static function getInstance(): Caster
+    public static function getInstance(): self
     {
         if (null === self::$instance) {
             self::$instance = self::create();
