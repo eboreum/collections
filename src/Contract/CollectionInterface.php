@@ -306,10 +306,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
     /**
      * Remove all elements from a clone of the current collection.
      * Must return a clone.
-     *
-     * @return static<T>
      */
-    public function toCleared(): self;
+    public function toCleared(): static;
 
     /**
      * Equivalent of `array_values`. Makes the contained elements in a clone of the current instance exist in a
@@ -318,10 +316,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Must return a clone.
      *
      * @see https://www.php.net/manual/en/function.array-values.php
-     *
-     * @return static<T>
      */
-    public function toSequential(): self;
+    public function toSequential(): static;
 
     /**
      * Reverses the order of elements in the clone of a the current collection using `array_reverse`.
@@ -332,9 +328,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *                               the `array_reverse` function.
      *                               When `true`, array keys are preserved. Otherwise, they are not (i.e. becoming
      *                               sequential).
-     * @return static<T>
      */
-    public function toReversed(bool $isPreservingKeys = true): self;
+    public function toReversed(bool $isPreservingKeys = true): static;
 
     /**
      * Sorts using the `uasort` function.
@@ -350,9 +345,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Must return a clone.
      *
      * @throws RuntimeException
-     * @return static<T>
      */
-    public function toSortedByCallback(Closure $callback): self;
+    public function toSortedByCallback(Closure $callback): static;
 
     /**
      * Produces a clone containing only elements which are considered to be unique, where the uniqueness is determined
@@ -374,9 +368,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *                                          resulting collection. Otherwise, only the last element will exist in the
      *                                          resulting collection.
      * @throws RuntimeException
-     * @return static<T>
      */
-    public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): self;
+    public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): static;
 
     /**
      * Add an element to the end of a clone of the current collection.
@@ -384,9 +377,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param T $element
      * @throws RuntimeException
-     * @return static<T>
      */
-    public function withAdded($element): self;
+    public function withAdded($element): static;
 
     /**
      * Add multiple elements to the end of a clone of the current collection. Array keys are not preserved.
@@ -394,9 +386,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param array<int|string, T> $elements
      * @throws RuntimeException
-     * @return static<T>
      */
-    public function withAddedMultiple(array $elements): self;
+    public function withAddedMultiple(array $elements): static;
 
     /**
      * Filter the elements of a clone of the current collection, using the `array_filter` function and based on logic in
@@ -404,9 +395,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Must return a clone.
      *
      * @throws RuntimeException
-     * @return static<T>
      */
-    public function withFiltered(Closure $callback): self;
+    public function withFiltered(Closure $callback): static;
 
     /**
      * Merge (using `array_merge` logic) a clone of the collection with the elements contained in the $collection
@@ -415,9 +405,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param CollectionInterface<T> $collection
      * @throws RuntimeException
-     * @return static<T>
      */
-    public function withMerged(CollectionInterface $collection): self;
+    public function withMerged(CollectionInterface $collection): static;
 
     /**
      * Remove the $key from a clone of the current collection, if the array key exists.
@@ -426,9 +415,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param int|string $key
      * @throws InvalidArgumentException
-     * @return static<T>
      */
-    public function withRemoved($key): self;
+    public function withRemoved($key): static;
 
     /**
      * Remove the $element from a clone of the current collection, if the element exists in the collection.
@@ -437,9 +425,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param T $element
      * @throws RuntimeException
-     * @return static<T>
      */
-    public function withRemovedElement($element): self;
+    public function withRemovedElement($element): static;
 
     /**
      * Set the $element argument on a clone of the current collection, using the $key argument.
@@ -449,9 +436,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * @param int|string $key
      * @param T $element
      * @throws RuntimeException
-     * @return static<T>
      */
-    public function withSet($key, $element): self;
+    public function withSet($key, $element): static;
 
     /**
      * Slice a clone of the current collection using the `array_slice` function.
@@ -459,10 +445,8 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * @see https://www.php.net/manual/en/function.array-slice.php
      *
      * Must return a clone.
-     *
-     * @return static<T>
      */
-    public function withSliced(int $offset, ?int $length = null): self;
+    public function withSliced(int $offset, ?int $length = null): static;
 
     /**
      * Returns `true` when no elements exist in the current collection. Otherwise, returns `false`.

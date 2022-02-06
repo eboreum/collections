@@ -25,13 +25,13 @@ class Caster extends EboreumCaster
     /**
      * {@inheritDoc}
      */
-    public static function create(?CharacterEncodingInterface $characterEncoding = null): Caster
+    public static function create(?CharacterEncodingInterface $characterEncoding = null): static
     {
         if (null === $characterEncoding) {
             $characterEncoding = CharacterEncoding::getInstance();
         }
 
-        $caster = new self($characterEncoding);
+        $caster = new static($characterEncoding);
 
         $caster = $caster->withCustomObjectFormatterCollection(new ObjectFormatterCollection([
             new TextuallyIdentifiableInterfaceFormatter(),
@@ -41,8 +41,6 @@ class Caster extends EboreumCaster
             new DateTimeInterfaceFormatter(),
             new ThrowableFormatter(),
         ]));
-
-        assert($caster instanceof Caster);
 
         return $caster;
     }

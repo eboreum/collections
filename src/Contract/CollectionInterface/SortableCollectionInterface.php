@@ -21,8 +21,6 @@ interface SortableCollectionInterface extends CollectionInterface
      * Must return a clone containing sorted elements for the given collection.
      *
      * This may be achieved using the method `toSortedByCallback`.
-     *
-     * @return static<T>
      */
-    public function toSorted(bool $isAscending = true): self;
+    public function toSorted(bool $isAscending = true): static;
 }

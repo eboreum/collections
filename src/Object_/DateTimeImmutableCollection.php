@@ -168,40 +168,28 @@ class DateTimeImmutableCollection
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T3>
      */
-    public function toSorted(bool $isAscending = true): self
+    public function toSorted(bool $isAscending = true): static
     {
         $direction = ($isAscending ? 1 : -1);
 
-        $collection = $this->toSortedByCallback(
+        return $this->toSortedByCallback(
             static function (DateTimeImmutable $a, DateTimeImmutable $b) use ($direction): int {
                 return ($a->getTimestamp() - $b->getTimestamp()) * $direction;
             }
         );
-
-        assert(is_a($collection, self::class));
-
-        return $collection;
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T3>
      */
-    public function toUnique(bool $isUsingFirstEncounteredElement = true): self
+    public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
-        $collection = $this->toUniqueByCallback(
+        return $this->toUniqueByCallback(
             static function (DateTimeImmutable $element) {
                 return (string)$element->getTimestamp();
             },
             $isUsingFirstEncounteredElement,
         );
-
-        assert(is_a($collection, self::class));
-
-        return $collection;
     }
 }

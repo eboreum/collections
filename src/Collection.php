@@ -537,10 +537,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function toCleared(): self
+    public function toCleared(): static
     {
         $clone = clone $this;
         $clone->elements = [];
@@ -550,10 +548,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function toReversed(bool $isPreservingKeys = true): self
+    public function toReversed(bool $isPreservingKeys = true): static
     {
         $clone = clone $this;
         $clone->elements = array_reverse($clone->elements, $isPreservingKeys);
@@ -563,10 +559,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function toSequential(): self
+    public function toSequential(): static
     {
         $clone = clone $this;
         $clone->elements = array_values($clone->elements);
@@ -576,10 +570,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function toSortedByCallback(Closure $callback): self
+    public function toSortedByCallback(Closure $callback): static
     {
         try {
             $clone = clone $this;
@@ -597,10 +589,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): self
+    public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): static
     {
         try {
             $clone = clone $this;
@@ -666,10 +656,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function withAdded($element): self
+    public function withAdded($element): static
     {
         try {
             static::assertIsElementAccepted($element);
@@ -689,10 +677,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function withAddedMultiple(array $elements): self
+    public function withAddedMultiple(array $elements): static
     {
         try {
             $invalids = static::makeInvalids($elements);
@@ -724,10 +710,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function withFiltered(Closure $callback): self
+    public function withFiltered(Closure $callback): static
     {
         try {
             $clone = clone $this;
@@ -749,10 +733,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function withMerged(CollectionInterface $collection): self
+    public function withMerged(CollectionInterface $collection): static
     {
         try {
             if (false === is_a($collection, static::class)) {
@@ -795,10 +777,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function withRemoved($key): self
+    public function withRemoved($key): static
     {
         if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
             throw new InvalidArgumentException(sprintf(
@@ -816,10 +796,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function withRemovedElement($element): self
+    public function withRemovedElement($element): static
     {
         try {
             static::assertIsElementAccepted($element);
@@ -843,10 +821,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function withSet($key, $element): self
+    public function withSet($key, $element): static
     {
         try {
             $errorMessages = [];
@@ -885,10 +861,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T>
      */
-    public function withSliced(int $offset, ?int $length = null): self
+    public function withSliced(int $offset, ?int $length = null): static
     {
         $clone = clone $this;
         $clone->elements = array_slice($clone->elements, $offset, $length, true);

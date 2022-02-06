@@ -166,38 +166,26 @@ class FloatCollection
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T2>
      */
-    public function toSorted(bool $isAscending = true): self
+    public function toSorted(bool $isAscending = true): static
     {
         $direction = ($isAscending ? 1 : -1);
 
-        $collection = $this->toSortedByCallback(static function (float $a, float $b) use ($direction) {
+        return $this->toSortedByCallback(static function (float $a, float $b) use ($direction) {
             return ($a - $b) * $direction;
         });
-
-        assert(is_a($collection, self::class)); // Make phpstan happy
-
-        return $collection;
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T2>
      */
-    public function toUnique(bool $isUsingFirstEncounteredElement = true): self
+    public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
-        $collection = $this->toUniqueByCallback(
+        return $this->toUniqueByCallback(
             static function (float $element) {
                 return (string)$element;
             },
             $isUsingFirstEncounteredElement,
         );
-
-        assert(is_a($collection, self::class)); // Make phpstan happy
-
-        return $collection;
     }
 }

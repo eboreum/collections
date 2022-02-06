@@ -22,8 +22,6 @@ interface UniqueableCollectionInterface extends CollectionInterface
      *
      * Internal logic – exclusively – must handle how uniqueness is considered. This may be achieved using the method
      * `toUniqueByCallback`.
-     *
-     * @return static<T>
      */
-    public function toUnique(bool $isUsingFirstEncounteredElement = true): self;
+    public function toUnique(bool $isUsingFirstEncounteredElement = true): static;
 }

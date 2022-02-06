@@ -123,12 +123,10 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
 
     /**
      * {@inheritDoc}
-     *
-     * @return static<T2>
      */
-    public function toUnique(bool $isUsingFirstEncounteredElement = true): self
+    public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
-        $collection = $this->toUniqueByCallback(
+        return $this->toUniqueByCallback(
             /**
              * @return array<T2>
              */
@@ -137,9 +135,5 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
             },
             $isUsingFirstEncounteredElement,
         );
-
-        assert(is_a($collection, self::class)); // Make phpstan happy
-
-        return $collection;
     }
 }
