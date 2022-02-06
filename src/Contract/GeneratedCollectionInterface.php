@@ -24,12 +24,6 @@ interface GeneratedCollectionInterface extends CollectionInterface
      * {@inheritDoc}
      */
     #[Overridden]
-    public function chunk(int $chunkSize): CollectionInterface;
-
-    /**
-     * {@inheritDoc}
-     */
-    #[Overridden]
     public function contains($element): bool;
 
     /**
