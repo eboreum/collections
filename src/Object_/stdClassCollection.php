@@ -15,9 +15,9 @@ use stdClass;
  *
  * A collection which contains instances of stdClass, exclusively.
  *
- * @template T3 of stdClass
- * @extends AbstractNamedClassOrInterfaceCollection<T3>
- * @implements GeneratedCollectionInterface<T3>
+ * @template T of stdClass
+ * @extends AbstractNamedClassOrInterfaceCollection<T>
+ * @implements GeneratedCollectionInterface<T>
  */
 class stdClassCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -32,7 +32,7 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T3> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -42,7 +42,7 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -84,7 +84,7 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {

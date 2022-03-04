@@ -14,15 +14,15 @@ use Eboreum\Exceptional\ExceptionMessageGenerator;
 /**
  * {@inheritDoc}
  *
- * @template T2 of object
- * @extends Collection<T2>
+ * @template T of object
+ * @extends Collection<T>
  */
 abstract class AbstractNamedClassOrInterfaceCollection extends Collection implements ObjectCollectionInterface
 {
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T2> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {

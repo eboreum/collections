@@ -15,8 +15,8 @@ use Eboreum\Collections\Contract\CollectionInterface;
  * found under \Eboreum\Collections\Object_, or create your own custom object collection by extending
  * \Eboreum\Collections\Abstraction\AbstractNamedObjectCollection.
  *
- * @template T2 of object
- * @extends Collection<T2>
+ * @template T of object
+ * @extends Collection<T>
  */
 class ObjectCollection extends Collection
 {
@@ -31,7 +31,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T2> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -41,7 +41,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      *
-     * @param T2 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -83,7 +83,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      *
-     * @param T2 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {

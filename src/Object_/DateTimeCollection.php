@@ -19,13 +19,13 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  *
  * A collection which contains instances of DateTime, exclusively.
  *
- * @template T3 of DateTime
- * @extends AbstractNamedClassOrInterfaceCollection<T3>
- * @implements GeneratedCollectionInterface<T3>
- * @implements MaximumableCollectionInterface<T3>
- * @implements MinimumableCollectionInterface<T3>
- * @implements SortableCollectionInterface<T3>
- * @implements UniqueableCollectionInterface<T3>
+ * @template T of DateTime
+ * @extends AbstractNamedClassOrInterfaceCollection<T>
+ * @implements GeneratedCollectionInterface<T>
+ * @implements MaximumableCollectionInterface<T>
+ * @implements MinimumableCollectionInterface<T>
+ * @implements SortableCollectionInterface<T>
+ * @implements UniqueableCollectionInterface<T>
  */
 class DateTimeCollection
     extends AbstractNamedClassOrInterfaceCollection
@@ -47,7 +47,7 @@ class DateTimeCollection
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T3> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -57,7 +57,7 @@ class DateTimeCollection
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -99,7 +99,7 @@ class DateTimeCollection
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {

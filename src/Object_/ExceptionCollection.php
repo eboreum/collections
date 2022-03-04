@@ -15,9 +15,9 @@ use Exception;
  *
  * A collection which contains instances of Exception, exclusively.
  *
- * @template T3 of Exception
- * @extends AbstractNamedClassOrInterfaceCollection<T3>
- * @implements GeneratedCollectionInterface<T3>
+ * @template T of Exception
+ * @extends AbstractNamedClassOrInterfaceCollection<T>
+ * @implements GeneratedCollectionInterface<T>
  */
 class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -32,7 +32,7 @@ class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T3> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -42,7 +42,7 @@ class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -84,7 +84,7 @@ class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {

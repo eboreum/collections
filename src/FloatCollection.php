@@ -15,12 +15,12 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  *
  * Contains values of type float, exclusively.
  *
- * @template T2 of float
- * @extends Collection<T2>
- * @implements MaximumableCollectionInterface<T2>
- * @implements MinimumableCollectionInterface<T2>
- * @implements SortableCollectionInterface<T2>
- * @implements UniqueableCollectionInterface<T2>
+ * @template T of float
+ * @extends Collection<T>
+ * @implements MaximumableCollectionInterface<T>
+ * @implements MinimumableCollectionInterface<T>
+ * @implements SortableCollectionInterface<T>
+ * @implements UniqueableCollectionInterface<T>
  */
 class FloatCollection
     extends Collection
@@ -41,7 +41,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T2> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -51,7 +51,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      *
-     * @param T2 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -93,7 +93,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      *
-     * @param T2 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {

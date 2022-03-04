@@ -13,9 +13,9 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  *
  * Contains values of type string, exclusively.
  *
- * @template T2 of string
- * @extends Collection<T2>
- * @implements UniqueableCollectionInterface<T2>
+ * @template T of string
+ * @extends Collection<T>
+ * @implements UniqueableCollectionInterface<T>
  */
 class StringCollection extends Collection implements UniqueableCollectionInterface
 {
@@ -30,7 +30,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T2> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -40,7 +40,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      *
-     * @param T2 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -82,7 +82,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      *
-     * @param T2 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {
@@ -128,7 +128,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     {
         return $this->toUniqueByCallback(
             /**
-             * @return array<T2>
+             * @return array<T>
              */
             static function (string $element) {
                 return $element;

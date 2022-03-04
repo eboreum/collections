@@ -15,9 +15,9 @@ use Error;
  *
  * A collection which contains instances of Error, exclusively.
  *
- * @template T3 of Error
- * @extends AbstractNamedClassOrInterfaceCollection<T3>
- * @implements GeneratedCollectionInterface<T3>
+ * @template T of Error
+ * @extends AbstractNamedClassOrInterfaceCollection<T>
+ * @implements GeneratedCollectionInterface<T>
  */
 class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -32,7 +32,7 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T3> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -42,7 +42,7 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -84,7 +84,7 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {

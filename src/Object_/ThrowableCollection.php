@@ -15,9 +15,9 @@ use Throwable;
  *
  * A collection which contains instances of Throwable, exclusively.
  *
- * @template T3 of Throwable
- * @extends AbstractNamedClassOrInterfaceCollection<T3>
- * @implements GeneratedCollectionInterface<T3>
+ * @template T of Throwable
+ * @extends AbstractNamedClassOrInterfaceCollection<T>
+ * @implements GeneratedCollectionInterface<T>
  */
 class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -32,7 +32,7 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T3> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -42,7 +42,7 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -84,7 +84,7 @@ class ThrowableCollection extends AbstractNamedClassOrInterfaceCollection implem
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {

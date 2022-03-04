@@ -14,9 +14,9 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  *
  * A collection which contains instances of Closure, exclusively.
  *
- * @template T3 of Closure
- * @extends AbstractNamedClassOrInterfaceCollection<T3>
- * @implements GeneratedCollectionInterface<T3>
+ * @template T of Closure
+ * @extends AbstractNamedClassOrInterfaceCollection<T>
+ * @implements GeneratedCollectionInterface<T>
  */
 class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
 {
@@ -31,7 +31,7 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
     /**
      * {@inheritDoc}
      *
-     * @param array<int|string, T3> $elements
+     * @param array<int|string, T> $elements
      */
     public function __construct(array $elements = [])
     {
@@ -41,7 +41,7 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function contains($element): bool
     {
@@ -83,7 +83,7 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
     /**
      * {@inheritDoc}
      *
-     * @param T3 $element
+     * @param T $element
      */
     public function indexOf($element): int|string|null
     {
