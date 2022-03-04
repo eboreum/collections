@@ -88,24 +88,32 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     public function chunk(int $chunkSize): CollectionInterface
     {
         try {
-            if (false == ($chunkSize >= 1)) { // @phpstan-ignore-line
+            if (false === ($chunkSize >= 1)) { // @phpstan-ignore-line
                 throw new RuntimeException(sprintf(
                     'Argument $chunkSize must be >= 1, but it is not. Found: %s',
                     Caster::getInstance()->castTyped($chunkSize),
                 ));
             }
 
-            $collection = new Collection();
+            $elements = [];
 
             if ($this->elements) {
-                $chunks = array_chunk($this->elements, $chunkSize, true);
+                $elements = array_map(
+                    /**
+                     * @return static
+                     */
+                    function (array $elements) {
+                        $clone = clone $this;
+                        $clone->elements = $elements;
 
-                foreach ($chunks as $chunk) {
-                    $clone = clone $this;
-                    $clone->elements = $chunk;
-                    $collection = $collection->withAdded($clone);
-                }
+                        return $clone;
+                    },
+                    array_chunk($this->elements, $chunkSize, true),
+                );
             }
+
+            /** @var Collection<static<T>> */
+            $collection = new Collection($elements);
         } catch (\Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
@@ -114,7 +122,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             ), 0, $t);
         }
 
-        return $collection;
+        return $collection; // @phpstan-ignore-line
     }
 
     /**

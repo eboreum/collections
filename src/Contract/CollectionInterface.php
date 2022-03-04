@@ -63,7 +63,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param int<1, max> $chunkSize Must be > 0. Otherwise, a RuntimeException must be thrown.
      * @throws RuntimeException
-     * @return CollectionInterface<T>
+     * @return CollectionInterface<static<T>>
      */
     public function chunk(int $chunkSize): CollectionInterface;
 

@@ -353,7 +353,7 @@ class CollectionTest extends AbstractCollectionTestCase
         $collectionB = new Collection([null]);
 
         try {
-            $collectionA->withMerged($collectionB);
+            $collectionA->withMerged($collectionB); // @phpstan-ignore-line
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));

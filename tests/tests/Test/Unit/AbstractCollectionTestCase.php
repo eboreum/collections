@@ -49,6 +49,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $found = array_map(
             static function ($child): array {
+                assert(is_object($child)); // Make phpstan happy
                 assert($child instanceof CollectionInterface); // Make phpstan happy
 
                 return $child->toArray();
