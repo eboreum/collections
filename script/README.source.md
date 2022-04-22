@@ -1,7 +1,7 @@
 Eboreum/Collections: Moving PHP closer towards generics
 ===============================
 
-![license](https://img.shields.io/github/license/eboreum/collections?label=license)
+![license](https://img.shields.io/packagist/l/eboreum/collections.svg)
 ![build](https://github.com/eboreum/collections/workflows/build/badge.svg?branch=main)
 ![codecov](https://codecov.io/gh/eboreum/collections/branch/main/graph/badge.svg)
 %run "script/make-readme/make-phpstan-badge.php"%
