@@ -304,13 +304,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
      */
     public function get(int|string $key)
     {
-        if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
-            throw new InvalidArgumentException(sprintf(
-                'Argument $key must be int or string, but it is not. Found: %s',
-                Caster::getInstance()->castTyped($key),
-            ));
-        }
-
         if (array_key_exists($key, $this->elements)) {
             return $this->elements[$key];
         }
