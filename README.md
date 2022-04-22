@@ -18,7 +18,8 @@ Comes fully equipped with [phpstan](https://packagist.org/packages/phpstan/phpst
 
 ```json
 "php": "^8.1",
-"eboreum/caster": "^1.0"
+"eboreum/caster": "^1.0",
+"eboreum/exceptional": "^1.0"
 ```
 
 For more information, see the [`composer.json`](composer.json) file.
@@ -138,8 +139,7 @@ The reason is that methods such as `current`, `find`, `first`, etc. cannot have 
 
 ```json
 "phpstan/phpstan": "^1.4",
-"phpunit/phpunit": "^9.5",
-"wikimedia/composer-merge-plugin": "^2.0"
+"phpunit/phpunit": "^9.5"
 ```
 
 ## Running tests
