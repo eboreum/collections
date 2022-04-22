@@ -57,6 +57,10 @@ The above classes utilize the abstract class `\Eboreum\Collections\Abstraction\A
 
 ## Automating writing of collection classes
 
+> **⚠️ NOTICE ⚠️**
+>
+> **"eboreum/collection-class-generator" is NOT YET publicly available!**
+
 Writing tens or even hundreds of collection classes, which essentially have the same structure, is tedious. This process can be automated by utilizing [https://packagist.org/packages/eboreum/collection-class-generator](https://packagist.org/packages/eboreum/collection-class-generator), which will write all desired collection classes for you, directly into in your own project to one or more locations of your choosing. It even comes with opt-in writing of unit tests ([https://packagist.org/packages/phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit))!
 
 ## Make collections for anything – not just classes

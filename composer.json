@@ -3,16 +3,13 @@
     "description": "Wish you had generics in PHP? This library provides a sensible means of managing collections of data (i.e. arrays with restrictions), immutably, until such a time that PHP generics are bestowed upon us.",
     "type": "library",
     "require": {
-        "php": "^8.0",
-        "eboreum/caster": "dev-main"
+        "php": "^8.1",
+        "eboreum/caster": "^1.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5",
         "wikimedia/composer-merge-plugin": "^2.0"
-    },
-    "suggest": {
-        "eboreum/collection-class-generator": "For automatically generating and/or mending typed collection classes for specific classes."
     },
     "license": "MIT",
     "authors": [

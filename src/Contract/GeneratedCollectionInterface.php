@@ -13,6 +13,10 @@ use Eboreum\Collections\Attribute\Method\Overridden;
  * Denotes that the implementing class has been programmatically generated, commonly by
  * "eboreum/collection-class-generator".
  *
+ * /!\ NOTICE /!\
+ *
+ * "eboreum/collection-class-generator" is NOT YET publicly available!
+ *
  * @see https://packagist.org/packages/eboreum/collection-class-generator
  *
  * @template T

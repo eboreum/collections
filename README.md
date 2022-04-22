@@ -17,8 +17,8 @@ Comes fully equipped with [phpstan](https://packagist.org/packages/phpstan/phpst
 # Requirements
 
 ```json
-"php": "^8.0",
-"eboreum/caster": "dev-main"
+"php": "^8.1",
+"eboreum/caster": "^1.0"
 ```
 
 For more information, see the [`composer.json`](composer.json) file.
@@ -73,6 +73,10 @@ You may use the above files as inspiration on how to build your own specific cla
 The above classes utilize the abstract class `\Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection` and subsequently the interface `\Eboreum\Collections\Contract\ObjectCollectionInterface`.
 
 ## Automating writing of collection classes
+
+> **⚠️ NOTICE ⚠️**
+>
+> **"eboreum/collection-class-generator" is NOT YET publicly available!**
 
 Writing tens or even hundreds of collection classes, which essentially have the same structure, is tedious. This process can be automated by utilizing [https://packagist.org/packages/eboreum/collection-class-generator](https://packagist.org/packages/eboreum/collection-class-generator), which will write all desired collection classes for you, directly into in your own project to one or more locations of your choosing. It even comes with opt-in writing of unit tests ([https://packagist.org/packages/phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit))!
 

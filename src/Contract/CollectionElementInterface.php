@@ -13,6 +13,10 @@ namespace Eboreum\Collections\Contract;
  * classes implementing this interface, and subsequently making automatically generated PHP code for the respective
  * collection class, containing properly typed methods.
  *
+ * /!\ NOTICE /!\
+ *
+ * "eboreum/collection-class-generator" is NOT YET publicly available!
+ *
  * @see https://packagist.org/packages/eboreum/collection-class-generator
  */
 interface CollectionElementInterface
