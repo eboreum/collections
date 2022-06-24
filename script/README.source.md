@@ -3,8 +3,8 @@ Eboreum/Collections: Moving PHP closer towards generics
 
 ![license](https://img.shields.io/github/license/eboreum/collections?label=license)
 ![build](https://github.com/eboreum/collections/workflows/build/badge.svg?branch=main)
-![codecov](https://codecov.io/gh/eboreum/collections/branch/main/graph/badge.svg)
-%run "script/make-readme/make-phpstan-badge.php"%
+[![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/7f2a8588f0b8689e3e6341028fd0bcfa/raw/test-coverage__main.json)](https://github.com/eboreum/collections/actions)
+[![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/7f2a8588f0b8689e3e6341028fd0bcfa/raw/phpstan-level__main.json)](https://github.com/eboreum/collections/actions)
 
 %composer.json.description%
 
