@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Eboreum\Collections\Contract;
 
 use Closure;
+use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehavior;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 
@@ -326,12 +327,12 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * @param Closure(T,int|string):(int|string) $closure The returned value will be used as the key in the resulting
      *                                                    collection.
-     * @param bool $useFirstOnDuplicateIndex When `true`, in case an array key is encountered several times, the first
-     *                                       occurrence is used and the remaining values are discarded. When `false`,
-     *                                       the last encountered occurrence is used (when the same key already exist).
      * @throws RuntimeException
      */
-    public function toReindexed(Closure $closure, bool $useFirstOnDuplicateIndex = true): static;
+    public function toReindexed(
+        Closure $closure,
+        ToReindexedDuplicateKeyBehavior $duplicateKeyBehavior = ToReindexedDuplicateKeyBehavior::throw_exception
+    ): static;
 
     /**
      * Reverses the order of elements in the clone of a the current collection using `array_reverse`.

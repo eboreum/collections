@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections;
 
 use Eboreum\Collections\Collection;
+use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehavior;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 
@@ -161,17 +162,23 @@ class CollectionTest extends AbstractCollectionTestCase
 
         $collectionA = new Collection($elements);
 
-        $collectionB = $collectionA->toReindexed(static function (string|int $element, string|int $key): string|int {
-            return $key;
-        });
+        $collectionB = $collectionA->toReindexed(
+            static function (string|int $element, string|int $key): string|int {
+                return $key;
+            },
+            ToReindexedDuplicateKeyBehavior::use_first_element,
+        );
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
         $this->assertSame($elements, $collectionB->toArray());
 
-        $collectionC = $collectionA->toReindexed(static function (string|int $element): string {
-            return (string)$element;
-        });
+        $collectionC = $collectionA->toReindexed(
+            static function (string|int $element): string {
+                return (string)$element;
+            },
+            ToReindexedDuplicateKeyBehavior::use_first_element,
+        );
 
         $this->assertNotSame($collectionA, $collectionC);
         $this->assertSame($elements, $collectionA->toArray());
@@ -187,7 +194,7 @@ class CollectionTest extends AbstractCollectionTestCase
             static function (string|int $element, string|int $key): string {
                 return (string)$element;
             },
-            false,
+            ToReindexedDuplicateKeyBehavior::use_last_element,
         );
 
         $this->assertNotSame($collectionA, $collectionD);
@@ -224,12 +231,13 @@ class CollectionTest extends AbstractCollectionTestCase
                         '^',
                         'Failure in (\\\\%s)->toReindexed\(',
                             '\$closure = \(object\) \\\\Closure\(\$element\)',
-                            ', \$useFirstOnDuplicateIndex = \(bool\) true',
+                            ', \$duplicateKeyBehavior = \(enum\) \\\\%s \{.+\}',
                         '\) inside \(object\) \1 \{.+\}',
                         '$',
                         '/',
                     ]),
                     preg_quote(Collection::class, '/'),
+                    preg_quote(ToReindexedDuplicateKeyBehavior::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -243,7 +251,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     '/',
                     '^',
                     'For 2\/4 elements, the \$closure argument did not produce an int or string\.',
-                    ' Invalid elements include: \[',
+                    ' Errors given: \[',
                         '"foo" => \(null\) null: Resulting key is: \(null\) null',
                         ', "bar" => \(bool\) true: Resulting key is: \(bool\) true',
                     '\]',
@@ -280,12 +288,13 @@ class CollectionTest extends AbstractCollectionTestCase
                         '^',
                         'Failure in (\\\\%s)->toReindexed\(',
                             '\$closure = \(object\) \\\\Closure\(\$element\)',
-                            ', \$useFirstOnDuplicateIndex = \(bool\) true',
+                            ', \$duplicateKeyBehavior = \(enum\) \\\\%s \{.+\}',
                         '\) inside \(object\) \1 \{.+\}',
                         '$',
                         '/',
                     ]),
                     preg_quote(Collection::class, '/'),
+                    preg_quote(ToReindexedDuplicateKeyBehavior::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -299,8 +308,68 @@ class CollectionTest extends AbstractCollectionTestCase
                     '/',
                     '^',
                     'For 1\/1 element, the \$closure argument did not produce an int or string\.',
-                    ' Invalid elements include: \[',
+                    ' Errors given: \[',
                         '0 => \(null\) null: Resulting key is: \(null\) null',
+                    '\]',
+                    '$',
+                    '/',
+                ]),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertTrue(null === $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
+    public function testToReindexedThrowsExceptionWhenClosureReturnsDuplicateKeysAndThisIsNotAllowed(): void
+    {
+        $collection = new Collection([
+            0 => 1,
+            1 => 1,
+        ]);
+
+        try {
+            $collection->toReindexed(static function (int $element): int {
+                return $element;
+            });
+        } catch (\Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                sprintf(
+                    implode('', [
+                        '/',
+                        '^',
+                        'Failure in (\\\\%s)->toReindexed\(',
+                            '\$closure = \(object\) \\\\Closure\(int \$element\): int',
+                            ', \$duplicateKeyBehavior = \(enum\) \\\\%s \{.+\}',
+                        '\) inside \(object\) \1 \{.+\}',
+                        '$',
+                        '/',
+                    ]),
+                    preg_quote(Collection::class, '/'),
+                    preg_quote(ToReindexedDuplicateKeyBehavior::class, '/'),
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                implode('', [
+                    '/',
+                    '^',
+                    'For 1\/2 elements, the \$closure argument produced a duplicate key, which is not allowed\.',
+                    ' Errors given: \[',
+                        '1 => \(int\) 1: Resulting key \(int\) 1 already exists in the resulting collection',
+                        ' for element \(int\) 1',
                     '\]',
                     '$',
                     '/',

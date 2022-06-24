@@ -38,6 +38,7 @@ use Eboreum\Caster\Attribute\DebugIdentifier;
 use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
 use Eboreum\Collections\Caster;
 use Eboreum\Collections\Contract\CollectionInterface;
+use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehavior;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Exceptional\ExceptionMessageGenerator;
@@ -551,8 +552,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     /**
      * {@inheritDoc}
      */
-    public function toReindexed(Closure $closure, bool $useFirstOnDuplicateIndex = true): static
-    {
+    public function toReindexed(
+        Closure $closure,
+        ToReindexedDuplicateKeyBehavior $duplicateKeyBehavior = ToReindexedDuplicateKeyBehavior::throw_exception
+    ): static {
         try {
             $clone = clone $this;
 
@@ -560,26 +563,39 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             $resultingElements = [];
 
             /** @var array<string> */
-            $invalids = [];
+            $invalidTypeErrorMessages = [];
+
+            /** @var array<int|string, string> */
+            $duplicateKeyErrorMessages = [];
 
             foreach ($clone->elements as $key => $element) {
                 $resultingKey = $closure($element, $key);
 
                 if (false === is_int($resultingKey) && false === is_string($resultingKey)) { // @phpstan-ignore-line
-                    $invalids[] = sprintf(
+                    $invalidTypeErrorMessages[] = sprintf(
                         '%s => %s: Resulting key is: %s',
                         Caster::getInstance()->cast($key),
                         Caster::getInstance()->castTyped($element),
                         Caster::getInstance()->castTyped($resultingKey),
                     );
-                }
 
-                if ($invalids) {
                     continue;
                 }
 
                 if (array_key_exists($resultingKey, $resultingElements)) {
-                    if (false === $useFirstOnDuplicateIndex) {
+                    if ($duplicateKeyBehavior === ToReindexedDuplicateKeyBehavior::throw_exception) {
+                        $duplicateKeyErrorMessages[] = sprintf(
+                            '%s => %s: Resulting key %s already exists in the resulting collection for element %s',
+                            Caster::getInstance()->cast($key),
+                            Caster::getInstance()->castTyped($element),
+                            Caster::getInstance()->castTyped($resultingKey),
+                            Caster::getInstance()->castTyped($resultingElements[$resultingKey]),
+                        );
+
+                        continue;
+                    }
+
+                    if ($duplicateKeyBehavior === ToReindexedDuplicateKeyBehavior::use_last_element) {
                         unset($resultingElements[$resultingKey]);
                         $resultingElements[$resultingKey] = $element;
                     }
@@ -588,23 +604,40 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 }
             }
 
-            if ($invalids) {
+            $messages = [];
+
+            if ($invalidTypeErrorMessages) {
                 $elementsCount = count($clone->elements);
 
-                throw new RuntimeException(sprintf(
-                    implode('', [
-                        'For %d/%d %s, the $closure argument did not produce an int or string. Invalid elements',
-                        ' include: [%s]',
-                    ]),
-                    count($invalids),
+                $messages[] = sprintf(
+                    'For %d/%d %s, the $closure argument did not produce an int or string. Errors given: [%s]',
+                    count($invalidTypeErrorMessages),
                     $elementsCount,
                     (
                         1 === $elementsCount
                         ? 'element'
                         : 'elements'
                     ),
-                    implode(', ', $invalids),
-                ));
+                    implode(', ', $invalidTypeErrorMessages),
+                );
+            }
+
+            if ($duplicateKeyErrorMessages) {
+                $elementsCount = count($clone->elements);
+
+                $messages[] = sprintf(
+                    implode('', [
+                        'For %d/%d elements, the $closure argument produced a duplicate key, which is not allowed.',
+                        ' Errors given: [%s]',
+                    ]),
+                    count($duplicateKeyErrorMessages),
+                    $elementsCount,
+                    implode(', ', $duplicateKeyErrorMessages),
+                );
+            }
+
+            if ($messages) {
+                throw new RuntimeException(implode('. ', $messages));
             }
 
             $clone->elements = $resultingElements;
