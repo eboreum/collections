@@ -36,6 +36,7 @@ namespace Eboreum\Collections;
 use Closure;
 use Eboreum\Caster\Attribute\DebugIdentifier;
 use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
+use Eboreum\Collections\Caster;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
@@ -543,6 +544,77 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     {
         $clone = clone $this;
         $clone->elements = [];
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function toReindexed(Closure $closure, bool $useFirstOnDuplicateIndex = true): static
+    {
+        try {
+            $clone = clone $this;
+
+            /** @var array<T> */
+            $resultingElements = [];
+
+            /** @var array<string> */
+            $invalids = [];
+
+            foreach ($clone->elements as $key => $element) {
+                $resultingKey = $closure($element, $key);
+
+                if (false === is_int($resultingKey) && false === is_string($resultingKey)) { // @phpstan-ignore-line
+                    $invalids[] = sprintf(
+                        '%s => %s: Resulting key is: %s',
+                        Caster::getInstance()->cast($key),
+                        Caster::getInstance()->castTyped($element),
+                        Caster::getInstance()->castTyped($resultingKey),
+                    );
+                }
+
+                if ($invalids) {
+                    continue;
+                }
+
+                if (array_key_exists($resultingKey, $resultingElements)) {
+                    if (false === $useFirstOnDuplicateIndex) {
+                        unset($resultingElements[$resultingKey]);
+                        $resultingElements[$resultingKey] = $element;
+                    }
+                } else {
+                    $resultingElements[$resultingKey] = $element;
+                }
+            }
+
+            if ($invalids) {
+                $elementsCount = count($clone->elements);
+
+                throw new RuntimeException(sprintf(
+                    implode('', [
+                        'For %d/%d %s, the $closure argument did not produce an int or string. Invalid elements',
+                        ' include: [%s]',
+                    ]),
+                    count($invalids),
+                    $elementsCount,
+                    (
+                        1 === $elementsCount
+                        ? 'element'
+                        : 'elements'
+                    ),
+                    implode(', ', $invalids),
+                ));
+            }
+
+            $clone->elements = $resultingElements;
+        } catch (\Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new \ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
 
         return $clone;
     }

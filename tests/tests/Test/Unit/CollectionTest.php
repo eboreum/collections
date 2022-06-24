@@ -151,6 +151,172 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->assertSame($expected, $carry->results);
     }
 
+    public function testToReindexedWorks(): void
+    {
+        $elements = [
+            0 => 'lorem',
+            'foo' => 0,
+            42 => '0',
+        ];
+
+        $collectionA = new Collection($elements);
+
+        $collectionB = $collectionA->toReindexed(static function (string|int $element, string|int $key): string|int {
+            return $key;
+        });
+
+        $this->assertNotSame($collectionA, $collectionB);
+        $this->assertSame($elements, $collectionA->toArray());
+        $this->assertSame($elements, $collectionB->toArray());
+
+        $collectionC = $collectionA->toReindexed(static function (string|int $element): string {
+            return (string)$element;
+        });
+
+        $this->assertNotSame($collectionA, $collectionC);
+        $this->assertSame($elements, $collectionA->toArray());
+        $this->assertSame(
+            [
+                'lorem' => 'lorem',
+                '0' => 0,
+            ],
+            $collectionC->toArray(),
+        );
+
+        $collectionD = $collectionA->toReindexed(
+            static function (string|int $element, string|int $key): string {
+                return (string)$element;
+            },
+            false,
+        );
+
+        $this->assertNotSame($collectionA, $collectionD);
+        $this->assertSame($elements, $collectionA->toArray());
+        $this->assertSame(
+            [
+                'lorem' => 'lorem',
+                '0' => '0',
+            ],
+            $collectionD->toArray(),
+        );
+    }
+
+    public function testToReindexedThrowsExceptionWhenClosureReturnContains2Of4InvalidValues(): void
+    {
+        $collection = new Collection([
+            0 => 'lorem',
+            'foo' => null,
+            42 => '0',
+            'bar' => true,
+        ]);
+
+        try {
+            $collection->toReindexed(static function ($element) {
+                return $element;
+            });
+        } catch (\Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                sprintf(
+                    implode('', [
+                        '/',
+                        '^',
+                        'Failure in (\\\\%s)->toReindexed\(',
+                            '\$closure = \(object\) \\\\Closure\(\$element\)',
+                            ', \$useFirstOnDuplicateIndex = \(bool\) true',
+                        '\) inside \(object\) \1 \{.+\}',
+                        '$',
+                        '/',
+                    ]),
+                    preg_quote(Collection::class, '/'),
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                implode('', [
+                    '/',
+                    '^',
+                    'For 2\/4 elements, the \$closure argument did not produce an int or string\.',
+                    ' Invalid elements include: \[',
+                        '"foo" => \(null\) null: Resulting key is: \(null\) null',
+                        ', "bar" => \(bool\) true: Resulting key is: \(bool\) true',
+                    '\]',
+                    '$',
+                    '/',
+                ]),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertTrue(null === $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
+    public function testToReindexedThrowsExceptionWhenClosureReturnContains1Of1InvalidValues(): void
+    {
+        $collection = new Collection([0 => null]);
+
+        try {
+            $collection->toReindexed(static function ($element) {
+                return $element;
+            });
+        } catch (\Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                sprintf(
+                    implode('', [
+                        '/',
+                        '^',
+                        'Failure in (\\\\%s)->toReindexed\(',
+                            '\$closure = \(object\) \\\\Closure\(\$element\)',
+                            ', \$useFirstOnDuplicateIndex = \(bool\) true',
+                        '\) inside \(object\) \1 \{.+\}',
+                        '$',
+                        '/',
+                    ]),
+                    preg_quote(Collection::class, '/'),
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            assert(is_object($currentException)); // Make phpstan happy
+            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertMatchesRegularExpression(
+                implode('', [
+                    '/',
+                    '^',
+                    'For 1\/1 element, the \$closure argument did not produce an int or string\.',
+                    ' Invalid elements include: \[',
+                        '0 => \(null\) null: Resulting key is: \(null\) null',
+                    '\]',
+                    '$',
+                    '/',
+                ]),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertTrue(null === $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
     public function testWithAddedThrowsExceptionWhenElementIsNotAcceptedByCollection(): void
     {
         $elements = [true, 42, 'foo' => 'bar'];

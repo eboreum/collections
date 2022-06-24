@@ -320,6 +320,20 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
     public function toSequential(): static;
 
     /**
+     * Reindex the elements in a clone of the current collection, using the value returned by the $closure argument.
+     *
+     * Must return said clone.
+     *
+     * @param Closure(T,int|string):(int|string) $closure The returned value will be used as the key in the resulting
+     *                                                    collection.
+     * @param bool $useFirstOnDuplicateIndex When `true`, in case an array key is encountered several times, the first
+     *                                       occurrence is used and the remaining values are discarded. When `false`,
+     *                                       the last encountered occurrence is used (when the same key already exist).
+     * @throws RuntimeException
+     */
+    public function toReindexed(Closure $closure, bool $useFirstOnDuplicateIndex = true): static;
+
+    /**
      * Reverses the order of elements in the clone of a the current collection using `array_reverse`.
      *
      * Must return a clone.
