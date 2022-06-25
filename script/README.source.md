@@ -85,27 +85,13 @@ Do remember: If you utilize phpstan, you should also add and/or update the `@tem
 
 You should also override methods such as `current`, `find`, `first`, etc. with a suitable return type. For instance:
 
-PHP ^8.0:
+PHP ^8.1:
 
 ```php
 /**
  * {@inheritDoc}
  */
-public function current(): int|float|int
-{
-    // ...
-}
-```
-
-PHP ^7.4:
-
-```php
-/**
- * {@inheritDoc}
- *
- * @return int|float|int
- */
-public function current()
+public function current(): int|float
 {
     // ...
 }
