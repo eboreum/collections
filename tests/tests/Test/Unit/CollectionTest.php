@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections;
 
 use Eboreum\Collections\Collection;
-use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehavior;
+use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 
@@ -166,7 +166,7 @@ class CollectionTest extends AbstractCollectionTestCase
             static function (string|int $element, string|int $key): string|int {
                 return $key;
             },
-            ToReindexedDuplicateKeyBehavior::use_first_element,
+            ToReindexedDuplicateKeyBehaviorEnum::use_first_element,
         );
 
         $this->assertNotSame($collectionA, $collectionB);
@@ -177,7 +177,7 @@ class CollectionTest extends AbstractCollectionTestCase
             static function (string|int $element): string {
                 return (string)$element;
             },
-            ToReindexedDuplicateKeyBehavior::use_first_element,
+            ToReindexedDuplicateKeyBehaviorEnum::use_first_element,
         );
 
         $this->assertNotSame($collectionA, $collectionC);
@@ -194,7 +194,7 @@ class CollectionTest extends AbstractCollectionTestCase
             static function (string|int $element, string|int $key): string {
                 return (string)$element;
             },
-            ToReindexedDuplicateKeyBehavior::use_last_element,
+            ToReindexedDuplicateKeyBehaviorEnum::use_last_element,
         );
 
         $this->assertNotSame($collectionA, $collectionD);
@@ -237,7 +237,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '/',
                     ]),
                     preg_quote(Collection::class, '/'),
-                    preg_quote(ToReindexedDuplicateKeyBehavior::class, '/'),
+                    preg_quote(ToReindexedDuplicateKeyBehaviorEnum::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -294,7 +294,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '/',
                     ]),
                     preg_quote(Collection::class, '/'),
-                    preg_quote(ToReindexedDuplicateKeyBehavior::class, '/'),
+                    preg_quote(ToReindexedDuplicateKeyBehaviorEnum::class, '/'),
                 ),
                 $currentException->getMessage(),
             );
@@ -353,7 +353,7 @@ class CollectionTest extends AbstractCollectionTestCase
                         '/',
                     ]),
                     preg_quote(Collection::class, '/'),
-                    preg_quote(ToReindexedDuplicateKeyBehavior::class, '/'),
+                    preg_quote(ToReindexedDuplicateKeyBehaviorEnum::class, '/'),
                 ),
                 $currentException->getMessage(),
             );

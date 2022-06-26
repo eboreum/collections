@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Eboreum\Collections\Contract;
 
 use Closure;
-use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehavior;
+use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 
@@ -331,7 +331,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      */
     public function toReindexed(
         Closure $closure,
-        ToReindexedDuplicateKeyBehavior $duplicateKeyBehavior = ToReindexedDuplicateKeyBehavior::throw_exception
+        ToReindexedDuplicateKeyBehaviorEnum $duplicateKeyBehavior = ToReindexedDuplicateKeyBehaviorEnum::throw_exception
     ): static;
 
     /**

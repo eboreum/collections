@@ -38,7 +38,7 @@ use Eboreum\Caster\Attribute\DebugIdentifier;
 use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
 use Eboreum\Collections\Caster;
 use Eboreum\Collections\Contract\CollectionInterface;
-use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehavior;
+use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Exceptional\ExceptionMessageGenerator;
@@ -554,7 +554,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
      */
     public function toReindexed(
         Closure $closure,
-        ToReindexedDuplicateKeyBehavior $duplicateKeyBehavior = ToReindexedDuplicateKeyBehavior::throw_exception
+        ToReindexedDuplicateKeyBehaviorEnum $duplicateKeyBehavior = ToReindexedDuplicateKeyBehaviorEnum::throw_exception
     ): static {
         try {
             $clone = clone $this;
@@ -583,7 +583,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 }
 
                 if (array_key_exists($resultingKey, $resultingElements)) {
-                    if ($duplicateKeyBehavior === ToReindexedDuplicateKeyBehavior::throw_exception) {
+                    if ($duplicateKeyBehavior === ToReindexedDuplicateKeyBehaviorEnum::throw_exception) {
                         $duplicateKeyErrorMessages[] = sprintf(
                             '%s => %s: Resulting key %s already exists in the resulting collection for element %s',
                             Caster::getInstance()->cast($key),
@@ -595,7 +595,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                         continue;
                     }
 
-                    if ($duplicateKeyBehavior === ToReindexedDuplicateKeyBehavior::use_last_element) {
+                    if ($duplicateKeyBehavior === ToReindexedDuplicateKeyBehaviorEnum::use_last_element) {
                         unset($resultingElements[$resultingKey]);
                         $resultingElements[$resultingKey] = $element;
                     }

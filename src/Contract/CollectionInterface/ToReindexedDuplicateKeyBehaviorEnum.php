@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections\Contract\CollectionInterface;
 
-enum ToReindexedDuplicateKeyBehavior
+enum ToReindexedDuplicateKeyBehaviorEnum
 {
     /**
      * When the same key is produced more than once, an exception is thrown.
