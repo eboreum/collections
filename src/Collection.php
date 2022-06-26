@@ -565,11 +565,17 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             /** @var array<string> */
             $invalidTypeErrorMessages = [];
 
-            /** @var array<int|string, string> */
-            $duplicateKeyErrorMessages = [];
+            /** @var array<int|string, array<int|string>> */
+            $resultingKeyToOriginalKeys = [];
 
             foreach ($clone->elements as $key => $element) {
                 $resultingKey = $closure($element, $key);
+
+                if (false === array_key_exists($resultingKey, $resultingKeyToOriginalKeys)) {
+                    $resultingKeyToOriginalKeys[$resultingKey] = [];
+                }
+
+                $resultingKeyToOriginalKeys[$resultingKey][] = $key;
 
                 if (false === is_int($resultingKey) && false === is_string($resultingKey)) { // @phpstan-ignore-line
                     $invalidTypeErrorMessages[] = sprintf(
@@ -584,14 +590,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
                 if (array_key_exists($resultingKey, $resultingElements)) {
                     if ($duplicateKeyBehavior === ToReindexedDuplicateKeyBehaviorEnum::throw_exception) {
-                        $duplicateKeyErrorMessages[] = sprintf(
-                            '%s => %s: Resulting key %s already exists in the resulting collection for element %s',
-                            Caster::getInstance()->cast($key),
-                            Caster::getInstance()->castTyped($element),
-                            Caster::getInstance()->castTyped($resultingKey),
-                            Caster::getInstance()->castTyped($resultingElements[$resultingKey]),
-                        );
-
                         continue;
                     }
 
@@ -622,17 +620,50 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 );
             }
 
-            if ($duplicateKeyErrorMessages) {
-                $elementsCount = count($clone->elements);
+            $duplicateKeysGroups = array_filter(
+                $resultingKeyToOriginalKeys,
+                static function (array $group): bool {
+                    return count($group) > 1;
+                },
+            );
+
+            if (
+                $duplicateKeysGroups
+                && $duplicateKeyBehavior === ToReindexedDuplicateKeyBehaviorEnum::throw_exception
+            ) {
+                /** @var array<string> */
+                $groupMessages = [];
+
+                foreach ($duplicateKeysGroups as $resultingKey => $originalKeys) {
+                    $groupMessages[] = sprintf(
+                        'Resulting key %s was produced from the %d indexes: [%s]',
+                        Caster::getInstance()->cast($resultingKey),
+                        count($originalKeys),
+                        implode(
+                            ', ',
+                            array_map(
+                                static function (int|string $resultingKey): string {
+                                    return Caster::getInstance()->cast($resultingKey);
+                                },
+                                $originalKeys,
+                            ),
+                        ),
+                    );
+                }
+
+                $count = array_sum(array_map('count', $duplicateKeysGroups));
+                $totalCount = count($clone->elements);
 
                 $messages[] = sprintf(
-                    implode('', [
-                        'For %d/%d elements, the $closure argument produced a duplicate key, which is not allowed.',
-                        ' Errors given: [%s]',
-                    ]),
-                    count($duplicateKeyErrorMessages),
-                    $elementsCount,
-                    implode(', ', $duplicateKeyErrorMessages),
+                    'For %d/%d %s, the $closure argument produced a duplicate key, which is not allowed: %s',
+                    $count,
+                    $totalCount,
+                    (
+                        1 === $totalCount
+                        ? 'element'
+                        : 'elements'
+                    ),
+                    implode('. ', $groupMessages),
                 );
             }
 

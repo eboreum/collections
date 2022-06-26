@@ -330,7 +330,12 @@ class CollectionTest extends AbstractCollectionTestCase
     {
         $collection = new Collection([
             0 => 1,
-            1 => 1,
+            'foo' => 1,
+            2 => 0,
+            3 => 1,
+            'bar' => 2,
+            5 => 3,
+            6 => 2,
         ]);
 
         try {
@@ -366,11 +371,9 @@ class CollectionTest extends AbstractCollectionTestCase
                 implode('', [
                     '/',
                     '^',
-                    'For 1\/2 elements, the \$closure argument produced a duplicate key, which is not allowed\.',
-                    ' Errors given: \[',
-                        '1 => \(int\) 1: Resulting key \(int\) 1 already exists in the resulting collection',
-                        ' for element \(int\) 1',
-                    '\]',
+                    'For 5\/7 elements, the \$closure argument produced a duplicate key, which is not allowed:',
+                    ' Resulting key 1 was produced from the 3 indexes: \[0, "foo", 3\]\.',
+                    ' Resulting key 2 was produced from the 2 indexes: \["bar", 6\]',
                     '$',
                     '/',
                 ]),
