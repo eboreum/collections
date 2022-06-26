@@ -655,14 +655,9 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 $totalCount = count($clone->elements);
 
                 $messages[] = sprintf(
-                    'For %d/%d %s, the $closure argument produced a duplicate key, which is not allowed: %s',
+                    'For %d/%d elements, the $closure argument produced a duplicate key, which is not allowed: %s',
                     $count,
                     $totalCount,
-                    (
-                        1 === $totalCount
-                        ? 'element'
-                        : 'elements'
-                    ),
                     implode('. ', $groupMessages),
                 );
             }
