@@ -323,6 +323,12 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
     /**
      * Reindex the elements in a clone of the current collection, using the value returned by the $closure argument.
      *
+     * Must throw a RuntimeException when either:
+     *
+     *  (A) The $closure argument does not return an int or string.
+     *  (B) When argument $duplicateKeyBehavior is ToReindexedDuplicateKeyBehaviorEnum::throw_exception and one or more
+     *      duplicate keys are found.
+     *
      * Must return said clone.
      *
      * @param Closure(T,int|string):(int|string) $closure The returned value will be used as the key in the resulting
