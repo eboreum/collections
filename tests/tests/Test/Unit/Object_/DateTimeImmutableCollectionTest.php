@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections\Object_;
 
 use DateTimeImmutable;
+use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Object_\DateTimeImmutableCollection;
 
 class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCase
@@ -149,6 +150,97 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
                 ];
             })(),
         ];
+    }
+
+    public function testToReindexedWorksWhenNoDuplicateKeysExist(): void
+    {
+        $elements = [
+            new DateTimeImmutable('2021-02-01 12:34:57+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:56+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:55+01:00'),
+            new DateTimeImmutable('2021-01-01 12:34:57+01:00'),
+            new DateTimeImmutable('2021-03-01 12:34:55+01:00'),
+        ];
+
+        $dateTimeImmutableCollectionA = new DateTimeImmutableCollection($elements);
+        $dateTimeImmutableCollectionB = $dateTimeImmutableCollectionA->toReindexed(
+            static function (DateTimeImmutable $dateTime): string {
+                return $dateTime->format('c');
+            }
+        );
+
+        $this->assertNotSame($dateTimeImmutableCollectionA, $dateTimeImmutableCollectionB);
+        $this->assertSame($elements, $dateTimeImmutableCollectionA->toArray());
+        $this->assertSame(
+            [
+                '2021-02-01T12:34:57+01:00' => $elements[0],
+                '2021-02-01T12:34:56+01:00' => $elements[1],
+                '2021-02-01T12:34:55+01:00' => $elements[2],
+                '2021-01-01T12:34:57+01:00' => $elements[3],
+                '2021-03-01T12:34:55+01:00' => $elements[4],
+            ],
+            $dateTimeImmutableCollectionB->toArray(),
+        );
+    }
+
+    public function testToReindexedWorksWhenFirstElementOnDuplicateKeysIsUsed(): void
+    {
+        $elements = [
+            new DateTimeImmutable('2021-02-01 12:34:57+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:56+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:57+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:55+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:55+01:00'),
+        ];
+
+        $dateTimeImmutableCollectionA = new DateTimeImmutableCollection($elements);
+        $dateTimeImmutableCollectionB = $dateTimeImmutableCollectionA->toReindexed(
+            static function (DateTimeImmutable $dateTime): string {
+                return $dateTime->format('c');
+            },
+            ToReindexedDuplicateKeyBehaviorEnum::use_first_element,
+        );
+
+        $this->assertNotSame($dateTimeImmutableCollectionA, $dateTimeImmutableCollectionB);
+        $this->assertSame($elements, $dateTimeImmutableCollectionA->toArray());
+        $this->assertSame(
+            [
+                '2021-02-01T12:34:57+01:00' => $elements[0],
+                '2021-02-01T12:34:56+01:00' => $elements[1],
+                '2021-02-01T12:34:55+01:00' => $elements[3],
+            ],
+            $dateTimeImmutableCollectionB->toArray(),
+        );
+    }
+
+    public function testToReindexedWorksWhenLastElementOnDuplicateKeysIsUsed(): void
+    {
+        $elements = [
+            new DateTimeImmutable('2021-02-01 12:34:57+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:56+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:57+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:55+01:00'),
+            new DateTimeImmutable('2021-02-01 12:34:55+01:00'),
+        ];
+
+        $dateTimeImmutableCollectionA = new DateTimeImmutableCollection($elements);
+        $dateTimeImmutableCollectionB = $dateTimeImmutableCollectionA->toReindexed(
+            static function (DateTimeImmutable $dateTime): string {
+                return $dateTime->format('c');
+            },
+            ToReindexedDuplicateKeyBehaviorEnum::use_last_element,
+        );
+
+        $this->assertNotSame($dateTimeImmutableCollectionA, $dateTimeImmutableCollectionB);
+        $this->assertSame($elements, $dateTimeImmutableCollectionA->toArray());
+        $this->assertSame(
+            [
+                '2021-02-01T12:34:56+01:00' => $elements[1],
+                '2021-02-01T12:34:57+01:00' => $elements[2],
+                '2021-02-01T12:34:55+01:00' => $elements[4],
+            ],
+            $dateTimeImmutableCollectionB->toArray(),
+        );
     }
 
     public function testToSortedWorks(): void
