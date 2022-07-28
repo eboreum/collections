@@ -171,8 +171,8 @@ class FloatCollection
     {
         $direction = ($isAscending ? 1 : -1);
 
-        return $this->toSortedByCallback(static function (float $a, float $b) use ($direction) {
-            return ($a - $b) * $direction;
+        return $this->toSortedByCallback(static function (float $a, float $b) use ($direction): int {
+            return intval($a - $b) * $direction;
         });
     }
 

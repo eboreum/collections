@@ -247,7 +247,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($this->elements as $k => $v) {
                 $callbackResult = $callback($v, $k);
 
-                if (false === is_bool($callbackResult)) {
+                if (false === is_bool($callbackResult)) { // @phpstan-ignore-line We want to capture this anyway
                     throw new RuntimeException(sprintf(
                         'Call $callback(%s, %s) did not return a boolean, which it must. Found return value: %s',
                         Caster::getInstance()->castTyped($v),
@@ -425,7 +425,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                     ), 0, $t);
                 }
 
-                if (false === is_int($result)) {
+                if (false === is_int($result)) { // @phpstan-ignore-line We want to capture this anyway
                     throw new RuntimeException(sprintf(
                         implode('', [
                             'Call $callback(%s, %s) must return int, but it did not.',
@@ -476,7 +476,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                     ), 0, $t);
                 }
 
-                if (false === is_int($result)) {
+                if (false === is_int($result)) { // @phpstan-ignore-line We want to capture this anyway
                     throw new RuntimeException(sprintf(
                         implode('', [
                             'Call $callback(%s, %s) must return int, but it did not.',
@@ -743,7 +743,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                     ), 0, $t);
                 }
 
-                if (false === is_string($result)) {
+                if (false === is_string($result)) { // @phpstan-ignore-line We want to capture this anyway
                     throw new RuntimeException(sprintf(
                         implode('', [
                             'Call $callback(%s, %s) must return string, but it did not.',

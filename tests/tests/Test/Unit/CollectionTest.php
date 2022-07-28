@@ -1220,9 +1220,11 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null]);
 
         try {
-            $collection->every(static function () {
-                return 42;
-            });
+            $collection->every(
+                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                    return 42;
+                }
+            );
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
@@ -1285,7 +1287,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         $this->assertSame(
             'baz',
-            $collection->find(static function (string $v, int $k) {
+            $collection->find(static function (string $v, int|string $k): bool {
                 return 2 === $k;
             }),
         );
@@ -1296,9 +1298,11 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null]);
 
         try {
-            $collection->find(static function () {
-                return 42;
-            });
+            $collection->find(
+                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                    return 42;
+                }
+            );
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
@@ -1463,9 +1467,11 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null]);
 
         try {
-            $collection->maxByCallback(static function () {
-                return null;
-            });
+            $collection->maxByCallback(
+                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                    return null;
+                }
+            );
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
@@ -1578,9 +1584,11 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([null]);
 
         try {
-            $collection->minByCallback(static function () {
-                return null;
-            });
+            $collection->minByCallback(
+                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                    return null;
+                }
+            );
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));

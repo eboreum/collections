@@ -984,9 +984,11 @@ abstract class AbstractCollectionTestCase extends TestCase
         assert(is_a($collection, Collection::class)); // Make phpstan happy
 
         try {
-            $collection->toUniqueByCallback(static function () {
-                return null;
-            });
+            $collection->toUniqueByCallback(
+                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                    return null;
+                }
+            );
         } catch (\Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));

@@ -98,6 +98,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *   - int|string $key: The current element's key.
      *   - object|null $carry: An object, which may be utilized to carry over information between iterations.
      *
+     * @param Closure(mixed, int|string, object|null):void $callback
      * @param object|null $carry Corresponds to the $carry argument in the $callback.
      * @throws RuntimeException
      */
@@ -118,6 +119,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * Any other return value returned by $callback must cause an exception to be thrown.
      *
+     * @param Closure(mixed, int|string, object|null):(bool|void|null) $callback
      * @param object|null $carry Corresponds to the $carry argument in the $callback.
      * @throws RuntimeException
      */
@@ -127,8 +129,9 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Will attempt to find the first element by value in the collection, using the specified callback. When nothing is
      * found, `null` is returned.
      *
-     * @param Closure $callback This closure will be called with arguments `mixed $v` and `int|string $k`, where $v is
-     *                          an element contained in the current collection and $k is the element's respective key.
+     * @param Closure(T, int|string):bool $callback This closure will be called with arguments `mixed $v` and
+     *                                              `int|string $k`, where $v is an element contained in the current
+     *                                              collection and $k is the element's respective key.
      * @throws RuntimeException
      * @return T|null
      */
@@ -236,9 +239,10 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * Argument $callback will receive the following arguments:
      *
-     *   - mixed $value: The current element's value.
+     *   - T $value: The current element's value.
      *   - int|string $key: The current element's key.
      *
+     * @param Closure(T, int|string):mixed $callback
      * @return array<int|string, T>
      */
     public function map(Closure $callback): array;
@@ -255,6 +259,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Argument $callback must return an integer. Any other return value returned by $callback must cause an exception
      * to be thrown.
      *
+     * @param Closure(T, int|string):int $callback
      * @throws RuntimeException
      * @return T|null
      */
@@ -272,6 +277,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * Argument $callback must return an integer. Any other return value returned by $callback must cause an exception
      * to be thrown.
      *
+     * @param Closure(T, int|string):int $callback
      * @throws RuntimeException
      * @return T|null
      */
@@ -357,14 +363,15 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * Argument $callback will have the following parameters:
      *
-     *   - mixed $a: An element A to test, which is present within the collection.
-     *   - mixed $b: An element B to test, which is present within the collection.
+     *   - T $a: An element A to test, which is present within the collection.
+     *   - T $b: An element B to test, which is present within the collection.
      *
      * Argument $callback must return an integer. Any other value returned by $callback must cause an exception to be
      * thrown.
      *
      * Must return a clone.
      *
+     * @param Closure(T, T):int $callback
      * @throws RuntimeException
      */
     public function toSortedByCallback(Closure $callback): static;
@@ -375,7 +382,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * Argument $callback will have the following parameters:
      *
-     *   - mixed $value: An element within the current collection.
+     *   - T $value: An element within the current collection.
      *   - int|string $key: An array key.
      *
      * Argument $callback must return a string. Any other value returned by $callback must cause an exception to be
@@ -383,6 +390,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      *
      * Must return a clone.
      *
+     * @param Closure(T, int|string):string $callback
      * @param bool $isUsingFirstEncounteredElement
      *                                          When `true` and when two or more elements, which have produced the same
      *                                          unique string, exist, only the first element will will exist in the
@@ -415,6 +423,7 @@ interface CollectionInterface extends ImmutableObjectInterface, \Countable, \Ite
      * the the $callback closure.
      * Must return a clone.
      *
+     * @param Closure(T, int|string):bool $callback
      * @throws RuntimeException
      */
     public function withFiltered(Closure $callback): static;
