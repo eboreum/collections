@@ -65,8 +65,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @see https://www.php.net/manual/en/function.array-chunk.php
      *
      * @param int<1, max> $chunkSize Must be > 0. Otherwise, a RuntimeException must be thrown.
-     * @throws RuntimeException
      * @return CollectionInterface<static<T>>
+     * @throws RuntimeException
      */
     public function chunk(int $chunkSize): CollectionInterface;
 
@@ -134,8 +134,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @param Closure(T, int|string):bool $callback This closure will be called with arguments `mixed $v` and
      *                                              `int|string $k`, where $v is an element contained in the current
      *                                              collection and $k is the element's respective key.
-     * @throws RuntimeException
      * @return T|null
+     * @throws RuntimeException
      */
     public function find(Closure $callback);
 
@@ -174,8 +174,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * Returns the element at the $key position in the collection's elements. If key does not exist, returns `null`.
      * Must throw a RuntimeException when argument $key is invalid.
      *
-     * @throws InvalidArgumentException
      * @return T|null
+     * @throws InvalidArgumentException
      */
     public function get(int|string $key);
 
@@ -262,8 +262,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * to be thrown.
      *
      * @param Closure(T, int|string):int $callback
-     * @throws RuntimeException
      * @return T|null
+     * @throws RuntimeException
      */
     public function maxByCallback(Closure $callback);
 
@@ -280,8 +280,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * to be thrown.
      *
      * @param Closure(T, int|string):int $callback
-     * @throws RuntimeException
      * @return T|null
+     * @throws RuntimeException
      */
     public function minByCallback(Closure $callback);
 
