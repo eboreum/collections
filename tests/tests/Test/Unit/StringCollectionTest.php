@@ -37,9 +37,9 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
         assert($handledCollectionClassName === get_class($collectionB)); // Make phpstan happy
         assert(is_a($collectionB, Collection::class)); // Make phpstan happy
 
-        $this->assertNotSame($collectionA, $collectionB);
-        $this->assertSame($elements, $collectionA->toArray());
-        $this->assertSame($expected, $collectionB->toArray());
+        $this->assertNotSame($collectionA, $collectionB, $message);
+        $this->assertSame($elements, $collectionA->toArray(), $message);
+        $this->assertSame($expected, $collectionB->toArray(), $message);
     }
 
     /**
