@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
+use Closure;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\FloatCollection;
 
@@ -188,7 +189,7 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
         string $message,
         array $expected,
         array $elements,
-        \Closure $callback,
+        Closure $callback,
         bool $isUsingFirstEncounteredElement
     ): void {
         $handledCollectionClassName = $this->getHandledCollectionClassName();

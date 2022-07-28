@@ -20,7 +20,7 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
         string $message,
         array $expected,
         array $elements,
-        \Closure $callback,
+        Closure $callback,
         bool $isUsingFirstEncounteredElement
     ): void {
         $handledCollectionClassName = $this->getHandledCollectionClassName();

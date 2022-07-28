@@ -34,7 +34,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\Directory $object): string {
+                    static function (Directory $object): string {
                         return $object->path;
                     },
                     true,
@@ -59,7 +59,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Directory $object): string {
+                    static function (Directory $object): string {
                         return $object->path;
                     },
                     true,
@@ -84,7 +84,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Directory $object): string {
+                    static function (Directory $object): string {
                         return $object->path;
                     },
                     false,
@@ -109,7 +109,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Directory $object): string {
+                    static function (Directory $object): string {
                         return $object->path;
                     },
                     true,
@@ -134,7 +134,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Directory $object): string {
+                    static function (Directory $object): string {
                         return $object->path;
                     },
                     false,
@@ -157,14 +157,14 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                 (static function (): DirectoryCollection {
                     $directory = dir(__DIR__);
 
-                    assert($directory instanceof \Directory);
+                    assert($directory instanceof Directory);
 
                     return new DirectoryCollection([0 => $directory]);
                 })(),
                 (static function (): DirectoryCollection {
                     $directory = dir(dirname(__DIR__));
 
-                    assert($directory instanceof \Directory);
+                    assert($directory instanceof Directory);
 
                     return new DirectoryCollection([0 => $directory]);
                 })(),
@@ -184,14 +184,14 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                 (static function (): DirectoryCollection {
                     $directory = dir(__DIR__);
 
-                    assert($directory instanceof \Directory);
+                    assert($directory instanceof Directory);
 
                     return new DirectoryCollection(['foo' => $directory]);
                 })(),
                 (static function (): DirectoryCollection {
                     $directory = dir(dirname(__DIR__));
 
-                    assert($directory instanceof \Directory);
+                    assert($directory instanceof Directory);
 
                     return new DirectoryCollection(['foo' => $directory]);
                 })(),

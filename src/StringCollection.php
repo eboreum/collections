@@ -58,7 +58,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      */
-    public function find(\Closure $callback): ?string
+    public function find(Closure $callback): ?string
     {
         return parent::find($callback);
     }
@@ -100,7 +100,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?string
+    public function maxByCallback(Closure $callback): ?string
     {
         return parent::maxByCallback($callback);
     }
@@ -108,7 +108,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?string
+    public function minByCallback(Closure $callback): ?string
     {
         return parent::minByCallback($callback);
     }

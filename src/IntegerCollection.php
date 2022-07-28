@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections;
 
+use Closure;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
@@ -69,7 +70,7 @@ class IntegerCollection
     /**
      * {@inheritDoc}
      */
-    public function find(\Closure $callback): ?int
+    public function find(Closure $callback): ?int
     {
         return parent::find($callback);
     }
@@ -127,7 +128,7 @@ class IntegerCollection
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?int
+    public function maxByCallback(Closure $callback): ?int
     {
         return parent::maxByCallback($callback);
     }
@@ -151,7 +152,7 @@ class IntegerCollection
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?int
+    public function minByCallback(Closure $callback): ?int
     {
         return parent::minByCallback($callback);
     }

@@ -7,6 +7,7 @@ namespace Test\Unit\Eboreum\Collections\Object_;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Exception;
 use Test\Unit\Eboreum\Collections\AbstractTypeCollectionTestCase;
 
 abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractTypeCollectionTestCase
@@ -26,7 +27,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
 
         try {
             $collection->withAdded(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -90,7 +91,7 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
 
         try {
             $collection->withRemovedElement(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(

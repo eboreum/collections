@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Abstraction;
 
+use DateTime;
+use DateTimeImmutable;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Exception\RuntimeException;
+use Exception;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 {
@@ -28,7 +32,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                     return 'IDontExist6f27c77df211460d95103a19491ac2dc'; // @phpstan-ignore-line
                 }
             };
-        } catch (\Exception $e) { // @phpstan-ignore-line
+        } catch (Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -82,10 +86,10 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
     public function testConstructorThrowsExceptionWhenArgumentElementContainsInvalidValues(): void
     {
         $elements = [
-            new \stdClass(),
-            new \DateTime('2021-01-01T00:00:00+00:00'),
-            new \stdClass(),
-            'foo' => new \DateTimeImmutable('2021-01-01T00:00:00+00:00'),
+            new stdClass(),
+            new DateTime('2021-01-01T00:00:00+00:00'),
+            new stdClass(),
+            'foo' => new DateTimeImmutable('2021-01-01T00:00:00+00:00'),
         ];
 
         try {
@@ -99,7 +103,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
                     return 'stdClass';
                 }
             };
-        } catch (\Exception $e) { // @phpstan-ignore-line
+        } catch (Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -186,8 +190,8 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
     public function testWithMergedThrowsExceptionWhenArgumentCollectionDoesNotHaveASuitableHandledClassName(): void
     {
         $elementsA = [
-            new \stdClass(),
-            new \stdClass(),
+            new stdClass(),
+            new stdClass(),
         ];
 
         $collectionA = new class ($elementsA) extends AbstractNamedClassOrInterfaceCollection
@@ -202,8 +206,8 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
         };
 
         $elementsB = [
-            new \DateTimeImmutable('2021-01-01T00:00:00+00:00'),
-            new \DateTimeImmutable('2021-01-01T00:00:00+00:00'),
+            new DateTimeImmutable('2021-01-01T00:00:00+00:00'),
+            new DateTimeImmutable('2021-01-01T00:00:00+00:00'),
         ];
 
         $collectionB = new class ($elementsB) extends AbstractNamedClassOrInterfaceCollection
@@ -219,7 +223,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 
         try {
             $collectionA->withMerged($collectionB);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections;
 
+use Closure;
 use Eboreum\Collections\Contract\CollectionInterface;
 
 /**
@@ -59,7 +60,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      */
-    public function find(\Closure $callback): ?object
+    public function find(Closure $callback): ?object
     {
         return parent::find($callback);
     }
@@ -101,7 +102,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?object
+    public function maxByCallback(Closure $callback): ?object
     {
         return parent::maxByCallback($callback);
     }
@@ -109,7 +110,7 @@ class ObjectCollection extends Collection
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?object
+    public function minByCallback(Closure $callback): ?object
     {
         return parent::minByCallback($callback);
     }

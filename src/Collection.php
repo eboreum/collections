@@ -33,6 +33,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections;
 
+use ArrayIterator;
 use Closure;
 use Eboreum\Caster\Attribute\DebugIdentifier;
 use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
@@ -42,6 +43,10 @@ use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBeha
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Exceptional\ExceptionMessageGenerator;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionObject;
+use Throwable;
 
 /**
  * {@inheritDoc}
@@ -75,10 +80,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             }
 
             $this->elements = $elements;
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -116,10 +121,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
             /** @var Collection<static<T>> */
             $collection = new Collection($elements);
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -168,7 +173,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($this->elements as $key => $value) {
                 try {
                     $callback($value, $key, $carry);
-                } catch (\Throwable $t) {
+                } catch (Throwable $t) {
                     throw new RuntimeException(sprintf(
                         'Failure when calling $callback(%s, %s, %s)',
                         Caster::getInstance()->castTyped($value),
@@ -177,10 +182,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                     ), 0, $t);
                 }
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -195,7 +200,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($this->elements as $key => $value) {
                 try {
                     $result = $callback($value, $key, $carry);
-                } catch (\Throwable $t) {
+                } catch (Throwable $t) {
                     throw new RuntimeException(sprintf(
                         'Failure when calling $callback(%s, %s, %s)',
                         Caster::getInstance()->castTyped($value),
@@ -223,10 +228,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                     Caster::getInstance()->castTyped($result),
                 ));
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -262,10 +267,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                     break;
                 }
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -324,11 +329,11 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     /**
      * {@inheritDoc}
      *
-     * @return \ArrayIterator<int|string, T>
+     * @return ArrayIterator<int|string, T>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->elements);
+        return new ArrayIterator($this->elements);
     }
 
     /**
@@ -417,7 +422,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($this->elements as $key => $value) {
                 try {
                     $result = $callback($value, $key);
-                } catch (\Throwable $t) {
+                } catch (Throwable $t) {
                     throw new RuntimeException(sprintf(
                         'Failure when calling $callback(%s, %s)',
                         Caster::getInstance()->castTyped($value),
@@ -445,10 +450,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                     $max = $result;
                 }
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -468,7 +473,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($this->elements as $key => $value) {
                 try {
                     $result = $callback($value, $key);
-                } catch (\Throwable $t) {
+                } catch (Throwable $t) {
                     throw new RuntimeException(sprintf(
                         'Failure when calling $callback(%s, %s)',
                         Caster::getInstance()->castTyped($value),
@@ -496,10 +501,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                     $min = $result;
                 }
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -667,10 +672,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             }
 
             $clone->elements = $resultingElements;
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -708,10 +713,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         try {
             $clone = clone $this;
             uasort($clone->elements, $callback);
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -735,7 +740,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($clone as $key => $value) {
                 try {
                     $result = $callback($value, $key);
-                } catch (\Throwable $t) {
+                } catch (Throwable $t) {
                     throw new RuntimeException(sprintf(
                         'Failure when calling $callback(%s, %s)',
                         Caster::getInstance()->castTyped($value),
@@ -775,10 +780,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($uniqueStringToKeyAndElement as [$key, $value]) {
                 $clone->elements[$key] = $value;
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -796,10 +801,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
             $clone = clone $this;
             $clone->elements[] = $element;
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -829,10 +834,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($elements as $element) {
                 $clone->elements[] = $element;
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -852,10 +857,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 $callback,
                 ARRAY_FILTER_USE_BOTH,
             );
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -872,7 +877,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             if (false === is_a($collection, static::class)) {
                 throw new RuntimeException(sprintf(
                     'Argument $collection must be an instance of %s, but it is not. Found: %s',
-                    Caster::makeNormalizedClassName(new \ReflectionObject($this)),
+                    Caster::makeNormalizedClassName(new ReflectionObject($this)),
                     Caster::getInstance()->castTyped($collection),
                 ));
             }
@@ -896,10 +901,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 $clone->elements,
                 $collection->elements,
             );
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -940,10 +945,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             if (false !== $key) {
                 unset($clone->elements[$key]);
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -969,7 +974,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             if (false === static::isElementAccepted($element)) {
                 $errorMessages[] = sprintf(
                     'Argument $element is not accepted by %s. Found: %s',
-                    Caster::makeNormalizedClassName(new \ReflectionClass(static::class)),
+                    Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
                     Caster::getInstance()->castTyped($element),
                 );
             }
@@ -980,10 +985,10 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
             $clone = clone $this;
             $clone->elements[$key] = $element;
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -1018,7 +1023,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         if (false === static::isElementAccepted($element)) {
             throw new InvalidArgumentException(sprintf(
                 'Argument $element is not accepted by %s. Found: %s',
-                Caster::makeNormalizedClassName(new \ReflectionClass(static::class)),
+                Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
                 Caster::getInstance()->castTyped($element),
             ));
         }

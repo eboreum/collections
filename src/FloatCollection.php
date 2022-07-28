@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eboreum\Collections;
 
+use Closure;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
@@ -69,7 +70,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      */
-    public function find(\Closure $callback): ?float
+    public function find(Closure $callback): ?float
     {
         return parent::find($callback);
     }
@@ -127,7 +128,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      */
-    public function maxByCallback(\Closure $callback): ?float
+    public function maxByCallback(Closure $callback): ?float
     {
         return parent::maxByCallback($callback);
     }
@@ -151,7 +152,7 @@ class FloatCollection
     /**
      * {@inheritDoc}
      */
-    public function minByCallback(\Closure $callback): ?float
+    public function minByCallback(Closure $callback): ?float
     {
         return parent::minByCallback($callback);
     }

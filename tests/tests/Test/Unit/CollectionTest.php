@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
+use Closure;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Exception;
+use stdClass;
 
 class CollectionTest extends AbstractCollectionTestCase
 {
@@ -32,7 +35,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     return is_string($element);
                 }
             };
-        } catch (\Exception $e) { // @phpstan-ignore-line
+        } catch (Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -100,7 +103,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collectionA->contains(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -140,11 +143,11 @@ class CollectionTest extends AbstractCollectionTestCase
      * @param array<int, string> $expected
      * @param array<int, mixed> $elements
      */
-    public function testEachWorks(array $expected, array $elements, \Closure $callback): void
+    public function testEachWorks(array $expected, array $elements, Closure $callback): void
     {
         $collection = new Collection($elements);
 
-        $carry = new \stdClass();
+        $carry = new stdClass();
         $carry->results = [];
 
         $collection->each($callback, $carry);
@@ -221,7 +224,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection->toReindexed(static function ($element) {
                 return $element;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -278,7 +281,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection->toReindexed(static function ($element) {
                 return $element;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -342,7 +345,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection->toReindexed(static function (int $element): int {
                 return $element;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -407,7 +410,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->withAdded(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -478,7 +481,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->withAddedMultiple([null, 3.1415]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -534,9 +537,9 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->withFiltered(static function ($v): void {
-                throw new \Exception('fail');
+                throw new Exception('fail');
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -592,7 +595,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collectionA->withMerged($collectionB); // @phpstan-ignore-line
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -655,7 +658,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->withRemoved(null); // @phpstan-ignore-line
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -696,7 +699,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->withRemovedElement(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -755,7 +758,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->withSet(null, null); // @phpstan-ignore-line
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -820,7 +823,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->withSet(0, null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -896,7 +899,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection::assertIsElementAccepted(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -982,7 +985,7 @@ class CollectionTest extends AbstractCollectionTestCase
     }
 
     /**
-     * @return array<int, array{array<int, string>, array<int|string, mixed>, \Closure}>
+     * @return array<int, array{array<int, string>, array<int|string, mixed>, Closure}>
      */
     public function dataProvider_testEachWorks(): array
     {
@@ -1028,13 +1031,13 @@ class CollectionTest extends AbstractCollectionTestCase
     public function testEachHandlesExceptionGracefullyWhenAFailureHappensInsideTheCallback(): void
     {
         $collection = new Collection([null]);
-        $exception = new \Exception('foo');
+        $exception = new Exception('foo');
 
         try {
             $collection->each(static function () use ($exception): void {
                 throw $exception;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -1090,11 +1093,11 @@ class CollectionTest extends AbstractCollectionTestCase
      * @param array<int, string> $expected
      * @param array<int|string, mixed> $elements
      */
-    public function testEveryWorks(array $expected, array $elements, \Closure $callback): void
+    public function testEveryWorks(array $expected, array $elements, Closure $callback): void
     {
         $collection = new Collection($elements);
 
-        $carry = new \stdClass();
+        $carry = new stdClass();
         $carry->results = [];
 
         $collection->every($callback, $carry);
@@ -1103,7 +1106,7 @@ class CollectionTest extends AbstractCollectionTestCase
     }
 
     /**
-     * @return array<int, array{array<int, string>, array<int|string, mixed>, \Closure}>
+     * @return array<int, array{array<int, string>, array<int|string, mixed>, Closure}>
      */
     public function dataProvider_testEveryWorks(): array
     {
@@ -1158,13 +1161,13 @@ class CollectionTest extends AbstractCollectionTestCase
     public function testEveryHandlesExceptionGracefullyWhenAFailureHappensInsideTheCallback(): void
     {
         $collection = new Collection([null]);
-        $exception = new \Exception('foo');
+        $exception = new Exception('foo');
 
         try {
             $collection->every(static function () use ($exception): void {
                 throw $exception;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -1225,7 +1228,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     return 42;
                 }
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -1303,7 +1306,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     return 42;
                 }
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -1374,7 +1377,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->indexOf(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(InvalidArgumentException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -1405,13 +1408,13 @@ class CollectionTest extends AbstractCollectionTestCase
     public function testMaxByCallbackHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
     {
         $collection = new Collection([null]);
-        $exception = new \Exception();
+        $exception = new Exception();
 
         try {
-            $collection->maxByCallback(static function () use ($exception): \Exception {
+            $collection->maxByCallback(static function () use ($exception): Exception {
                 throw $exception;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -1472,7 +1475,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     return null;
                 }
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -1522,13 +1525,13 @@ class CollectionTest extends AbstractCollectionTestCase
     public function testMinByCallbackHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
     {
         $collection = new Collection([null]);
-        $exception = new \Exception();
+        $exception = new Exception();
 
         try {
-            $collection->minByCallback(static function () use ($exception): \Exception {
+            $collection->minByCallback(static function () use ($exception): Exception {
                 throw $exception;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -1589,7 +1592,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     return null;
                 }
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(

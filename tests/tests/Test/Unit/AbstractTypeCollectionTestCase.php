@@ -8,6 +8,8 @@ use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Exception;
+use ReflectionObject;
 
 abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 {
@@ -22,7 +24,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
         try {
             $collection->withAdded(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -84,7 +86,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
         try {
             $collection->withAddedMultiple([null]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -145,7 +147,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
         try {
             $collectionA->withMerged($collectionB);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -204,7 +206,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
         $collectionA = new $handledCollectionClassName();
         $collectionB = new $handledCollectionClassName();
 
-        $reflectionObjectCurrent = new \ReflectionObject($collectionB);
+        $reflectionObjectCurrent = new ReflectionObject($collectionB);
         $reflectionProperty = null;
 
         do {
@@ -232,7 +234,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
         try {
             $collectionA->withMerged($collectionB);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -290,7 +292,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
         try {
             $collection->withRemovedElement(null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -350,7 +352,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
         try {
             $collection->withSet(0, null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(

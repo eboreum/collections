@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Eboreum\Collections\Contract;
 
 use Closure;
+use Countable;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
+use IteratorAggregate;
 
 /**
  * {@inheritDoc}
@@ -18,9 +20,9 @@ use Eboreum\Collections\Exception\RuntimeException;
  * is immutable, which \ArrayAccess would break.
  *
  * @template T
- * @extends \IteratorAggregate<int|string, T>
+ * @extends IteratorAggregate<int|string, T>
  */
-interface CollectionInterface extends ImmutableObjectInterface, \Countable, \IteratorAggregate
+interface CollectionInterface extends ImmutableObjectInterface, Countable, IteratorAggregate
 {
     /**
      * Do nothing if the provided $element argument is accepted in the implementing collection class. Otherwise,

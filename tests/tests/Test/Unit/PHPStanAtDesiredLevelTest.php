@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Eboreum\Collections\Test\Unit;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class PHPStanAtDesiredLevelTest extends TestCase
 {
@@ -20,7 +21,7 @@ class PHPStanAtDesiredLevelTest extends TestCase
         exec($command, $output, $resultCode);
 
         if (0 !== $resultCode) {
-            throw new \RuntimeException('phpstan is not at the level specidied in phpstan.neon');
+            throw new RuntimeException('phpstan is not at the level specidied in phpstan.neon');
         }
 
         $this->assertTrue(true);

@@ -8,6 +8,7 @@ use Closure;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Exception\RuntimeException;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractCollectionTestCase extends TestCase
@@ -196,7 +197,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         try {
             $collection->chunk(-1); // @phpstan-ignore-line
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -834,13 +835,13 @@ abstract class AbstractCollectionTestCase extends TestCase
     public function testToSortedByCallbackHandlesExceptionGracefullyWhenAFailureOccursInsideTheCallback(): void
     {
         $collection = new Collection([null, null]);
-        $exception = new \Exception();
+        $exception = new Exception();
 
         try {
             $collection->toSortedByCallback(static function () use ($exception): void {
                 throw $exception;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -913,13 +914,13 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         assert(is_a($collection, Collection::class)); // Make phpstan happy
 
-        $exception = new \Exception();
+        $exception = new Exception();
 
         try {
             $collection->toUniqueByCallback(static function () use ($exception): void {
                 throw $exception;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(
@@ -989,7 +990,7 @@ abstract class AbstractCollectionTestCase extends TestCase
                     return null;
                 }
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, get_class($currentException));
             $this->assertMatchesRegularExpression(

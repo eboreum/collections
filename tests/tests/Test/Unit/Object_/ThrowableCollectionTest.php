@@ -35,7 +35,7 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                     '1 single item collection.',
                     $elements,
                     $elements,
-                    static function (\Throwable $object): string {
+                    static function (Throwable $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -60,7 +60,7 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Throwable $object): string {
+                    static function (Throwable $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -85,7 +85,7 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Throwable $object): string {
+                    static function (Throwable $object): string {
                         return $object->getMessage();
                     },
                     false,
@@ -110,7 +110,7 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         4 => $elements[4],
                     ],
                     $elements,
-                    static function (\Throwable $object): string {
+                    static function (Throwable $object): string {
                         return $object->getMessage();
                     },
                     true,
@@ -135,7 +135,7 @@ class ThrowableCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
                         5 => $elements[5],
                     ],
                     $elements,
-                    static function (\Throwable $object): string {
+                    static function (Throwable $object): string {
                         return $object->getMessage();
                     },
                     false,

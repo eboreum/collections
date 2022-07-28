@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections;
 
+use DateTimeImmutable;
 use Eboreum\Collections\ObjectCollection;
+use stdClass;
 
 class ObjectCollectionTest extends AbstractTypeCollectionTestCase
 {
@@ -302,8 +304,8 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new ObjectCollection([0 => new \stdClass()]),
-                new ObjectCollection([0 => new \DateTimeImmutable()]),
+                new ObjectCollection([0 => new stdClass()]),
+                new ObjectCollection([0 => new DateTimeImmutable()]),
                 function (
                     ObjectCollection $collectionA,
                     ObjectCollection $collectionB,
@@ -318,8 +320,8 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
             ],
             [
                 'Same name string keys. Will override.',
-                new ObjectCollection(['foo' => new \stdClass()]),
-                new ObjectCollection(['foo' => new \DateTimeImmutable()]),
+                new ObjectCollection(['foo' => new stdClass()]),
+                new ObjectCollection(['foo' => new DateTimeImmutable()]),
                 function (
                     ObjectCollection $collectionA,
                     ObjectCollection $collectionB,
@@ -342,12 +344,12 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
     protected function createMultipleElements(): array
     {
         return [
-            new \stdClass(),
+            new stdClass(),
             'foo' => new class
             {
             },
             42 => dir(__DIR__),
-            new \DateTimeImmutable(),
+            new DateTimeImmutable(),
         ];
     }
 

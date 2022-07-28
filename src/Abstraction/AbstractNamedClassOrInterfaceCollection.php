@@ -10,6 +10,9 @@ use Eboreum\Collections\Contract\ObjectCollectionInterface;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Exceptional\ExceptionMessageGenerator;
+use ReflectionClass;
+use ReflectionMethod;
+use Throwable;
 
 /**
  * {@inheritDoc}
@@ -33,16 +36,16 @@ abstract class AbstractNamedClassOrInterfaceCollection extends Collection implem
             ) {
                 throw new RuntimeException(sprintf(
                     'Collection %s has handled class \\%s, but said handled class does not exist',
-                    Caster::makeNormalizedClassName(new \ReflectionClass(static::class)),
+                    Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
                     static::getHandledClassName(),
                 ));
             }
 
             parent::__construct($elements);
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
-                new \ReflectionMethod(self::class, __FUNCTION__),
+                new ReflectionMethod(self::class, __FUNCTION__),
                 func_get_args(),
             ), 0, $t);
         }
@@ -60,7 +63,7 @@ abstract class AbstractNamedClassOrInterfaceCollection extends Collection implem
 
             throw new InvalidArgumentException(sprintf(
                 'Expects argument $element to be an object, instance of %s, but it is not. Found: %s',
-                Caster::makeNormalizedClassName(new \ReflectionClass($handledClassName)),
+                Caster::makeNormalizedClassName(new ReflectionClass($handledClassName)),
                 Caster::getInstance()->castTyped($element),
             ));
         }
