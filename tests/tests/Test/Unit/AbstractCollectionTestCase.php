@@ -11,7 +11,7 @@ use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Exception\ElementNotFoundException;
 use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
-use Eboreum\Exceptional\ExceptionMessageGenerator;
+use Eboreum\Collections\ExceptionMessageGenerator;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

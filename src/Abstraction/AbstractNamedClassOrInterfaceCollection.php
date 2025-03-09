@@ -9,7 +9,7 @@ use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\ObjectCollectionInterface;
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\Exception\UnacceptableElementException;
-use Eboreum\Exceptional\ExceptionMessageGenerator;
+use Eboreum\Collections\ExceptionMessageGenerator;
 use ReflectionClass;
 use ReflectionMethod;
 use Throwable;

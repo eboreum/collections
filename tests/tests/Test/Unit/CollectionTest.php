@@ -13,7 +13,7 @@ use Eboreum\Collections\Exception\UnacceptableCollectionException;
 use Eboreum\Collections\Exception\UnacceptableElementException;
 use Eboreum\Collections\FloatCollection;
 use Eboreum\Collections\IntegerCollection;
-use Eboreum\Exceptional\ExceptionMessageGenerator;
+use Eboreum\Collections\ExceptionMessageGenerator;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;

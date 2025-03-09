@@ -45,7 +45,7 @@ use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\Exception\UnacceptableCollectionException;
 use Eboreum\Collections\Exception\UnacceptableElementException;
-use Eboreum\Exceptional\ExceptionMessageGenerator;
+use Eboreum\Collections\ExceptionMessageGenerator;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionObject;
