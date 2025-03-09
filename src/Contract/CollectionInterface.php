@@ -415,6 +415,67 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
     public function toCleared(): static;
 
     /**
+     * Equivalent of `array_diff`.
+     *
+     * Must return a clone. The resulting clone must contain only the VALUES in this current collections, which are
+     * different from the VALUES in the $other collection.
+     *
+     * @see https://www.php.net/manual/en/function.array-diff.php
+     *
+     * @param CollectionInterface<T> $collection
+     * @param bool $isBidirectional When false, only elements in the current collection ($this) will be included. When
+     *                              true, all the different elements from both collections ($this and $collection) will
+     *                              be included.
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function toDifference(CollectionInterface $collection, bool $isBidirectional = false): static;
+
+    /**
+     * Equivalent of `array_diff_key`.
+     *
+     * Must return a clone. The resulting clone must contain only the KEYS in this current collections, which are
+     * different from the KEYS in the $other collection.
+     *
+     * @see https://www.php.net/manual/en/function.array-diff-key.php
+     *
+     * @param CollectionInterface<T> $collection
+     * @param bool $isBidirectional When false, only key in the current collection ($this) will be included. When true,
+     *                              all the different keys from both collections ($this and $collection) will be
+     *                              included.
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function toDifferenceByKey(CollectionInterface $collection, bool $isBidirectional = false): static;
+
+    /**
+     * Equivalent of `array_intersect`.
+     *
+     * Must return a clone. The resulting clone must contain only the intersection of VALUES between the two
+     * collections.
+     *
+     * @see https://www.php.net/manual/en/function.array-intersect.php
+     *
+     * @param CollectionInterface<T> $collection
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function toIntersection(CollectionInterface $collection): static;
+
+    /**
+     * Equivalent of `array_intersect_key`.
+     *
+     * Must return a clone. The resulting clone must contain only the intersection of KEYS between the two collections.
+     *
+     * @see https://www.php.net/manual/en/function.array-intersect-key.php
+     *
+     * @param CollectionInterface<T> $collection
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function toIntersectionByKey(CollectionInterface $collection): static;
+
+    /**
      * Equivalent of `array_values`. Makes the contained elements in a clone of the current instance exist in a
      * sequential array, with all keys being numerical, starting from index 0.
      *

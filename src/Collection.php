@@ -52,7 +52,11 @@ use ReflectionObject;
 use Throwable;
 
 use function array_chunk;
+use function array_diff;
+use function array_diff_key;
 use function array_filter;
+use function array_intersect;
+use function array_intersect_key;
 use function array_key_exists;
 use function array_key_first;
 use function array_key_last;
@@ -756,6 +760,150 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     {
         $clone = clone $this;
         $clone->elements = [];
+
+        return $clone;
+    }
+
+    public function toDifference(CollectionInterface $collection, bool $isBidirectional = false): static
+    {
+        try {
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
+
+            $clone = clone $this;
+            $clone->elements = array_diff(
+                $this->toArray(),
+                $collection->toArray(),
+            );
+
+            if ($isBidirectional) {
+                $clone->elements = array_merge(
+                    $clone->elements,
+                    array_diff(
+                        $collection->toArray(),
+                        $this->toArray(),
+                    ),
+                );
+            }
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
+            );
+        } catch (Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
+
+        return $clone;
+    }
+
+    public function toDifferenceByKey(CollectionInterface $collection, bool $isBidirectional = false): static
+    {
+        try {
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
+
+            $clone = clone $this;
+            $clone->elements = array_diff_key(
+                $this->toArray(),
+                $collection->toArray(),
+            );
+
+            if ($isBidirectional) {
+                $clone->elements = array_merge(
+                    $clone->elements,
+                    array_diff_key(
+                        $collection->toArray(),
+                        $this->toArray(),
+                    ),
+                );
+            }
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
+            );
+        } catch (Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
+
+        return $clone;
+    }
+
+    public function toIntersection(CollectionInterface $collection): static
+    {
+        try {
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
+
+            $clone = clone $this;
+            $clone->elements = array_intersect(
+                $clone->elements,
+                $collection->toArray(),
+            );
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
+            );
+        } catch (Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
+
+        return $clone;
+    }
+
+    public function toIntersectionByKey(CollectionInterface $collection): static
+    {
+        try {
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
+
+            $clone = clone $this;
+            $clone->elements = array_intersect_key(
+                $clone->elements,
+                $collection->toArray(),
+            );
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
+            );
+        } catch (Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
 
         return $clone;
     }

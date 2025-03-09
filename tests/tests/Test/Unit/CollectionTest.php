@@ -17,6 +17,7 @@ use Eboreum\Exceptional\ExceptionMessageGenerator;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionMethod;
 use ReflectionObject;
 use stdClass;
@@ -537,6 +538,288 @@ class CollectionTest extends AbstractCollectionTestCase
         );
 
         $collectionA->guardCollectionInheritanceAndAcceptedElements($collectionB);
+    }
+
+    public function testToDifferenceThrowsExceptionWhenCollectionsMismatch(): void
+    {
+        $collectionA = new IntegerCollection();
+        $collectionB = new FloatCollection();
+
+        $this->expectException(UnacceptableCollectionException::class);
+
+        $collectionA->toDifference($collectionB);
+    }
+
+    public function testToDifferenceHandlesExceptionGracefully(): void
+    {
+        $collectionA = new Collection();
+
+        $collectionB = $this->createMock(Collection::class);
+        $exception = $this->createMock(Exception::class);
+
+        $collectionB
+            ->expects($this->once())
+            ->method('toArray')
+            ->willThrowException($exception);
+
+        try {
+            $collectionA->toDifference($collectionB);
+        } catch (Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, $currentException::class);
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collectionA,
+                    new ReflectionMethod($collectionA, 'toDifference'),
+                    [$collectionB],
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertSame($exception, $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
+    public function testToDifferenceWorks(): void
+    {
+        /** @var IntegerCollection<int> $collectionA */
+        $collectionA = new IntegerCollection([1, 2, 3]);
+
+        /** @var IntegerCollection<int> $collectionB */
+        $collectionB = new IntegerCollection([3, 4, 5]);
+
+        $collectionC = $collectionA->toDifference($collectionB);
+
+        $this->assertNotSame($collectionA, $collectionC);
+        $this->assertNotSame($collectionB, $collectionC);
+        $this->assertSame([1, 2, 3], $collectionA->toArray());
+        $this->assertSame([3, 4, 5], $collectionB->toArray());
+        $this->assertSame([1, 2], $collectionC->toArray());
+
+        $collectionD = $collectionA->toDifference($collectionB, true);
+
+        $this->assertNotSame($collectionA, $collectionD);
+        $this->assertNotSame($collectionB, $collectionD);
+        $this->assertSame([1, 2, 3], $collectionA->toArray());
+        $this->assertSame([3, 4, 5], $collectionB->toArray());
+        $this->assertSame([1, 2, 4, 5], $collectionD->toArray());
+    }
+
+    public function testToDifferenceByKeyThrowsExceptionWhenCollectionsMismatch(): void
+    {
+        /** @var IntegerCollection<int> $collectionA */
+        $collectionA = new IntegerCollection();
+
+        /** @var FloatCollection<float> $collectionB */
+        $collectionB = new FloatCollection();
+
+        $this->expectException(UnacceptableCollectionException::class);
+
+        $collectionA->toDifferenceByKey($collectionB); // @phpstan-ignore-line
+    }
+
+    public function testToDifferenceByKeyHandlesExceptionGracefully(): void
+    {
+        /** @var Collection<mixed> $collectionA */
+        $collectionA = new Collection();
+
+        /** @var Collection<mixed>&MockObject $collectionB */
+        $collectionB = $this->createMock(Collection::class);
+
+        $exception = $this->createMock(Exception::class);
+
+        $collectionB
+            ->expects($this->once())
+            ->method('toArray')
+            ->willThrowException($exception);
+
+        try {
+            $collectionA->toDifferenceByKey($collectionB);
+        } catch (Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, $currentException::class);
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collectionA,
+                    new ReflectionMethod($collectionA, 'toDifferenceByKey'),
+                    [$collectionB],
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertSame($exception, $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
+    public function testToDifferenceByKeyWorks(): void
+    {
+        /** @var IntegerCollection<int> $collectionA */
+        $collectionA = new IntegerCollection([1 => 42, 2 => 43, 3 => 44]);
+
+        /** @var IntegerCollection<int> $collectionB */
+        $collectionB = new IntegerCollection([3 => 97, 4 => 98, 5 => 99]);
+
+        $collectionC = $collectionA->toDifferenceByKey($collectionB);
+
+        $this->assertNotSame($collectionA, $collectionC);
+        $this->assertNotSame($collectionB, $collectionC);
+        $this->assertSame([1 => 42, 2 => 43, 3 => 44], $collectionA->toArray());
+        $this->assertSame([3 => 97, 4 => 98, 5 => 99], $collectionB->toArray());
+        $this->assertSame([1 => 42, 2 => 43], $collectionC->toArray());
+
+        $collectionD = $collectionA->toDifferenceByKey($collectionB, true);
+
+        $this->assertNotSame($collectionA, $collectionD);
+        $this->assertNotSame($collectionB, $collectionD);
+        $this->assertSame([1 => 42, 2 => 43, 3 => 44], $collectionA->toArray());
+        $this->assertSame([3 => 97, 4 => 98, 5 => 99], $collectionB->toArray());
+        $this->assertSame([42, 43, 98, 99], $collectionD->toArray());
+    }
+
+    public function testToIntersectionThrowsExceptionWhenCollectionsMismatch(): void
+    {
+        /** @var IntegerCollection<int> $collectionA */
+        $collectionA = new IntegerCollection();
+
+        /** @var FloatCollection<float> $collectionB */
+        $collectionB = new FloatCollection();
+
+        $this->expectException(UnacceptableCollectionException::class);
+
+        $collectionA->toIntersection($collectionB); // @phpstan-ignore-line
+    }
+
+    public function testToIntersectionHandlesExceptionGracefully(): void
+    {
+        /** @var Collection<mixed> $collectionA */
+        $collectionA = new Collection();
+
+        /** @var Collection<mixed>&MockOBject $collectionB */
+        $collectionB = $this->createMock(Collection::class);
+
+        $exception = $this->createMock(Exception::class);
+
+        $collectionB
+            ->expects($this->once())
+            ->method('toArray')
+            ->willThrowException($exception);
+
+        try {
+            $collectionA->toIntersection($collectionB);
+        } catch (Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, $currentException::class);
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collectionA,
+                    new ReflectionMethod($collectionA, 'toIntersection'),
+                    [$collectionB],
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertSame($exception, $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
+    public function testToIntersectionWorks(): void
+    {
+        /** @var IntegerCollection<int> $collectionA */
+        $collectionA = new IntegerCollection([1, 2, 3, 4]);
+
+        /** @var IntegerCollection<int> $collectionB */
+        $collectionB = new IntegerCollection([3, 4, 5, 6]);
+
+        $collectionC = $collectionA->toIntersection($collectionB);
+
+        $this->assertNotSame($collectionA, $collectionC);
+        $this->assertNotSame($collectionB, $collectionC);
+        $this->assertSame([1, 2, 3, 4], $collectionA->toArray());
+        $this->assertSame([3, 4, 5, 6], $collectionB->toArray());
+        $this->assertSame([2 => 3, 3 => 4], $collectionC->toArray());
+    }
+
+    public function testToIntersectionByKeyThrowsExceptionWhenCollectionsMismatch(): void
+    {
+        /** @var IntegerCollection<int> $collectionA */
+        $collectionA = new IntegerCollection();
+
+        /** @var FloatCollection<float> $collectionB */
+        $collectionB = new FloatCollection();
+
+        $this->expectException(UnacceptableCollectionException::class);
+
+        $collectionA->toIntersectionByKey($collectionB); // @phpstan-ignore-line
+    }
+
+    public function testToIntersectionByKeyHandlesExceptionGracefully(): void
+    {
+        /** @var Collection<mixed> $collectionA */
+        $collectionA = new Collection();
+
+        /** @var Collection<mixed>&MockObject $collectionB */
+        $collectionB = $this->createMock(Collection::class);
+
+        $exception = $this->createMock(Exception::class);
+
+        $collectionB
+            ->expects($this->once())
+            ->method('toArray')
+            ->willThrowException($exception);
+
+        try {
+            $collectionA->toIntersectionByKey($collectionB);
+        } catch (Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, $currentException::class);
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collectionA,
+                    new ReflectionMethod($collectionA, 'toIntersectionByKey'),
+                    [$collectionB],
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertSame($exception, $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
+    public function testToIntersectionByKeyWorks(): void
+    {
+        /** @var IntegerCollection<int> $collectionA */
+        $collectionA = new IntegerCollection([1 => 42, 2 => 43, 3 => 44, 4 => 45]);
+
+        /** @var IntegerCollection<int> $collectionB */
+        $collectionB = new IntegerCollection([3 => 97, 4 => 98, 5 => 99, 6 => 100]);
+
+        $collectionC = $collectionA->toIntersectionByKey($collectionB);
+
+        $this->assertNotSame($collectionA, $collectionC);
+        $this->assertNotSame($collectionB, $collectionC);
+        $this->assertSame([1 => 42, 2 => 43, 3 => 44, 4 => 45], $collectionA->toArray());
+        $this->assertSame([3 => 97, 4 => 98, 5 => 99, 6 => 100], $collectionB->toArray());
+        $this->assertSame([3 => 44, 4 => 45], $collectionC->toArray());
     }
 
     public function testToReindexedWorks(): void
