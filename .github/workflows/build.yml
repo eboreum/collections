@@ -44,7 +44,7 @@ jobs:
         uses: schneegans/dynamic-badges-action@v1.4.0
         with:
           auth: ${{ secrets.GIST_SECRET_README_BADGES }}
-          gistID: 7f2a8588f0b8689e3e6341028fd0bcfa
+          gistID: 41726f60f5b61eb3197459c1fbfea90e
           filename: test-coverage__${{ github.head_ref || github.ref_name }}.json
           label: Test Coverage
           message: "N/A"
@@ -54,7 +54,7 @@ jobs:
         uses: schneegans/dynamic-badges-action@v1.4.0
         with:
           auth: ${{ secrets.GIST_SECRET_README_BADGES }}
-          gistID: 7f2a8588f0b8689e3e6341028fd0bcfa
+          gistID: 41726f60f5b61eb3197459c1fbfea90e
           filename: phpstan-level__${{ github.head_ref || github.ref_name }}.json
           label: PHPStan Level
           message: "N/A"
@@ -69,7 +69,7 @@ jobs:
         uses: schneegans/dynamic-badges-action@v1.4.0
         with:
           auth: ${{ secrets.GIST_SECRET_README_BADGES }}
-          gistID: 7f2a8588f0b8689e3e6341028fd0bcfa
+          gistID: 41726f60f5b61eb3197459c1fbfea90e
           filename: test-coverage__${{ github.head_ref || github.ref_name }}.json
           label: Test Coverage
           message: ${{ env.COVERAGE }}%
@@ -87,7 +87,7 @@ jobs:
         uses: schneegans/dynamic-badges-action@v1.4.0
         with:
           auth: ${{ secrets.GIST_SECRET_README_BADGES }}
-          gistID: 7f2a8588f0b8689e3e6341028fd0bcfa
+          gistID: 41726f60f5b61eb3197459c1fbfea90e
           filename: phpstan-level__${{ github.head_ref || github.ref_name }}.json
           label: PHPStan Level
           message: ${{ env.PHPSTAN_LEVEL }}
