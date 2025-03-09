@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Closure;
-use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
+
+use function is_int;
+use function max;
+use function min;
 
 /**
  * {@inheritDoc}
@@ -17,24 +20,19 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  * Contains values of type integer (int), exclusively.
  *
  * @template T of int
- * @extends Collection<T>
  * @implements MaximumableCollectionInterface<T>
  * @implements MinimumableCollectionInterface<T>
  * @implements SortableCollectionInterface<T>
  * @implements UniqueableCollectionInterface<T>
+ * @extends Collection<T>
  */
-class IntegerCollection
-    extends Collection
-    implements
-        MaximumableCollectionInterface,
-        MinimumableCollectionInterface,
-        SortableCollectionInterface,
-        UniqueableCollectionInterface
+class IntegerCollection extends Collection implements
+    MaximumableCollectionInterface,
+    MinimumableCollectionInterface,
+    SortableCollectionInterface,
+    UniqueableCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public static function isElementAccepted($element): bool
+    public static function isElementAccepted(mixed $element): bool
     {
         return is_int($element);
     }
@@ -59,33 +57,21 @@ class IntegerCollection
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?int
     {
         return parent::current();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function find(Closure $callback): ?int
     {
         return parent::find($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?int
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?int
     {
         return parent::get($key);
@@ -101,73 +87,44 @@ class IntegerCollection
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?int
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function max(): ?int
     {
         if (!$this->elements) {
             return null;
         }
 
-        $int = max($this->elements);
-
-        assert(is_int($int)); // Should not be possible that $int is false, as we check for the empty array above
-
-        return $int;
+        return max($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?int
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function min(): ?int
     {
         if (!$this->elements) {
             return null;
         }
 
-        $int = min($this->elements);
-
-        assert(is_int($int)); // Should not be possible that $int is false, as we check for the empty array above
-
-        return $int;
+        return min($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?int
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?int
     {
         return parent::next();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toSorted(bool $isAscending = true): static
     {
         $direction = ($isAscending ? 1 : -1);
@@ -177,9 +134,6 @@ class IntegerCollection
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
         return $this->toUniqueByCallback(

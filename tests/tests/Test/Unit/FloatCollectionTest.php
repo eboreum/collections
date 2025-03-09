@@ -5,16 +5,309 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections;
 
 use Closure;
-use Eboreum\Collections\Collection;
 use Eboreum\Collections\FloatCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 
+use function strval;
+
+/**
+ * @template T of float
+ * @template TCollection of FloatCollection<T>
+ * @extends AbstractTypeCollectionTestCase<T, TCollection>
+ */
+#[CoversClass(FloatCollection::class)]
 class FloatCollectionTest extends AbstractTypeCollectionTestCase
 {
     /**
-     * @dataProvider dataProvider_testMaxWorks
+     * @return array<int, array{float|null, array<float>}>
+     */
+    public static function providerTestMaxWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            [
+                3.14,
+                [3.14],
+            ],
+            [
+                3.15,
+                [
+                    3.15,
+                    3.14,
+                ],
+            ],
+            [
+                3.14,
+                [
+                    3.14,
+                    3.13,
+                    3.12,
+                    3.14,
+                    3.12,
+                ],
+            ],
+            [
+                3.14,
+                [
+                    3.13,
+                    3.12,
+                    3.14,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{float|null, array<float>}>
+     */
+    public static function providerTestMinWorks(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            [
+                3.14,
+                [3.14],
+            ],
+            [
+                3.14,
+                [
+                    3.15,
+                    3.14,
+                ],
+            ],
+            [
+                3.14,
+                [
+                    3.16,
+                    3.15,
+                    3.14,
+                    3.16,
+                    3.14,
+                ],
+            ],
+            [
+                3.14,
+                [
+                    3.15,
+                    3.14,
+                    3.16,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function providerTestToUniqueByCallbackWorks(): array
+    {
+        return [
+            [
+                'Empty collection.',
+                static function (): array {
+                    return [
+                        [],
+                        [],
+                    ];
+                },
+                static function (): string {
+                    return '';
+                },
+                true,
+            ],
+            [
+                '1 single item collection.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [3.1415];
+
+                    return [
+                        $elements,
+                        $elements,
+                    ];
+                },
+                static function (): string {
+                    return '';
+                },
+                true,
+            ],
+            [
+                'Ascending, use first encountered.',
+                static function (): array {
+                    /** @var array<T> $expected */
+                    $expected = [0 => 0.0, 1 => 3.1415, 3 => -1.0, 5 => 2.7183];
+
+                    /** @var array<T> $elements */
+                    $elements = [0.0, 3.1415, 0.0, -1.0, 0.0, 2.7183];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (float $value): string {
+                    return strval($value);
+                },
+                true,
+            ],
+            [
+                'Ascending, use last encountered.',
+                static function (): array {
+                    /** @var array<T> $expected */
+                    $expected = [1 => 3.1415, 3 => -1.0, 4 => 0.0, 5 => 2.7183];
+
+                    /** @var array<T> $elements */
+                    $elements = [0.0, 3.1415, 0.0, -1.0, 0.0, 2.7183];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (float $value): string {
+                    return strval($value);
+                },
+                false,
+            ],
+            [
+                'Descending, use first encountered.',
+                static function (): array {
+                    /** @var array<T> $expected */
+                    $expected = [0 => 2.7183, 1 => 0.0, 2 => -1.0, 4 => 3.1415];
+
+                    /** @var array<T> $elements */
+                    $elements = [2.7183, 0.0, -1.0, 0.0, 3.1415, 0.0];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (float $value): string {
+                    return strval($value);
+                },
+                true,
+            ],
+            [
+                'Descending, use last encountered.',
+                static function (): array {
+                    /** @var array<T> $expected */
+                    $expected = [0 => 2.7183, 2 => -1.0, 4 => 3.1415, 5 => 0.0];
+
+                    /** @var array<T> $elements */
+                    $elements = [2.7183, 0.0, -1.0, 0.0, 3.1415, 0.0];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (float $value): string {
+                    return strval($value);
+                },
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
      *
+     * @return array<
+     *   int,
+     *   array{
+     *     string,
+     *     TCollection<T>,
+     *     TCollection<T>,
+     *     Closure(self<T, TCollection<T>>, TCollection<T>, TCollection<T>, TCollection<T>, string): void,
+     *   },
+     * >
+     */
+    public static function providerTestWithMergedWorks(): array
+    {
+        /** @var TCollection<T> $a0 */
+        $a0 = new FloatCollection([0 => 3.1415]);
+
+        /** @var TCollection<T> $b0 */
+        $b0 = new FloatCollection([0 => 2.7182]);
+
+        /** @var TCollection<T> $aAssociative */
+        $aAssociative = new FloatCollection(['foo' => 3.1415]);
+
+        /** @var TCollection<T> $bAssociative */
+        $bAssociative = new FloatCollection(['foo' => 2.7182]);
+
+        return [
+            [
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
+                $a0,
+                $b0,
+                static function (
+                    self $self,
+                    FloatCollection $collectionA,
+                    FloatCollection $collectionB,
+                    FloatCollection $collectionC,
+                    string $message
+                ): void {
+                    $self->assertCount(2, $collectionC, $message);
+                    $self->assertSame([0 => 3.1415, 1 => 2.7182], $collectionC->toArray(), $message);
+                },
+            ],
+            [
+                'Same name string keys. Will override.',
+                $aAssociative,
+                $bAssociative,
+                static function (
+                    self $self,
+                    FloatCollection $collectionA,
+                    FloatCollection $collectionB,
+                    FloatCollection $collectionC,
+                    string $message
+                ): void {
+                    $self->assertCount(1, $collectionC, $message);
+                    $self->assertSame(['foo' => 2.7182], $collectionC->toArray(), $message);
+                },
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected static function createMultipleElements(AbstractCollectionTestCase $self): array
+    {
+        /** @var array{0: T, foo: T, 42: T, 43: T} $elements */
+        $elements = [
+            0 => -0.9999,
+            'foo' => 3.1415,
+            42 => 2.7182,
+            43 => -7.7,
+        ];
+
+        return $elements;
+    }
+
+    protected static function createSingleElement(AbstractCollectionTestCase $self): float
+    {
+        return 3.1415;
+    }
+
+    protected static function getHandledCollectionClassName(): string
+    {
+        return FloatCollection::class;
+    }
+
+    /**
      * @param array<int, float> $elements
      */
+    #[DataProvider('providerTestMaxWorks')]
     public function testMaxWorks(?float $expected, array $elements): void
     {
         $floatCollection = new FloatCollection($elements);
@@ -24,132 +317,15 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
     }
 
     /**
-     * @return array<int, array{float|null, array<float>}>
-     */
-    public function dataProvider_testMaxWorks(): array
-    {
-        return [
-            [
-                null,
-                [],
-            ],
-            (function(){
-                $elements = [3.14];
-
-                return [
-                    $elements[0],
-                    $elements,
-                ];
-            })(),
-            (function(){
-                $elements = [
-                    3.15,
-                    3.14,
-                ];
-
-                return [
-                    $elements[0],
-                    $elements,
-                ];
-            })(),
-            (function(){
-                $elements = [
-                    3.14,
-                    3.13,
-                    3.12,
-                    3.14,
-                    3.12,
-                ];
-
-                return [
-                    $elements[3],
-                    $elements,
-                ];
-            })(),
-            (function(){
-                $elements = [
-                    3.13,
-                    3.12,
-                    3.14,
-                ];
-
-                return [
-                    $elements[2],
-                    $elements,
-                ];
-            })(),
-        ];
-    }
-
-    /**
-     * @dataProvider dataProvider_testMinWorks
-     *
      * @param array<int, float> $elements
      */
+    #[DataProvider('providerTestMinWorks')]
     public function testMinWorks(?float $expected, array $elements): void
     {
         $floatCollection = new FloatCollection($elements);
         $element = $floatCollection->min();
 
         $this->assertSame($expected, $element);
-    }
-
-    /**
-     * @return array<int, array{float|null, array<float>}>
-     */
-    public function dataProvider_testMinWorks(): array
-    {
-        return [
-            [
-                null,
-                [],
-            ],
-            (function(){
-                $elements = [3.14];
-
-                return [
-                    $elements[0],
-                    $elements,
-                ];
-            })(),
-            (function(){
-                $elements = [
-                    3.15,
-                    3.14,
-                ];
-
-                return [
-                    $elements[1],
-                    $elements,
-                ];
-            })(),
-            (function(){
-                $elements = [
-                    3.16,
-                    3.15,
-                    3.14,
-                    3.16,
-                    3.14,
-                ];
-
-                return [
-                    $elements[2],
-                    $elements,
-                ];
-            })(),
-            (function(){
-                $elements = [
-                    3.15,
-                    3.14,
-                    3.16,
-                ];
-
-                return [
-                    $elements[1],
-                    $elements,
-                ];
-            })(),
-        ];
     }
 
     public function testToSortedWorks(): void
@@ -179,167 +355,26 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
         );
     }
 
-    /**
-     * @dataProvider dataProvider_testToUniqueByCallbackWorks
-     *
-     * @param array<int, float> $expected
-     * @param array<int, float> $elements
-     */
+    #[DataProvider('providerTestToUniqueByCallbackWorks')]
     public function testToUniqueWorks(
         string $message,
-        array $expected,
-        array $elements,
+        Closure $elementsFactory,
         Closure $callback,
-        bool $isUsingFirstEncounteredElement
+        bool $isUsingFirstEncounteredElement,
     ): void {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        [$expected, $elements] = $elementsFactory($this);
+
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_object($collectionA)); // Make phpstan happy
-        assert(is_a($collectionA, $handledCollectionClassName)); // Make phpstan happy
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
-        assert(method_exists($collectionA, 'toUnique')); // Make phpstan happy
+        $this->assertInstanceOf(FloatCollection::class, $collectionA);
 
         $collectionB = $collectionA->toUnique($isUsingFirstEncounteredElement);
 
-        assert(is_object($collectionB)); // Make phpstan happy
-        assert(is_a($collectionB, $handledCollectionClassName)); // Make phpstan happy
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(FloatCollection::class, $collectionB);
 
         $this->assertNotSame($collectionA, $collectionB, $message);
         $this->assertSame($elements, $collectionA->toArray(), $message);
         $this->assertSame($expected, $collectionB->toArray(), $message);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function dataProvider_testToUniqueByCallbackWorks(): array
-    {
-        return [
-            [
-                'Empty collection.',
-                [],
-                [],
-                static function (): string {
-                    return '';
-                },
-                true,
-            ],
-            [
-                '1 single item collection.',
-                [3.1415],
-                [3.1415],
-                static function (): string {
-                    return '';
-                },
-                true,
-            ],
-            [
-                'Ascending, use first encountered.',
-                [0 => 0.0, 1 => 3.1415, 3 => -1.0, 5 => 2.7183],
-                [0.0,3.1415,0.0,-1.0,0.0,2.7183],
-                static function (float $value): string {
-                    return strval($value);
-                },
-                true,
-            ],
-            [
-                'Ascending, use last encountered.',
-                [1 => 3.1415, 3 => -1.0, 4 => 0.0, 5 => 2.7183],
-                [0.0,3.1415,0.0,-1.0,0.0,2.7183],
-                static function (float $value): string {
-                    return strval($value);
-                },
-                false,
-            ],
-            [
-                'Descending, use first encountered.',
-                [0 => 2.7183, 1 => 0.0, 2 => -1.0, 4 => 3.1415],
-                [2.7183,0.0,-1.0,0.0,3.1415,0.0],
-                static function (float $value): string {
-                    return strval($value);
-                },
-                true,
-            ],
-            [
-                'Descending, use last encountered.',
-                [0 => 2.7183, 2 => -1.0, 4 => 3.1415, 5 => 0.0],
-                [2.7183,0.0,-1.0,0.0,3.1415,0.0],
-                static function (float $value): string {
-                    return strval($value);
-                },
-                false,
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, array{string, FloatCollection<float>, FloatCollection<float>, Closure: void}>
-     */
-    public function dataProvider_testWithMergedWorks(): array
-    {
-        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
-        return [
-            [
-                'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new FloatCollection([0 => 3.1415]),
-                new FloatCollection([0 => 2.7182]),
-                function (
-                    FloatCollection $collectionA,
-                    FloatCollection $collectionB,
-                    FloatCollection $collectionC,
-                    string $message
-                ): void {
-                    $this->assertCount(2, $collectionC, $message);
-                    $this->assertSame([0 => 3.1415, 1 => 2.7182], $collectionC->toArray(), $message);
-                },
-            ],
-            [
-                'Same name string keys. Will override.',
-                new FloatCollection(['foo' => 3.1415]),
-                new FloatCollection(['foo' => 2.7182]),
-                function (
-                    FloatCollection $collectionA,
-                    FloatCollection $collectionB,
-                    FloatCollection $collectionC,
-                    string $message
-                ): void {
-                    $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(['foo' => 2.7182], $collectionC->toArray(), $message);
-                },
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function createMultipleElements(): array
-    {
-        return [
-            -0.9999,
-            'foo' => 3.1415,
-            42 => 2.7182,
-            -7.7,
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function createSingleElement()
-    {
-        return 3.1415;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getHandledCollectionClassName(): string
-    {
-        return FloatCollection::class;
     }
 }

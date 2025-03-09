@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=0);
+declare(strict_types=1);
 
 use Eboreum\Collections\Contract\ObjectCollectionInterface;
 
@@ -42,7 +42,7 @@ foreach ($absoluteFilePaths as $filePathAbsolute) {
 }
 
 if (0 === $count) {
-    throw new \RuntimeException(sprintf(
+    throw new RuntimeException(sprintf(
         '0 instances of \\%s were processed',
         ObjectCollectionInterface::class,
     ));

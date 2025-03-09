@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Closure;
-use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
+
+use function is_string;
 
 /**
  * {@inheritDoc}
@@ -19,10 +20,7 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  */
 class StringCollection extends Collection implements UniqueableCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public static function isElementAccepted($element): bool
+    public static function isElementAccepted(mixed $element): bool
     {
         return is_string($element);
     }
@@ -47,33 +45,21 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?string
     {
         return parent::current();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function find(Closure $callback): ?string
     {
         return parent::find($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?string
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?string
     {
         return parent::get($key);
@@ -89,41 +75,26 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?string
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?string
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?string
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?string
     {
         return parent::next();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
         return $this->toUniqueByCallback(

@@ -9,18 +9,385 @@ use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Exception\RuntimeException;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_pop;
+use function array_reverse;
+use function array_slice;
+use function array_values;
+use function count;
+use function current;
+use function end;
+use function explode;
+use function implode;
+use function preg_quote;
+use function sprintf;
+
+/**
+ * @template T
+ * @template TCollection of CollectionInterface<T>
+ */
 abstract class AbstractCollectionTestCase extends TestCase
 {
+    /**
+     * @return array<int, array{Closure(self<T, TCollection<T>>):array{array<array<T>>, TCollection<T>}, int<1,max>}>
+     */
+    public static function providerTestChunkWorks(): array
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+
+        return [
+            [
+                static function () use ($handledCollectionClassName): array {
+                    $collection =  new $handledCollectionClassName();
+
+                    return [
+                        [],
+                        $collection,
+                    ];
+                },
+                1,
+            ],
+            [
+                static function (self $self) use ($handledCollectionClassName): array {
+                    /** @var array<T> $elements */
+                    $elements = static::createMultipleElements($self);
+
+                    $collection = new $handledCollectionClassName($elements);
+
+                    return [
+                        [
+                            [
+                                0 => $elements[0],
+                            ],
+                            [
+                                'foo' => $elements['foo'],
+                            ],
+                            [
+                                42 => $elements[42],
+                            ],
+                            [
+                                43 => $elements[43],
+                            ],
+                        ],
+                        $collection,
+                    ];
+                },
+                1,
+            ],
+            [
+                static function (self $self) use ($handledCollectionClassName): array {
+                    $elements = static::createMultipleElements($self);
+                    $collection = new $handledCollectionClassName($elements);
+
+                    return [
+                        [
+                            [
+                                0 => $elements[0],
+                                'foo' => $elements['foo'],
+                            ],
+                            [
+                                42 => $elements[42],
+                                43 => $elements[43],
+                            ],
+                        ],
+                        $collection,
+                    ];
+                },
+                2,
+            ],
+            [
+                static function (self $self) use ($handledCollectionClassName): array {
+                    $elements = static::createMultipleElements($self);
+                    $collection = new $handledCollectionClassName($elements);
+
+                    return [
+                        [
+                            [
+                                0 => $elements[0],
+                                'foo' => $elements['foo'],
+                                42 => $elements[42],
+                            ],
+                            [
+                                43 => $elements[43],
+                            ],
+                        ],
+                        $collection,
+                    ];
+                },
+                3,
+            ],
+            [
+                static function (self $self) use ($handledCollectionClassName): array {
+                    $elements = static::createMultipleElements($self);
+                    $collection = new $handledCollectionClassName($elements);
+
+                    return [
+                        [
+                            [
+                                0 => $elements[0],
+                                'foo' => $elements['foo'],
+                                42 => $elements[42],
+                                43 => $elements[43],
+                            ],
+                        ],
+                        $collection,
+                    ];
+                },
+                4,
+            ],
+            [
+                static function (self $self) use ($handledCollectionClassName): array {
+                    $elements = static::createMultipleElements($self);
+                    $collection = new $handledCollectionClassName($elements);
+
+                    return [
+                        [
+                            [
+                                0 => $elements[0],
+                                'foo' => $elements['foo'],
+                                42 => $elements[42],
+                                43 => $elements[43],
+                            ],
+                        ],
+                        $collection,
+                    ];
+                },
+                5,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{Closure(self<T, TCollection<T>>):array{array<mixed>, array<T>, Closure}}>
+     */
+    public static function providerTestMapWorks(): array
+    {
+        return [
+            [
+                static function (): array {
+                    return [
+                        [],
+                        [],
+                        static function (): void {
+                        },
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    return [
+                        [
+                            0 => null,
+                            'foo' => null,
+                            42 => null,
+                            43 => null,
+                        ],
+                        static::createMultipleElements($self),
+                        static function (): null {
+                            return null;
+                        },
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = static::createMultipleElements($self);
+
+                    return [
+                        $elements,
+                        $elements,
+                        static function ($v): mixed {
+                            return $v;
+                        },
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    return [
+                        [
+                            0 => 0,
+                            'foo' => 'foo',
+                            42 => 42,
+                            43 => 43,
+                        ],
+                        static::createMultipleElements($self),
+                        static function ($v, $k) {
+                            return $k;
+                        },
+                    ];
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{Closure(self<T, TCollection<T>>):array{T, array<int|string, T>}}>
+     */
+    public static function providerTestMaxByCallbackWorks(): array
+    {
+        return [
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[0],
+                        [$elements[0]],
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[1],
+                        array_slice($elements, 0, 2),
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[2],
+                        array_slice($elements, 0, 3),
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[3],
+                        $elements,
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[3],
+                        array_reverse($elements, true),
+                    ];
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{Closure(self<T, TCollection>):array{T, array<int, T>}}>
+     */
+    public static function providerTestMinByCallbackWorks(): array
+    {
+        return [
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[0],
+                        [$elements[0]],
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[0],
+                        array_slice($elements, 0, 2),
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[0],
+                        array_slice($elements, 0, 3),
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[0],
+                        $elements,
+                    ];
+                },
+            ],
+            [
+                static function (self $self): array {
+                    $elements = array_values(static::createMultipleElements($self));
+
+                    return [
+                        $elements[0],
+                        array_reverse($elements, true),
+                    ];
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @return array<
+     *   int,
+     *   array{
+     *     string,
+     *     Closure(self<T, TCollection<T>>):array{array<int, T>, array<int, T>},
+     *     Closure(T, int|string):string,
+     *     bool,
+     *   },
+     * >
+     */
+    abstract public static function providerTestToUniqueByCallbackWorks(): array;
+
+    /**
+     * @return array<array{string, TCollection<T>, TCollection<T>, Closure: void}>
+     */
+    abstract public static function providerTestWithMergedWorks(): array;
+
+    /**
+     * The name of the collection class being handled, including namespace.
+     *
+     * @return class-string<TCollection<T>>
+     */
+    abstract protected static function getHandledCollectionClassName(): string;
+
+    /**
+     * @param self<T, TCollection<T>> $self
+     *
+     * @return array{0: T, foo: T, 42: T, 43: T}
+     */
+    abstract protected static function createMultipleElements(self $self): array;
+
+    /**
+     * @param self<T, TCollection<T>> $self
+     */
+    abstract protected static function createSingleElement(self $self): mixed;
+
     public function testBasics(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertCount(4, $collection);
         $this->assertSame([0, 'foo', 42, 43], $collection->getKeys());
         $this->assertSame($elements, $collection->toArray());
@@ -28,19 +395,17 @@ abstract class AbstractCollectionTestCase extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider_testChunkWorks
-     * @template T
-     *
+     * @param Closure(self<T, TCollection<T>>):array{array<T>, TCollection<T>} $factory
      * @param int<1, max> $chunkSize
-     * @param array<mixed> $expected
-     * @param CollectionInterface<T> $collection
      */
-    public function testChunkWorks(array $expected, CollectionInterface $collection, int $chunkSize): void
+    #[DataProvider('providerTestChunkWorks')]
+    public function testChunkWorks(Closure $factory, int $chunkSize): void
     {
+        [$expected, $collection] = $factory($this);
+
         $chunkedCollection = $collection->chunk($chunkSize);
 
-        assert(is_a($chunkedCollection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertSame(count($expected), count($chunkedCollection));
         $this->assertNotSame($collection, $chunkedCollection);
 
@@ -49,9 +414,8 @@ abstract class AbstractCollectionTestCase extends TestCase
         }
 
         $found = array_map(
-            static function ($child): array {
-                assert(is_object($child)); // Make phpstan happy
-                assert($child instanceof CollectionInterface); // Make phpstan happy
+            function ($child): array {
+                $this->assertInstanceOf(CollectionInterface::class, $child);
 
                 return $child->toArray();
             },
@@ -61,145 +425,18 @@ abstract class AbstractCollectionTestCase extends TestCase
         $this->assertSame($expected, $found);
     }
 
-    /**
-     * @return array<int, array{array<mixed>, CollectionInterface<mixed>, int<1, max>}>
-     */
-    public function dataProvider_testChunkWorks(): array
-    {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-
-        return [
-            [
-                [],
-                (function () use ($handledCollectionClassName) {
-                    $collection =  new $handledCollectionClassName();
-
-                    assert($collection instanceof CollectionInterface); // Make phpstan happy
-
-                    return $collection;
-                })(),
-                1,
-            ],
-            (function () use ($handledCollectionClassName) {
-                $elements = $this->createMultipleElements();
-                $collection = new $handledCollectionClassName($elements);
-
-                assert($collection instanceof CollectionInterface); // Make phpstan happy
-
-                return [
-                    [
-                        [
-                            0 => $elements[0],
-                        ],
-                        [
-                            'foo' => $elements['foo'],
-                        ],
-                        [
-                            42 => $elements[42],
-                        ],
-                        [
-                            43 => $elements[43],
-                        ],
-                    ],
-                    $collection,
-                    1,
-                ];
-            })(),
-            (function () use ($handledCollectionClassName) {
-                $elements = $this->createMultipleElements();
-                $collection = new $handledCollectionClassName($elements);
-
-                assert($collection instanceof CollectionInterface); // Make phpstan happy
-
-                return [
-                    [
-                        [
-                            0 => $elements[0],
-                            'foo' => $elements['foo'],
-                        ],
-                        [
-                            42 => $elements[42],
-                            43 => $elements[43],
-                        ],
-                    ],
-                    $collection,
-                    2,
-                ];
-            })(),
-            (function () use ($handledCollectionClassName) {
-                $elements = $this->createMultipleElements();
-                $collection = new $handledCollectionClassName($elements);
-
-                assert($collection instanceof CollectionInterface); // Make phpstan happy
-
-                return [
-                    [
-                        [
-                            0 => $elements[0],
-                            'foo' => $elements['foo'],
-                            42 => $elements[42],
-                        ],
-                        [
-                            43 => $elements[43],
-                        ],
-                    ],
-                    $collection,
-                    3,
-                ];
-            })(),
-            (function () use ($handledCollectionClassName) {
-                $elements = $this->createMultipleElements();
-                $collection = new $handledCollectionClassName($elements);
-
-                assert($collection instanceof CollectionInterface); // Make phpstan happy
-
-                return [
-                    [
-                        [
-                            0 => $elements[0],
-                            'foo' => $elements['foo'],
-                            42 => $elements[42],
-                            43 => $elements[43],
-                        ],
-                    ],
-                    $collection,
-                    4,
-                ];
-            })(),
-            (function () use ($handledCollectionClassName) {
-                $elements = $this->createMultipleElements();
-                $collection = new $handledCollectionClassName($elements);
-
-                assert($collection instanceof CollectionInterface); // Make phpstan happy
-
-                return [
-                    [
-                        [
-                            0 => $elements[0],
-                            'foo' => $elements['foo'],
-                            42 => $elements[42],
-                            43 => $elements[43],
-                        ],
-                    ],
-                    $collection,
-                    5,
-                ];
-            })(),
-        ];
-    }
-
     public function testChunkThrowsExceptionWhenArgumentChunkSizeIsOutOfBounds(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         try {
             $collection->chunk(-1); // @phpstan-ignore-line
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -220,8 +457,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -244,12 +480,11 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testContainsWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collectionA = new $handledCollectionClassName();
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collectionA);
         $this->assertFalse($collectionA->contains($elements[0]));
         $this->assertFalse($collectionA->contains($elements['foo']));
         $this->assertFalse($collectionA->contains($elements[42]));
@@ -257,8 +492,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $collectionB = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collectionB);
         $this->assertTrue($collectionB->contains($elements[0]));
         $this->assertTrue($collectionB->contains($elements['foo']));
         $this->assertTrue($collectionB->contains($elements[42]));
@@ -267,12 +501,11 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testCurrentWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = array_values($this->createMultipleElements());
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = array_values(static::createMultipleElements($this));
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertSame($elements[0], $collection->current());
         $this->assertSame($elements[1], $collection->next());
         $this->assertSame($elements[1], $collection->current());
@@ -280,21 +513,20 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testCurrentReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertNull($collection->current());
     }
 
     public function testFindWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertSame($elements[0], $collection->find(static function ($v, $k): bool {
             return 0 === $k;
@@ -315,10 +547,10 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testFindReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertNull($collection->find(static function ($v, $k) {
             return true;
@@ -327,12 +559,11 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testFirstWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertSame($elements[0], $collection->first());
         $this->assertSame($elements['foo'], $collection->next());
         $this->assertSame($elements['foo'], $collection->current());
@@ -346,54 +577,51 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testFirstReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertNull($collection->first());
     }
 
     public function testFirstKeyWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
 
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertSame(0, $collection->firstKey());
 
         $elements = [
-            'bar' => $this->createSingleElement(),
-            'foo' => $this->createSingleElement(),
+            'bar' => static::createSingleElement($this),
+            'foo' => static::createSingleElement($this),
         ];
 
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertSame('bar', $collection->firstKey());
     }
 
     public function testFirstKeyReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertNull($collection->firstKey());
     }
 
     public function testGetWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertNull($collection->get(-1));
         $this->assertSame($elements[0], $collection->get(0));
@@ -404,11 +632,11 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testGetIteratorWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         foreach ([$collection, (array)$collection->getIterator()] as $c) {
             foreach ($c as $k => $v) {
@@ -422,22 +650,22 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testGetKeysWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertSame([0, 'foo', 42, 43], $collection->getKeys());
     }
 
     public function testHasWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertFalse($collection->has(-1));
         $this->assertTrue($collection->has(0));
@@ -449,12 +677,12 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testIndexOfWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $element = array_pop($elements);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertNull($collection->indexOf($element));
         $this->assertSame(0, $collection->indexOf($elements[0]));
@@ -464,11 +692,11 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testLastWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertSame($elements[43], $collection->last());
         $this->assertSame(null, $collection->next());
@@ -479,257 +707,123 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testLastKeyWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
 
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertSame(43, $collection->lastKey());
 
         $elements = [
-            'bar' => $this->createSingleElement(),
-            'foo' => $this->createSingleElement(),
+            'bar' => static::createSingleElement($this),
+            'foo' => static::createSingleElement($this),
         ];
 
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertSame('foo', $collection->lastKey());
     }
 
     public function testLastKeyReturnsNullWhenThereAreNoElementsInCollection(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertNull($collection->lastKey());
     }
 
     /**
-     * @dataProvider dataProvider_testMapWorks
-     *
-     * @param array<mixed> $expected
-     * @param array<mixed> $elements
+     * @param Closure(self<T, TCollection<T>>):array{array<T>, array<T>, Closure} $factory
      */
-    public function testMapWorks(array $expected, array $elements, Closure $callback): void
+    #[DataProvider('providerTestMapWorks')]
+    public function testMapWorks(Closure $factory): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        [$expected, $elements, $callback] = $factory($this);
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertSame($expected, $collection->map($callback));
     }
 
     /**
-     * @return array<int, array{array<mixed>, array<mixed>, Closure}>
+     * @param Closure(self<T, TCollection<T>>):array{T, array<int, T>} $factory
      */
-    public function dataProvider_testMapWorks(): array
+    #[DataProvider('providerTestMaxByCallbackWorks')]
+    public function testMaxByCallbackWorks(Closure $factory): void
     {
-        return [
-            [
-                [],
-                [],
-                static function (): void {},
-            ],
-            [
-                [
-                    0 => null,
-                    'foo' => null,
-                    42 => null,
-                    43 => null,
-                ],
-                $this->createMultipleElements(),
-                static function () {
-                    return null;
-                },
-            ],
-            (function () {
-                $elements = $this->createMultipleElements();
+        [$expected, $elements] = $factory($this);
 
-                return [
-                    $elements,
-                    $elements,
-                    static function ($v, $k) {
-                        return $v;
-                    },
-                ];
-            })(),
-            [
-                [
-                    0 => 0,
-                    'foo' => 'foo',
-                    42 => 42,
-                    43 => 43,
-                ],
-                $this->createMultipleElements(),
-                static function ($v, $k) {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName($elements);
+
+        $this->assertInstanceOf(Collection::class, $collection);
+
+        $this->assertSame(
+            $expected,
+            $collection->maxByCallback(
+                // @phpstan-ignore-next-line
+                static function ($v, $k): mixed {
                     return $k;
                 },
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProvider_testMaxByCallbackWorks
-     * @param mixed $expectedMaxByCallback
-     * @param array<int, mixed> $elements
-     */
-    public function testMaxByCallbackWorks($expectedMaxByCallback, array $elements): void
-    {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $collection = new $handledCollectionClassName($elements);
-
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
-        $this->assertSame($expectedMaxByCallback, $collection->maxByCallback(static function ($v, $k) {
-            return $k;
-        }));
+            ),
+        );
 
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
-        $this->assertNull($collection->maxByCallback(static function () {
-            return 0;
-        }));
+        $this->assertNull(
+            $collection->maxByCallback(
+                static function () {
+                    return 0;
+                },
+            ),
+        );
     }
 
     /**
-     * @return array<int, array{mixed, array<int, mixed>}>
+     * @param Closure(self<T, TCollection<T>>):array{T, array<int, T>} $factory
      */
-    public function dataProvider_testMaxByCallbackWorks(): array
+    #[DataProvider('providerTestMinByCallbackWorks')]
+    public function testMinByCallbackWorks(Closure $factory): void
     {
-        return [
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
+        [$expected, $elements] = $factory($this);
 
-                return [
-                    $elements[0],
-                    [$elements[0]],
-                ];
-            })(),
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[1],
-                    array_slice($elements, 0, 2),
-                ];
-            })(),
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[2],
-                    array_slice($elements, 0, 3),
-                ];
-            })(),
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[3],
-                    $elements,
-                ];
-            })(),
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[3],
-                    array_reverse($elements, true),
-                ];
-            })(),
-        ];
-    }
-
-    /**
-     * @dataProvider dataProvider_testMinByCallbackWorks
-     * @param mixed $expectedMinByCallback
-     * @param array<int, mixed> $elements
-     */
-    public function testMinByCallbackWorks($expectedMinByCallback, array $elements): void
-    {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
-        $this->assertSame($expectedMinByCallback, $collection->minByCallback(static function ($v, $k) {
-            return $k;
-        }));
+        $this->assertSame(
+            $expected,
+            $collection->minByCallback(
+                // @phpstan-ignore-next-line
+                static function ($v, $k): mixed {
+                    return $k;
+                },
+            ),
+        );
 
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertNull($collection->minByCallback(static function () {
             return 0;
         }));
     }
 
-    /**
-     * @return array<int, array{mixed, array<int, mixed>}>
-     */
-    public function dataProvider_testMinByCallbackWorks(): array
-    {
-        return [
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[0],
-                    [$elements[0]],
-                ];
-            })(),
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[0],
-                    array_slice($elements, 0, 2),
-                ];
-            })(),
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[0],
-                    array_slice($elements, 0, 3),
-                ];
-            })(),
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[0],
-                    $elements,
-                ];
-            })(),
-            (function (): array {
-                $elements = array_values($this->createMultipleElements());
-
-                return [
-                    $elements[0],
-                    array_reverse($elements, true),
-                ];
-            })(),
-        ];
-    }
-
     public function testNextWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertSame($elements[0], $collection->current());
         $this->assertSame($elements['foo'], $collection->next());
@@ -742,19 +836,19 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testToClearedWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->toCleared();
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $collectionC = $collectionA->toCleared();
 
-        assert(is_a($collectionC, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionC);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertNotSame($collectionA, $collectionC);
@@ -766,15 +860,15 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testToReversedWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->toReversed(true);
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
@@ -782,7 +876,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $collectionC = $collectionA->toReversed(false);
 
-        assert(is_a($collectionC, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionC);
 
         $this->assertNotSame($collectionA, $collectionC);
         $this->assertSame($elements, $collectionA->toArray());
@@ -791,15 +885,15 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testToSequentialWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->toSequential();
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
@@ -808,17 +902,17 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testToSortedByCallbackWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->toSortedByCallback(static function () {
             return 1;
         });
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $expected = [
             43 => $elements[43],
@@ -843,7 +937,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             });
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -865,7 +959,6 @@ abstract class AbstractCollectionTestCase extends TestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -878,28 +971,29 @@ abstract class AbstractCollectionTestCase extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider_testToUniqueByCallbackWorks
-     * @param array<int, mixed> $expected
-     * @param array<int, mixed> $elements
+     * @param Closure(self<T, TCollection<T>>):array{array<int, T>, array<int, T>} $elementsFactory
+     * @param Closure(T, int|string):string $callback
      */
+    #[DataProvider('providerTestToUniqueByCallbackWorks')]
     public function testToUniqueByCallbackWorks(
         string $message,
-        array $expected,
-        array $elements,
+        Closure $elementsFactory,
         Closure $callback,
-        bool $isUsingFirstEncounteredElement
+        bool $isUsingFirstEncounteredElement,
     ): void {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        [$expected, $elements] = $elementsFactory($this);
+
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->toUniqueByCallback(
-            $callback,
+            $callback, // @phpstan-ignore-line
             $isUsingFirstEncounteredElement,
         );
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $this->assertNotSame($collectionA, $collectionB, $message);
         $this->assertSame($elements, $collectionA->toArray(), $message);
@@ -908,11 +1002,11 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testToUniqueByCallbackHandlesExceptionGracefullyWhenAFailureInTheCallbackOccurs(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         $exception = new Exception();
 
@@ -922,7 +1016,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             });
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -950,8 +1044,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -964,7 +1057,6 @@ abstract class AbstractCollectionTestCase extends TestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -978,28 +1070,29 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testToUniqueByCallbackThrowsExceptionWhenCallbackDoesNotReturnAString(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         try {
             $collection->toUniqueByCallback(
-                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                // @phpstan-ignore-next-line
+                static function (): null {
                     return null;
                 }
             );
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>toUniqueByCallback\(',
-                            '\$callback = \(object\) \\\\Closure\(\)',
+                            '\$callback = \(object\) \\\\Closure\(\)(: *[^,\)]+)?',
                             ', \$isUsingFirstEncounteredElement = \(bool\) true',
                         '\) inside \(object\) \\\\%s \{',
                             '%s\$elements = \(array\(4\)\) \[.+\] \(sample\)',
@@ -1020,8 +1113,7 @@ abstract class AbstractCollectionTestCase extends TestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1044,17 +1136,17 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testWithAddedWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
 
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
-        $element = $this->createSingleElement();
+        $element = static::createSingleElement($this);
         $collectionB = $collectionA->withAdded($element);
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
@@ -1071,21 +1163,21 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testWithAddedMultipleWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
 
-        $elementsA = array_slice($this->createMultipleElements(), 0, 2);
-        $elementsAdded = array_slice($this->createMultipleElements(), 2, 2);
+        $elementsA = array_slice(static::createMultipleElements($this), 0, 2);
+        $elementsAdded = array_slice(static::createMultipleElements($this), 2, 2);
         $collectionA = new $handledCollectionClassName($elementsA);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->withAddedMultiple($elementsAdded);
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $expectedElementsB = array_merge(
             $elementsA,
-            array_values($elementsAdded),
+            array_values($elementsAdded), // @phpstan-ignore-line
         );
 
         $this->assertNotSame($collectionA, $collectionB);
@@ -1095,12 +1187,12 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testWithFilteredWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
 
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $index = -1;
 
@@ -1113,7 +1205,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             return 0 !== $k;
         });
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
@@ -1121,12 +1213,10 @@ abstract class AbstractCollectionTestCase extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider_testWithMergedWorks
-     * @template T
-     *
-     * @param CollectionInterface<T> $collectionA
-     * @param CollectionInterface<T> $collectionB
+     * @param TCollection<T> $collectionA
+     * @param TCollection<T> $collectionB
      */
+    #[DataProvider('providerTestWithMergedWorks')]
     public function testWithMergedWorks(
         string $message,
         CollectionInterface $collectionA,
@@ -1138,25 +1228,25 @@ abstract class AbstractCollectionTestCase extends TestCase
         $this->assertNotSame($collectionA, $collectionC, $message);
         $this->assertNotSame($collectionB, $collectionC, $message);
 
-        $callback($collectionA, $collectionB, $collectionC, $message);
+        $callback($this, $collectionA, $collectionB, $collectionC, $message);
     }
 
     public function testWithRemovedWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
 
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->withRemoved(0);
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $collectionC = $collectionB->withRemoved(-1);
 
-        assert(is_a($collectionC, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionC);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertNotSame($collectionA, $collectionC);
@@ -1169,17 +1259,17 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testWithRemovedElementWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $element = current($elements);
 
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->withRemovedElement($element);
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
@@ -1189,16 +1279,16 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testWithSetWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
 
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->withSet('foo', $elements[0]);
 
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertSame($elements, $collectionA->toArray());
@@ -1209,22 +1299,23 @@ abstract class AbstractCollectionTestCase extends TestCase
 
     public function testWithSlicedWorks(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         $collectionB = $collectionA->withSliced(0);
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         $collectionC = $collectionB->withSliced(1, 2);
 
-        assert(is_a($collectionC, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionC);
 
         $collectionD = $collectionC->withSliced(0, 1);
 
-        assert(is_a($collectionD, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionD);
 
         $this->assertNotSame($collectionA, $collectionB);
         $this->assertNotSame($collectionA, $collectionC);
@@ -1243,33 +1334,8 @@ abstract class AbstractCollectionTestCase extends TestCase
      */
     protected function getHandledCollectionClassNameShort(): string
     {
-        $split = explode('\\', $this->getHandledCollectionClassName());
+        $split = explode('\\', static::getHandledCollectionClassName());
 
         return end($split);
     }
-
-    /**
-     * @return array<int, array{string, array<int, mixed>, array<int, mixed>, Closure, bool}>
-     */
-    abstract public function dataProvider_testToUniqueByCallbackWorks(): array;
-
-    /**
-     * @return array<array{string, CollectionInterface<mixed>, CollectionInterface<mixed>, Closure: void}>
-     */
-    abstract public function dataProvider_testWithMergedWorks();
-
-    /**
-     * The name of the collection class being handled, including namespace.
-     */
-    abstract protected function getHandledCollectionClassName(): string;
-
-    /**
-     * @return mixed
-     */
-    abstract protected function createSingleElement();
-
-    /**
-     * @return array{0: mixed, foo: mixed, 42: mixed, 43: mixed}
-     */
-    abstract protected function createMultipleElements(): array;
 }

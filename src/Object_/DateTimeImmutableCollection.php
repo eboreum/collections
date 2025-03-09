@@ -12,7 +12,6 @@ use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterf
 use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
-use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 
 /**
  * {@inheritDoc}
@@ -20,25 +19,20 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  * A collection which contains instances of DateTimeImmutable, exclusively.
  *
  * @template T of DateTimeImmutable
- * @extends AbstractNamedClassOrInterfaceCollection<T>
- * @implements GeneratedCollectionInterface<T>
+ * @implements CollectionInterface<T>
  * @implements MaximumableCollectionInterface<T>
  * @implements MinimumableCollectionInterface<T>
  * @implements SortableCollectionInterface<T>
  * @implements UniqueableCollectionInterface<T>
+ * @extends AbstractNamedClassOrInterfaceCollection<T>
  */
-class DateTimeImmutableCollection
-    extends AbstractNamedClassOrInterfaceCollection
-    implements
-        GeneratedCollectionInterface,
-        MaximumableCollectionInterface,
-        MinimumableCollectionInterface,
-        SortableCollectionInterface,
-        UniqueableCollectionInterface
+class DateTimeImmutableCollection extends AbstractNamedClassOrInterfaceCollection implements
+    CollectionInterface,
+    MaximumableCollectionInterface,
+    MinimumableCollectionInterface,
+    SortableCollectionInterface,
+    UniqueableCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public static function getHandledClassName(): string
     {
         return DateTimeImmutable::class;
@@ -64,9 +58,6 @@ class DateTimeImmutableCollection
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?DateTimeImmutable
     {
         return parent::current();
@@ -80,17 +71,11 @@ class DateTimeImmutableCollection
         return parent::find($key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?DateTimeImmutable
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?DateTimeImmutable
     {
         return parent::get($key);
@@ -106,17 +91,11 @@ class DateTimeImmutableCollection
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?DateTimeImmutable
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function max(): ?DateTimeImmutable
     {
         if (!$this->elements) {
@@ -128,17 +107,11 @@ class DateTimeImmutableCollection
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?DateTimeImmutable
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function min(): ?DateTimeImmutable
     {
         if (!$this->elements) {
@@ -150,25 +123,16 @@ class DateTimeImmutableCollection
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?DateTimeImmutable
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?DateTimeImmutable
     {
         return parent::next();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toSorted(bool $isAscending = true): static
     {
         $direction = ($isAscending ? 1 : -1);
@@ -180,9 +144,6 @@ class DateTimeImmutableCollection
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
         return $this->toUniqueByCallback(

@@ -10,19 +10,23 @@ use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Exception\RuntimeException;
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+use function basename;
+use function implode;
+use function preg_quote;
+use function sprintf;
+
+#[CoversClass(AbstractNamedClassOrInterfaceCollection::class)]
 class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 {
     public function testConstructorThrowsExceptionWhenHandledClassNameIsNotAnExistingClass(): void
     {
         try {
-            new class ([]) extends AbstractNamedClassOrInterfaceCollection
+            new class ([]) extends AbstractNamedClassOrInterfaceCollection // @phpstan-ignore-line
             {
-                /**
-                 * {@inheritDoc}
-                 */
                 public static function getHandledClassName(): string
                 {
                     /**
@@ -34,7 +38,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             };
         } catch (Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -57,7 +61,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -86,18 +90,15 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
     public function testConstructorThrowsExceptionWhenArgumentElementContainsInvalidValues(): void
     {
         $elements = [
-            new stdClass(),
-            new DateTime('2021-01-01T00:00:00+00:00'),
-            new stdClass(),
+            0 => new stdClass(),
+            1 => new DateTime('2021-01-01T00:00:00+00:00'),
+            2 => new stdClass(),
             'foo' => new DateTimeImmutable('2021-01-01T00:00:00+00:00'),
         ];
 
         try {
-            new class ($elements) extends AbstractNamedClassOrInterfaceCollection
+            new class ($elements) extends AbstractNamedClassOrInterfaceCollection // @phpstan-ignore-line
             {
-                /**
-                 * {@inheritDoc}
-                 */
                 public static function getHandledClassName(): string
                 {
                     return 'stdClass';
@@ -105,7 +106,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             };
         } catch (Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -133,7 +134,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -161,7 +162,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -196,9 +197,6 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 
         $collectionA = new class ($elementsA) extends AbstractNamedClassOrInterfaceCollection
         {
-            /**
-             * {@inheritDoc}
-             */
             public static function getHandledClassName(): string
             {
                 return 'stdClass';
@@ -212,9 +210,6 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 
         $collectionB = new class ($elementsB) extends AbstractNamedClassOrInterfaceCollection
         {
-            /**
-             * {@inheritDoc}
-             */
             public static function getHandledClassName(): string
             {
                 return 'DateTimeImmutable';
@@ -225,7 +220,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $collectionA->withMerged($collectionB);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -251,8 +246,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Closure;
-use Eboreum\Collections\Contract\CollectionInterface;
+
+use function is_object;
 
 /**
  * {@inheritDoc}
@@ -21,10 +22,7 @@ use Eboreum\Collections\Contract\CollectionInterface;
  */
 class ObjectCollection extends Collection
 {
-    /**
-     * {@inheritDoc}
-     */
-    public static function isElementAccepted($element): bool
+    public static function isElementAccepted(mixed $element): bool
     {
         return is_object($element);
     }
@@ -49,33 +47,21 @@ class ObjectCollection extends Collection
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?object
     {
         return parent::current();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function find(Closure $callback): ?object
     {
         return parent::find($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?object
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?object
     {
         return parent::get($key);
@@ -91,33 +77,21 @@ class ObjectCollection extends Collection
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?object
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?object
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?object
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?object
     {
         return parent::next();

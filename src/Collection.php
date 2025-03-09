@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @codingStandardsIgnoreStart
  *
@@ -37,7 +38,6 @@ use ArrayIterator;
 use Closure;
 use Eboreum\Caster\Attribute\DebugIdentifier;
 use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
-use Eboreum\Collections\Caster;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\InvalidArgumentException;
@@ -48,6 +48,36 @@ use ReflectionMethod;
 use ReflectionObject;
 use Throwable;
 
+use function array_chunk;
+use function array_filter;
+use function array_key_exists;
+use function array_key_first;
+use function array_key_last;
+use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_reverse;
+use function array_search;
+use function array_slice;
+use function array_sum;
+use function array_values;
+use function count;
+use function end;
+use function func_get_args;
+use function implode;
+use function is_a;
+use function is_bool;
+use function is_int;
+use function is_scalar;
+use function is_string;
+use function key;
+use function next;
+use function reset;
+use function sprintf;
+use function uasort;
+
+use const ARRAY_FILTER_USE_BOTH;
+
 /**
  * {@inheritDoc}
  *
@@ -56,6 +86,42 @@ use Throwable;
  */
 class Collection implements CollectionInterface, DebugIdentifierAttributeInterface
 {
+    public static function assertIsElementAccepted(mixed $element): void
+    {
+        if (false === static::isElementAccepted($element)) {
+            throw new InvalidArgumentException(sprintf(
+                'Argument $element is not accepted by %s. Found: %s',
+                Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
+                Caster::getInstance()->castTyped($element),
+            ));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function makeInvalids(array $elements): array
+    {
+        $invalids = [];
+
+        foreach ($elements as $k => $v) {
+            if (false === static::isElementAccepted($v)) {
+                $invalids[] = sprintf(
+                    '%s => %s',
+                    Caster::getInstance()->cast($k),
+                    Caster::getInstance()->castTyped($v),
+                );
+            }
+        }
+
+        return $invalids;
+    }
+
+    public static function isElementAccepted(mixed $element): bool
+    {
+        return true;
+    }
+
     /**
      * @var array<int|string, T>
      */
@@ -89,9 +155,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function chunk(int $chunkSize): CollectionInterface
     {
         try {
@@ -119,7 +182,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 );
             }
 
-            /** @var Collection<static<T>> */
+            /** @var Collection<static<T>> $collection */
             $collection = new Collection($elements);
         } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
@@ -129,7 +192,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             ), 0, $t);
         }
 
-        return $collection; // @phpstan-ignore-line
+        return $collection;
     }
 
     /**
@@ -142,18 +205,12 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return (false !== array_search($element, $this->elements, true));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function count(): int
     {
         return count($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function current()
+    public function current(): mixed
     {
         $key = $this->key();
 
@@ -164,9 +221,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function each(Closure $callback, ?object $carry = null): void
     {
         try {
@@ -191,9 +245,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function every(Closure $callback, ?object $carry = null): void
     {
         try {
@@ -278,10 +329,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $return;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function first()
+    public function first(): mixed
     {
         reset($this->elements);
 
@@ -294,9 +342,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $this->elements[$key];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function firstKey(): int|string|null
     {
         if (!$this->elements) {
@@ -306,10 +351,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return array_key_first($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function get(int|string $key)
+    public function get(int|string $key): mixed
     {
         if (array_key_exists($key, $this->elements)) {
             return $this->elements[$key];
@@ -336,9 +378,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return new ArrayIterator($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function has(int|string $key): bool
     {
         return array_key_exists($key, $this->elements);
@@ -360,18 +399,12 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $key;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function key(): int|string|null
     {
         return key($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function last()
+    public function last(): mixed
     {
         end($this->elements);
 
@@ -384,9 +417,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $this->elements[$key];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function lastKey(): int|string|null
     {
         if (!$this->elements) {
@@ -512,10 +542,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $element;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function next()
+    public function next(): mixed
     {
         next($this->elements);
         $key = key($this->elements);
@@ -543,9 +570,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return array_values($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toCleared(): static
     {
         $clone = clone $this;
@@ -554,9 +578,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toReindexed(
         Closure $closure,
         ToReindexedDuplicateKeyBehaviorEnum $duplicateKeyBehavior = ToReindexedDuplicateKeyBehaviorEnum::throw_exception
@@ -564,13 +585,13 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         try {
             $clone = clone $this;
 
-            /** @var array<T> */
+            /** @var array<T> $resultingElements */
             $resultingElements = [];
 
-            /** @var array<string> */
+            /** @var array<string> $invalidTypeErrorMessages */
             $invalidTypeErrorMessages = [];
 
-            /** @var array<int|string, array<int|string>> */
+            /** @var array<int|string, array<int|string>> $resultingKeyToOriginalKeys */
             $resultingKeyToOriginalKeys = [];
 
             foreach ($clone->elements as $key => $element) {
@@ -636,7 +657,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 $duplicateKeysGroups
                 && $duplicateKeyBehavior === ToReindexedDuplicateKeyBehaviorEnum::throw_exception
             ) {
-                /** @var array<string> */
+                /** @var array<string> $groupMessages */
                 $groupMessages = [];
 
                 foreach ($duplicateKeysGroups as $resultingKey => $originalKeys) {
@@ -683,9 +704,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toReversed(bool $isPreservingKeys = true): static
     {
         $clone = clone $this;
@@ -694,9 +712,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toSequential(): static
     {
         $clone = clone $this;
@@ -705,9 +720,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toSortedByCallback(Closure $callback): static
     {
         try {
@@ -724,16 +736,13 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): static
     {
         try {
             $clone = clone $this;
 
             /**
-             * @var array<string, array{key: int|string, value: mixed}>
+             * @var array<string, array{key: int|string, value: mixed}> $uniqueStringToKeyAndElement
              */
             $uniqueStringToKeyAndElement = [];
 
@@ -845,9 +854,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withFiltered(Closure $callback): static
     {
         try {
@@ -868,9 +874,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withMerged(CollectionInterface $collection): static
     {
         try {
@@ -912,18 +915,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withRemoved($key): static
+    public function withRemoved(int|string $key): static
     {
-        if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
-            throw new InvalidArgumentException(sprintf(
-                'Argument $key must be int or string, but it is not. Found: %s',
-                Caster::getInstance()->castTyped($key),
-            ));
-        }
-
         $clone = clone $this;
 
         unset($clone->elements[$key]);
@@ -956,31 +949,17 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withSet($key, $element): static
+    public function withSet(int|string $key, mixed $element): static
     {
         try {
-            $errorMessages = [];
-
-            if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
-                $errorMessages[] = sprintf(
-                    'Argument $key must be int or string, but it is not. Found: %s',
-                    Caster::getInstance()->castTyped($key),
-                );
-            }
-
             if (false === static::isElementAccepted($element)) {
-                $errorMessages[] = sprintf(
-                    'Argument $element is not accepted by %s. Found: %s',
-                    Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
-                    Caster::getInstance()->castTyped($element),
+                throw new RuntimeException(
+                    sprintf(
+                        'Argument $element is not accepted by %s. Found: %s',
+                        Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
+                        Caster::getInstance()->castTyped($element),
+                    ),
                 );
-            }
-
-            if ($errorMessages) {
-                throw new RuntimeException(implode('. ', $errorMessages));
             }
 
             $clone = clone $this;
@@ -996,9 +975,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withSliced(int $offset, ?int $length = null): static
     {
         $clone = clone $this;
@@ -1007,56 +983,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isEmpty(): bool
     {
         return !$this->elements;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        if (false === static::isElementAccepted($element)) {
-            throw new InvalidArgumentException(sprintf(
-                'Argument $element is not accepted by %s. Found: %s',
-                Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
-                Caster::getInstance()->castTyped($element),
-            ));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function makeInvalids(array $elements): array
-    {
-        $invalids = [];
-
-        foreach ($elements as $k => $v) {
-            if (false === static::isElementAccepted($v)) {
-                $invalids[] = sprintf(
-                    '%s => %s',
-                    Caster::getInstance()->cast($k),
-                    Caster::getInstance()->castTyped($v),
-                );
-            }
-        }
-
-        return $invalids;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * We use "codingStandardsIgnoreStart", because it reports $element is unused, and we know this, but it has to
-     * respect the method definition in CollectionInterface.
-     */
-    public static function isElementAccepted($element): bool // @codingStandardsIgnoreLine
-    {
-        return true;
     }
 }

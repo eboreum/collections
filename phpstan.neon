@@ -3,6 +3,6 @@ parameters:
     paths:
         - script/
         - src/
-        - tests/
+        - tests/tests/
     bootstrapFiles:
         - tests/phpunit.bootstrap.php

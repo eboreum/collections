@@ -7,7 +7,6 @@ namespace Eboreum\Collections\Object_;
 use Closure;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
-use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 use Error;
 
 /**
@@ -16,14 +15,11 @@ use Error;
  * A collection which contains instances of Error, exclusively.
  *
  * @template T of Error
+ * @implements CollectionInterface<T>
  * @extends AbstractNamedClassOrInterfaceCollection<T>
- * @implements GeneratedCollectionInterface<T>
  */
-class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
+class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements CollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public static function getHandledClassName(): string
     {
         return Error::class;
@@ -49,9 +45,6 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?Error
     {
         return parent::current();
@@ -65,17 +58,11 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
         return parent::find($key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?Error
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?Error
     {
         return parent::get($key);
@@ -91,33 +78,21 @@ class ErrorCollection extends AbstractNamedClassOrInterfaceCollection implements
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?Error
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?Error
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?Error
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?Error
     {
         return parent::next();

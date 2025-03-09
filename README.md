@@ -17,9 +17,9 @@ Comes fully equipped with [phpstan](https://packagist.org/packages/phpstan/phpst
 # Requirements
 
 ```json
-"php": "^8.1",
-"eboreum/caster": "^1.0",
-"eboreum/exceptional": "^1.0"
+"php": "^8.3",
+"eboreum/caster": "^2.1",
+"eboreum/exceptional": "^2.0"
 ```
 
 For more information, see the [`composer.json`](composer.json) file.
@@ -124,8 +124,10 @@ The reason is that methods such as `current`, `find`, `first`, etc. cannot have 
 ## Test/development requirements
 
 ```json
-"phpstan/phpstan": "^1.4",
-"phpunit/phpunit": "^9.5"
+"phpstan/phpstan": "^2.1.5",
+"phpunit/phpunit": "^11.3",
+"slevomat/coding-standard": "8.15.0",
+"squizlabs/php_codesniffer": "3.10.2"
 ```
 
 ## Running tests

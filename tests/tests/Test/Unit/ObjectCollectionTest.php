@@ -6,333 +6,404 @@ namespace Test\Unit\Eboreum\Collections;
 
 use DateTimeImmutable;
 use Eboreum\Collections\ObjectCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
 use stdClass;
+use Stringable;
 
+use function dir;
+
+/**
+ * @template T of object
+ * @template TCollection of ObjectCollection<T>
+ * @extends AbstractTypeCollectionTestCase<T, TCollection>
+ */
+#[CoversClass(ObjectCollection::class)]
 class ObjectCollectionTest extends AbstractTypeCollectionTestCase
 {
     /**
      * {@inheritDoc}
      */
-    public function dataProvider_testToUniqueByCallbackWorks(): array
+    public static function providerTestToUniqueByCallbackWorks(): array
     {
         return [
             [
                 'Empty collection.',
-                [],
-                [],
+                static function (): array {
+                    return [
+                        [],
+                        [],
+                    ];
+                },
                 static function (): string {
                     return '';
                 },
                 true,
             ],
-            (static function (): array {
-                $elements = [
-                    0 => new class
-                    {
-                        public function __toString(): string
+            [
+                '1 single item collection.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => new class
                         {
-                            return 'foo';
-                        }
-                    },
-                ];
+                            public function __toString(): string
+                            {
+                                return 'foo';
+                            }
+                        },
+                    ];
 
-                return [
-                    '1 single item collection.',
-                    $elements,
-                    $elements,
-                    static function (object $object): string {
-                        return (string)$object;
-                    },
-                    true,
-                ];
-            })(),
-            (static function (): array {
-                $elements = [
-                    0 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'a';
-                        }
-                    },
-                    1 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'b';
-                        }
-                    },
-                    2 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'c';
-                        }
-                    },
-                    3 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'b';
-                        }
-                    },
-                    4 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'd';
-                        }
-                    },
-                    5 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'b';
-                        }
-                    },
-                ];
+                    return [
+                        $elements,
+                        $elements,
+                    ];
+                },
+                static function (object $object): string {
+                    static::assertInstanceOf(Stringable::class, $object);
 
-                return [
-                    'Ascending, use first encountered.',
-                    [
+                    return (string)$object;
+                },
+                true,
+            ],
+            [
+                'Ascending, use first encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'a';
+                            }
+                        },
+                        1 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'b';
+                            }
+                        },
+                        2 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'c';
+                            }
+                        },
+                        3 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'b';
+                            }
+                        },
+                        4 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'd';
+                            }
+                        },
+                        5 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'b';
+                            }
+                        },
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
                         0 => $elements[0],
                         1 => $elements[1],
                         2 => $elements[2],
                         4 => $elements[4],
-                    ],
-                    $elements,
-                    static function (object $object): string {
-                        return (string)$object;
-                    },
-                    true,
-                ];
-            })(),
-            (static function (): array {
-                $elements = [
-                    0 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'a';
-                        }
-                    },
-                    1 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'b';
-                        }
-                    },
-                    2 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'c';
-                        }
-                    },
-                    3 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'b';
-                        }
-                    },
-                    4 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'd';
-                        }
-                    },
-                    5 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'b';
-                        }
-                    },
-                ];
+                    ];
 
-                return [
-                    'Ascending, use last encountered.',
-                    [
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (object $object): string {
+                    static::assertInstanceOf(Stringable::class, $object);
+
+                    return (string) $object;
+                },
+                true,
+            ],
+            [
+                'Ascending, use last encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'a';
+                            }
+                        },
+                        1 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'b';
+                            }
+                        },
+                        2 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'c';
+                            }
+                        },
+                        3 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'b';
+                            }
+                        },
+                        4 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'd';
+                            }
+                        },
+                        5 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'b';
+                            }
+                        },
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
                         0 => $elements[0],
                         2 => $elements[2],
                         4 => $elements[4],
                         5 => $elements[5],
-                    ],
-                    $elements,
-                    static function (object $object): string {
-                        return (string)$object;
-                    },
-                    false,
-                ];
-            })(),
-            (static function (): array {
-                $elements = [
-                    0 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'd';
-                        }
-                    },
-                    1 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'a';
-                        }
-                    },
-                    2 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'c';
-                        }
-                    },
-                    3 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'a';
-                        }
-                    },
-                    4 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'b';
-                        }
-                    },
-                    5 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'a';
-                        }
-                    },
-                ];
+                    ];
 
-                return [
-                    'Descending, use first encountered.',
-                    [
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (object $object): string {
+                    static::assertInstanceOf(Stringable::class, $object);
+
+                    return (string) $object;
+                },
+                false,
+            ],
+            [
+                'Descending, use first encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'd';
+                            }
+                        },
+                        1 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'a';
+                            }
+                        },
+                        2 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'c';
+                            }
+                        },
+                        3 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'a';
+                            }
+                        },
+                        4 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'b';
+                            }
+                        },
+                        5 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'a';
+                            }
+                        },
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
                         0 => $elements[0],
                         1 => $elements[1],
                         2 => $elements[2],
                         4 => $elements[4],
-                    ],
-                    $elements,
-                    static function (object $object): string {
-                        return (string)$object;
-                    },
-                    true,
-                ];
-            })(),
-            (static function (): array {
-                $elements = [
-                    0 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'd';
-                        }
-                    },
-                    1 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'a';
-                        }
-                    },
-                    2 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'c';
-                        }
-                    },
-                    3 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'a';
-                        }
-                    },
-                    4 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'b';
-                        }
-                    },
-                    5 => new class
-                    {
-                        public function __toString(): string
-                        {
-                            return 'a';
-                        }
-                    },
-                ];
+                    ];
 
-                return [
-                    'Descending, use last encountered.',
-                    [
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (object $object): string {
+                    static::assertInstanceOf(Stringable::class, $object);
+
+                    return (string) $object;
+                },
+                true,
+            ],
+            [
+                'Descending, use last encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'd';
+                            }
+                        },
+                        1 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'a';
+                            }
+                        },
+                        2 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'c';
+                            }
+                        },
+                        3 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'a';
+                            }
+                        },
+                        4 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'b';
+                            }
+                        },
+                        5 => new class
+                        {
+                            public function __toString(): string
+                            {
+                                return 'a';
+                            }
+                        },
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
                         0 => $elements[0],
                         2 => $elements[2],
                         4 => $elements[4],
                         5 => $elements[5],
-                    ],
-                    $elements,
-                    static function (object $object): string {
-                        return (string)$object;
-                    },
-                    false,
-                ];
-            })(),
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (object $object): string {
+                    static::assertInstanceOf(Stringable::class, $object);
+
+                    return (string) $object;
+                },
+                false,
+            ],
         ];
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return array<int, array{string, ObjectCollection<object>, ObjectCollection<object>, Closure: void}>
+     * @return array<
+     *   int,
+     *   array{
+     *     string,
+     *     TCollection<T>,
+     *     TCollection<T>,
+     *   },
+     * >
      */
-    public function dataProvider_testWithMergedWorks(): array
+    public static function providerTestWithMergedWorks(): array
     {
-        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
+        /** @var TCollection<T> $a0 */
+        $a0 = new ObjectCollection([0 => new stdClass()]);
+
+        /** @var TCollection<T> $b0 */
+        $b0 = new ObjectCollection([0 => new DateTimeImmutable()]);
+
+        /** @var TCollection<T> $aAssociative */
+        $aAssociative = new ObjectCollection(['foo' => new stdClass()]);
+
+        /** @var TCollection<T> $bAssociative */
+        $bAssociative = new ObjectCollection(['foo' => new DateTimeImmutable()]);
+
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new ObjectCollection([0 => new stdClass()]),
-                new ObjectCollection([0 => new DateTimeImmutable()]),
-                function (
+                $a0,
+                $b0,
+                static function (
+                    self $self,
                     ObjectCollection $collectionA,
                     ObjectCollection $collectionB,
                     ObjectCollection $collectionC,
                     string $message
                 ): void {
-                    $this->assertCount(2, $collectionC, $message);
-                    $this->assertSame([0, 1], $collectionC->getKeys(), $message);
-                    $this->assertSame($collectionA->first(), $collectionC->first(), $message);
-                    $this->assertSame($collectionB->first(), $collectionC->last(), $message);
+                    $self->assertCount(2, $collectionC, $message);
+                    $self->assertSame([0, 1], $collectionC->getKeys(), $message);
+                    $self->assertSame($collectionA->first(), $collectionC->first(), $message);
+                    $self->assertSame($collectionB->first(), $collectionC->last(), $message);
                 },
             ],
             [
                 'Same name string keys. Will override.',
-                new ObjectCollection(['foo' => new stdClass()]),
-                new ObjectCollection(['foo' => new DateTimeImmutable()]),
-                function (
+                $aAssociative,
+                $bAssociative,
+                static function (
+                    self $self,
                     ObjectCollection $collectionA,
                     ObjectCollection $collectionB,
                     ObjectCollection $collectionC,
                     string $message
                 ): void {
-                    $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(['foo'], $collectionC->getKeys(), $message);
-                    $this->assertNotSame($collectionA->first(), $collectionC->first(), $message);
-                    $this->assertSame($collectionB->first(), $collectionC->first(), $message);
-                    $this->assertSame($collectionB->last(), $collectionC->last(), $message);
+                    $self->assertCount(1, $collectionC, $message);
+                    $self->assertSame(['foo'], $collectionC->getKeys(), $message);
+                    $self->assertNotSame($collectionA->first(), $collectionC->first(), $message);
+                    $self->assertSame($collectionB->first(), $collectionC->first(), $message);
+                    $self->assertSame($collectionB->last(), $collectionC->last(), $message);
                 },
             ],
         ];
@@ -341,22 +412,22 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function createMultipleElements(): array
+    protected static function createMultipleElements(AbstractCollectionTestCase $self): array
     {
-        return [
-            new stdClass(),
+        /** @var array{0: T, foo: T, 42: T, 43: T} $elements */
+        $elements = [
+            0 => new stdClass(),
             'foo' => new class
             {
             },
             42 => dir(__DIR__),
-            new DateTimeImmutable(),
+            43 => new DateTimeImmutable(),
         ];
+
+        return $elements;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function createSingleElement()
+    protected static function createSingleElement(AbstractCollectionTestCase $self): object
     {
         return new class
         {
@@ -364,9 +435,9 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
     }
 
     /**
-     * {@inheritDoc}
+     * @return class-string<TCollection<T>>
      */
-    protected function getHandledCollectionClassName(): string
+    protected static function getHandledCollectionClassName(): string
     {
         return ObjectCollection::class;
     }

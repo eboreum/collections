@@ -26,8 +26,6 @@ interface MinimumableCollectionInterface extends CollectionInterface
      * Corresponds to the PHP core function `min`.
      *
      * @see https://www.php.net/manual/en/function.min.php
-     *
-     * @return mixed|null
      */
-    public function min();
+    public function min(): mixed;
 }

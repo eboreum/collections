@@ -7,7 +7,6 @@ namespace Eboreum\Collections\Object_;
 use Closure;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
-use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 
 /**
  * {@inheritDoc}
@@ -15,14 +14,11 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  * A collection which contains instances of Closure, exclusively.
  *
  * @template T of Closure
+ * @implements CollectionInterface<T>
  * @extends AbstractNamedClassOrInterfaceCollection<T>
- * @implements GeneratedCollectionInterface<T>
  */
-class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
+class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implements CollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public static function getHandledClassName(): string
     {
         return Closure::class;
@@ -48,9 +44,6 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?Closure
     {
         return parent::current();
@@ -64,17 +57,11 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
         return parent::find($key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?Closure
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?Closure
     {
         return parent::get($key);
@@ -90,33 +77,21 @@ class ClosureCollection extends AbstractNamedClassOrInterfaceCollection implemen
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?Closure
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?Closure
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?Closure
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?Closure
     {
         return parent::next();

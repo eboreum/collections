@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Closure;
-use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
+
+use function intval;
+use function is_float;
+use function max;
+use function min;
 
 /**
  * {@inheritDoc}
@@ -17,24 +21,19 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  * Contains values of type float, exclusively.
  *
  * @template T of float
- * @extends Collection<T>
  * @implements MaximumableCollectionInterface<T>
  * @implements MinimumableCollectionInterface<T>
  * @implements SortableCollectionInterface<T>
  * @implements UniqueableCollectionInterface<T>
+ * @extends Collection<T>
  */
-class FloatCollection
-    extends Collection
-    implements
-        MaximumableCollectionInterface,
-        MinimumableCollectionInterface,
-        SortableCollectionInterface,
-        UniqueableCollectionInterface
+class FloatCollection extends Collection implements
+    MaximumableCollectionInterface,
+    MinimumableCollectionInterface,
+    SortableCollectionInterface,
+    UniqueableCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public static function isElementAccepted($element): bool
+    public static function isElementAccepted(mixed $element): bool
     {
         return is_float($element);
     }
@@ -59,33 +58,21 @@ class FloatCollection
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?float
     {
         return parent::current();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function find(Closure $callback): ?float
     {
         return parent::find($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?float
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?float
     {
         return parent::get($key);
@@ -101,73 +88,44 @@ class FloatCollection
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?float
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function max(): ?float
     {
         if (!$this->elements) {
             return null;
         }
 
-        $float = max($this->elements);
-
-        assert(is_float($float)); // Should not be possible that $float is false, as we check for the empty array above
-
-        return $float;
+        return max($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?float
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function min(): ?float
     {
         if (!$this->elements) {
             return null;
         }
 
-        $float = min($this->elements);
-
-        assert(is_float($float)); // Should not be possible that $float is false, as we check for the empty array above
-
-        return $float;
+        return min($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?float
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?float
     {
         return parent::next();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toSorted(bool $isAscending = true): static
     {
         $direction = ($isAscending ? 1 : -1);
@@ -177,9 +135,6 @@ class FloatCollection
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
         return $this->toUniqueByCallback(

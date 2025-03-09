@@ -5,53 +5,34 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections;
 
 use Closure;
-use Eboreum\Collections\Collection;
 use Eboreum\Collections\StringCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 
+use function strval;
+
+/**
+ * @template T of string
+ * @template TCollection of StringCollection<T>
+ * @extends AbstractTypeCollectionTestCase<T, TCollection>
+ */
+#[CoversClass(StringCollection::class)]
 class StringCollectionTest extends AbstractTypeCollectionTestCase
 {
     /**
-     * @dataProvider dataProvider_testToUniqueByCallbackWorks
-     *
-     * @param array<int, string> $expected
-     * @param array<int, string> $elements
-     */
-    public function testToUniqueWorks(
-        string $message,
-        array $expected,
-        array $elements,
-        Closure $callback,
-        bool $isUsingFirstEncounteredElement
-    ): void {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $collectionA = new $handledCollectionClassName($elements);
-
-        assert(is_object($collectionA)); // Make phpstan happy
-        assert($handledCollectionClassName === get_class($collectionA)); // Make phpstan happy
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
-        assert(method_exists($collectionA, 'toUnique')); // Make phpstan happy
-
-        $collectionB = $collectionA->toUnique($isUsingFirstEncounteredElement);
-
-        assert(is_object($collectionB)); // Make phpstan happy
-        assert($handledCollectionClassName === get_class($collectionB)); // Make phpstan happy
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
-
-        $this->assertNotSame($collectionA, $collectionB, $message);
-        $this->assertSame($elements, $collectionA->toArray(), $message);
-        $this->assertSame($expected, $collectionB->toArray(), $message);
-    }
-
-    /**
      * {@inheritDoc}
      */
-    public function dataProvider_testToUniqueByCallbackWorks(): array
+    public static function providerTestToUniqueByCallbackWorks(): array
     {
         return [
             [
                 'Empty collection.',
-                [],
-                [],
+                static function (): array {
+                    return [
+                        [],
+                        [],
+                    ];
+                },
                 static function (): string {
                     return '';
                 },
@@ -59,8 +40,15 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             ],
             [
                 '1 single item collection.',
-                ['foo'],
-                ['foo'],
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = ['foo'];
+
+                    return [
+                        $elements,
+                        $elements,
+                    ];
+                },
                 static function (): string {
                     return '';
                 },
@@ -68,8 +56,18 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             ],
             [
                 'Ascending, use first encountered.',
-                [0 => 'a', 1 => 'b', 3 => 'c', 5 => 'd'],
-                ['a', 'b', 'a', 'c', 'a', 'd'],
+                static function (): array {
+                    /** @var array<T> $expected */
+                    $expected = [0 => 'a', 1 => 'b', 3 => 'c', 5 => 'd'];
+
+                    /** @var array<T> $elements */
+                    $elements = ['a', 'b', 'a', 'c', 'a', 'd'];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
                 static function (string $value): string {
                     return strval($value);
                 },
@@ -77,8 +75,18 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             ],
             [
                 'Ascending, use last encountered.',
-                [1 => 'b', 3 => 'c', 4 => 'a', 5 => 'd'],
-                ['a', 'b', 'a', 'c', 'a', 'd'],
+                static function (): array {
+                    /** @var array<T> $expected */
+                    $expected = [1 => 'b', 3 => 'c', 4 => 'a', 5 => 'd'];
+
+                    /** @var array<T> $elements */
+                    $elements = ['a', 'b', 'a', 'c', 'a', 'd'];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
                 static function (string $value): string {
                     return strval($value);
                 },
@@ -86,8 +94,18 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             ],
             [
                 'Descending, use first encountered.',
-                [0 => 'd', 1 => 'a', 2 => 'c', 4 => 'b'],
-                ['d', 'a', 'c', 'a', 'b', 'a'],
+                static function (): array {
+                    /** @var array<T> $expected */
+                    $expected = [0 => 'd', 1 => 'a', 2 => 'c', 4 => 'b'];
+
+                    /** @var array<T> $elements */
+                    $elements = ['d', 'a', 'c', 'a', 'b', 'a'];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
                 static function (string $value): string {
                     return strval($value);
                 },
@@ -95,8 +113,18 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             ],
             [
                 'Descending, use last encountered.',
-                [0 => 'd', 2 => 'c', 4 => 'b', 5 => 'a'],
-                ['d', 'a', 'c', 'a', 'b', 'a'],
+                static function (): array {
+                    /** @var array<T> $expected */
+                    $expected = [0 => 'd', 2 => 'c', 4 => 'b', 5 => 'a'];
+
+                    /** @var array<T> $elements */
+                    $elements = ['d', 'a', 'c', 'a', 'b', 'a'];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
                 static function (string $value): string {
                     return strval($value);
                 },
@@ -108,38 +136,59 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
     /**
      * {@inheritDoc}
      *
-     * @return array<array{string, StringCollection<string>, StringCollection<string>, Closure: void}>
+     * @return array<
+     *   int,
+     *   array{
+     *     string,
+     *     TCollection<T>,
+     *     TCollection<T>,
+     *     Closure(self<T, TCollection>, TCollection<T>, TCollection<T>, TCollection<T>, string): void,
+     *   },
+     * >
      */
-    public function dataProvider_testWithMergedWorks()
+    public static function providerTestWithMergedWorks(): array
     {
-        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
+        /** @var TCollection<T> $foo0 */
+        $foo0 = new StringCollection([0 => 'foo']);
+
+        /** @var TCollection<T> $bar0 */
+        $bar0 = new StringCollection([0 => 'bar']);
+
+        /** @var TCollection<T> $fooAssociative */
+        $fooAssociative = new StringCollection(['foo' => 'foo']);
+
+        /** @var TCollection<T> $barAssociative */
+        $barAssociative = new StringCollection(['foo' => 'bar']);
+
         return [
             [
                 'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new StringCollection([0 => 'foo']),
-                new StringCollection([0 => 'bar']),
-                function (
+                $foo0,
+                $bar0,
+                static function (
+                    self $self,
                     StringCollection $collectionA,
                     StringCollection $collectionB,
                     StringCollection $collectionC,
                     string $message
                 ): void {
-                    $this->assertCount(2, $collectionC, $message);
-                    $this->assertSame([0 => 'foo', 1 => 'bar'], $collectionC->toArray(), $message);
+                    $self->assertCount(2, $collectionC, $message);
+                    $self->assertSame([0 => 'foo', 1 => 'bar'], $collectionC->toArray(), $message);
                 },
             ],
             [
                 'Same name string keys. Will override.',
-                new StringCollection(['foo' => 'foo']),
-                new StringCollection(['foo' => 'bar']),
-                function (
+                $fooAssociative,
+                $barAssociative,
+                static function (
+                    self $self,
                     StringCollection $collectionA,
                     StringCollection $collectionB,
                     StringCollection $collectionC,
                     string $message
                 ): void {
-                    $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(['foo' => 'bar'], $collectionC->toArray(), $message);
+                    $self->assertCount(1, $collectionC, $message);
+                    $self->assertSame(['foo' => 'bar'], $collectionC->toArray(), $message);
                 },
             ],
         ];
@@ -148,29 +197,48 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function createMultipleElements(): array
+    protected static function createMultipleElements(AbstractCollectionTestCase $self): array
     {
-        return [
-            'foo',
+        /** @var array{0: T, foo: T, 42: T, 43: T} $elements */
+        $elements = [
+            0 => 'foo',
             'foo' => 'bar',
             42 => 'baz',
-            'bim',
+            43 => 'bim',
         ];
+
+        return $elements;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function createSingleElement()
+    protected static function createSingleElement(AbstractCollectionTestCase $self): string
     {
         return 'foo';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getHandledCollectionClassName(): string
+    protected static function getHandledCollectionClassName(): string
     {
         return StringCollection::class;
+    }
+
+    #[DataProvider('providerTestToUniqueByCallbackWorks')]
+    public function testToUniqueWorks(
+        string $message,
+        Closure $elementsFactory,
+        Closure $callback,
+        bool $isUsingFirstEncounteredElement,
+    ): void {
+        [$expected, $elements] = $elementsFactory($this);
+
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $collectionA = new $handledCollectionClassName($elements);
+
+        $this->assertInstanceOf(StringCollection::class, $collectionA);
+
+        $collectionB = $collectionA->toUnique($isUsingFirstEncounteredElement);
+
+        $this->assertInstanceOf(StringCollection::class, $collectionB);
+        $this->assertNotSame($collectionA, $collectionB, $message);
+        $this->assertSame($elements, $collectionA->toArray(), $message);
+        $this->assertSame($expected, $collectionB->toArray(), $message);
     }
 }

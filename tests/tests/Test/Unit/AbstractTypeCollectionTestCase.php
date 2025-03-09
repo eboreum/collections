@@ -11,22 +11,31 @@ use Eboreum\Collections\Exception\RuntimeException;
 use Exception;
 use ReflectionObject;
 
+use function implode;
+use function preg_quote;
+use function sprintf;
+
+/**
+ * @template T of mixed
+ * @template TCollection of Collection<mixed>
+ * @extends AbstractCollectionTestCase<T, TCollection>
+ */
 abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 {
     public function testWithAddedThrowsExceptionWhenArgumentElementIsNotAccepted(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
 
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         try {
             $collection->withAdded(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -49,8 +58,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
+            $this->assertSame(InvalidArgumentException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -77,18 +85,18 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
     public function testWithAddedMultipleThrowsExceptionWhenArgumentElementsContainsInvalidValues(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $elements = $this->createMultipleElements();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
 
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         try {
             $collection->withAddedMultiple([null]);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -113,8 +121,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -139,17 +146,17 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
     public function testWithMergedThrowsExceptionWhenArgumentCollectionBIsNotASubclassOfCollectionA(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName();
         $collectionB = new Collection();
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
 
         try {
             $collectionA->withMerged($collectionB);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -173,8 +180,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -200,9 +206,9 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
         $this->fail('Exception was never thrown.');
     }
 
-    public function testWithMergedThrowsExceptionWhenArgumentCollectionBIsASubclassOfCollectionAButElementIsNotAcceptedByCollectionA(): void
+    public function testWithMergedThrowsExceptionWhenArgumentCollectionBIsASubclassOfCollectionAButElementIsNotAcceptedByCollectionA(): void // phpcs:ignore
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName();
         $collectionB = new $handledCollectionClassName();
 
@@ -229,14 +235,14 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($collectionB, [null]);
 
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collectionA);
+        $this->assertInstanceOf(Collection::class, $collectionB);
 
         try {
             $collectionA->withMerged($collectionB);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -260,8 +266,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -285,16 +290,16 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
     public function testWithRemovedElementThrowsExceptionWhenArgumentElementIsNotAcceptedbyTheCollection(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         try {
             $collection->withRemovedElement(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -317,8 +322,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
+            $this->assertSame(InvalidArgumentException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -345,16 +349,16 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
     public function testWithSetThrowsExceptionWhenArgumentElementIsNotAcceptedbyTheCollection(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
+        $this->assertInstanceOf(Collection::class, $collection);
 
         try {
             $collection->withSet(0, null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -378,8 +382,7 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [

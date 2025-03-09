@@ -12,7 +12,6 @@ use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterf
 use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
-use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 
 /**
  * {@inheritDoc}
@@ -20,25 +19,20 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  * A collection which contains instances of DateTime, exclusively.
  *
  * @template T of DateTime
- * @extends AbstractNamedClassOrInterfaceCollection<T>
- * @implements GeneratedCollectionInterface<T>
+ * @implements CollectionInterface<T>
  * @implements MaximumableCollectionInterface<T>
  * @implements MinimumableCollectionInterface<T>
  * @implements SortableCollectionInterface<T>
  * @implements UniqueableCollectionInterface<T>
+ * @extends AbstractNamedClassOrInterfaceCollection<T>
  */
-class DateTimeCollection
-    extends AbstractNamedClassOrInterfaceCollection
-    implements
-        GeneratedCollectionInterface,
-        MaximumableCollectionInterface,
-        MinimumableCollectionInterface,
-        SortableCollectionInterface,
-        UniqueableCollectionInterface
+class DateTimeCollection extends AbstractNamedClassOrInterfaceCollection implements
+    CollectionInterface,
+    MaximumableCollectionInterface,
+    MinimumableCollectionInterface,
+    SortableCollectionInterface,
+    UniqueableCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public static function getHandledClassName(): string
     {
         return DateTime::class;
@@ -64,9 +58,6 @@ class DateTimeCollection
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?DateTime
     {
         return parent::current();
@@ -80,17 +71,11 @@ class DateTimeCollection
         return parent::find($key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?DateTime
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?DateTime
     {
         return parent::get($key);
@@ -106,17 +91,11 @@ class DateTimeCollection
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?DateTime
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function max(): ?DateTime
     {
         if (!$this->elements) {
@@ -128,17 +107,11 @@ class DateTimeCollection
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?DateTime
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function min(): ?DateTime
     {
         if (!$this->elements) {
@@ -150,25 +123,16 @@ class DateTimeCollection
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?DateTime
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?DateTime
     {
         return parent::next();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toSorted(bool $isAscending = true): static
     {
         $direction = ($isAscending ? 1 : -1);
@@ -180,9 +144,6 @@ class DateTimeCollection
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
         return $this->toUniqueByCallback(

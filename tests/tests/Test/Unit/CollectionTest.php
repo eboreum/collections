@@ -10,10 +10,352 @@ use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBeha
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
+use function assert;
+use function basename;
+use function gettype;
+use function implode;
+use function is_int;
+use function is_object;
+use function is_string;
+use function preg_quote;
+use function sprintf;
+use function strval;
+
+/**
+ * @template T
+ * @template TCollection of Collection<T>
+ * @extends AbstractCollectionTestCase<T, TCollection>
+ */
+#[CoversClass(Collection::class)]
 class CollectionTest extends AbstractCollectionTestCase
 {
+    /**
+     * @return array<int, array{array<int, string>, array<int|string, mixed>, Closure}>
+     */
+    public static function providerTestEachWorks(): array
+    {
+        return [
+            [
+                [
+                    'integer:NULL',
+                    'integer:boolean',
+                    'integer:integer',
+                    'string:string',
+                ],
+                [null, true, 42, 'foo' => 'bar'],
+                static function ($v, $k, stdClass $carry): void {
+                    $carry->results[] = sprintf(
+                        '%s:%s',
+                        gettype($k),
+                        gettype($v),
+                    );
+                },
+            ],
+            [
+                [
+                    'integer:NULL',
+                    'integer:boolean',
+                    'string:string',
+                ],
+                [null, true, 42, 'foo' => 'bar'],
+                static function ($v, $k, stdClass $carry) {
+                    if (2 === $k) {
+                        return false;
+                    }
+
+                    $carry->results[] = sprintf(
+                        '%s:%s',
+                        gettype($k),
+                        gettype($v),
+                    );
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array{array<int, string>, array<int|string, mixed>, Closure}>
+     */
+    public static function providerTestEveryWorks(): array
+    {
+        return [
+            [
+                [
+                    'integer:NULL',
+                    'integer:boolean',
+                ],
+                [null, true, 42, 'foo' => 'bar'],
+                static function ($v, $k, stdClass $carry) {
+                    if (2 === $k) {
+                        return false;
+                    }
+
+                    $carry->results[] = sprintf(
+                        '%s:%s',
+                        gettype($k),
+                        gettype($v),
+                    );
+                },
+            ],
+            [
+                ['integer:NULL'],
+                [null],
+                static function ($v, $k, stdClass $carry) {
+                    $carry->results[] = sprintf(
+                        '%s:%s',
+                        gettype($k),
+                        gettype($v),
+                    );
+
+                    return true;
+                },
+            ],
+            [
+                ['integer:NULL'],
+                [null],
+                static function ($v, $k, stdClass $carry) {
+                    $carry->results[] = sprintf(
+                        '%s:%s',
+                        gettype($k),
+                        gettype($v),
+                    );
+
+                    return null;
+                },
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function providerTestToUniqueByCallbackWorks(): array
+    {
+        return [
+            [
+                'Empty collection.',
+                static function (): array {
+                    return [
+                        [],
+                        [],
+                    ];
+                },
+                static function (): string {
+                    return '';
+                },
+                true,
+            ],
+            [
+                '1 single item collection.',
+                static function (AbstractCollectionTestCase $self): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [self::createSingleElement($self)];
+
+                    return [
+                        $expected,
+                        $expected,
+                    ];
+                },
+                static function (): string {
+                    return '';
+                },
+                true,
+            ],
+            [
+                'Integer item collection, ascending, use first encountered.',
+                static function (): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [0 => 1, 1 => 2, 3 => 3, 5 => 4];
+
+                    /** @var array<int, T> $elements */
+                    $elements = [1, 2, 1, 3, 1, 4];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (mixed $value): string {
+                    assert(is_int($value));
+
+                    return strval($value);
+                },
+                true,
+            ],
+            [
+                'Integer item collection, ascending, use last encountered.',
+                static function (): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [1 => 2, 3 => 3, 4 => 1, 5 => 4];
+
+                    /** @var array<int, T> $elements */
+                    $elements = [1, 2, 1, 3, 1, 4];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (mixed $value): string {
+                    assert(is_int($value));
+
+                    return strval($value);
+                },
+                false,
+            ],
+            [
+                'Integer item collection, descending, use first encountered.',
+                static function (): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [0 => 4, 1 => 1, 2 => 3, 4 => 2];
+
+                    /** @var array<int, T> $elements */
+                    $elements = [4, 1, 3, 1, 2, 1];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (mixed $value): string {
+                    assert(is_int($value));
+
+                    return strval($value);
+                },
+                true,
+            ],
+            [
+                'Integer item collection, descending, use last encountered.',
+                static function (): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [0 => 4, 2 => 3, 4 => 2, 5 => 1];
+
+                    /** @var array<int, T> $elements */
+                    $elements = [4, 1, 3, 1, 2, 1];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (mixed $value): string {
+                    assert(is_int($value));
+
+                    return strval($value);
+                },
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array<
+     *   int,
+     *   array{
+     *     string,
+     *     Collection<mixed>,
+     *     Collection<mixed>,
+     *     Closure(self<T, TCollection<T>>, TCollection<T>, TCollection<T>, TCollection<T>, string): void,
+     *   },
+     * >
+     */
+    public static function providerTestWithMergedWorks(): array
+    {
+        /** @var TCollection<T> $a0 */
+        $a0 =  new Collection([0 => 3.1415, 1 => null]);
+
+        /** @var TCollection<T> $b0 */
+        $b0 = new Collection([0 => 2.7182, 1 => 42]);
+
+        /** @var TCollection<T> $aAssociative */
+        $aAssociative = new Collection(['foo' => 3.1415, 1 => null]);
+
+        /** @var TCollection<T> $bAssociative */
+        $bAssociative = new Collection(['foo' => 2.7182, 1 => 42]);
+
+        return [
+            [
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
+                $a0,
+                $b0,
+                static function (
+                    self $self,
+                    Collection $collectionA,
+                    Collection $collectionB,
+                    Collection $collectionC,
+                    string $message
+                ): void {
+                    $self->assertCount(4, $collectionC, $message);
+                    $self->assertSame(
+                        [
+                            0 => 3.1415,
+                            1 => null,
+                            2 => 2.7182,
+                            3 => 42,
+                        ],
+                        $collectionC->toArray(),
+                        $message,
+                    );
+                },
+            ],
+            [
+                'Same name string keys. Will override.',
+                $aAssociative,
+                $bAssociative,
+                static function (
+                    self $self,
+                    Collection $collectionA,
+                    Collection $collectionB,
+                    Collection $collectionC,
+                    string $message
+                ): void {
+                    $self->assertCount(3, $collectionC, $message);
+                    $self->assertSame(
+                        [
+                            'foo' => 2.7182,
+                            0 => null,
+                            1 => 42,
+                        ],
+                        $collectionC->toArray(),
+                        $message,
+                    );
+                },
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected static function createMultipleElements(AbstractCollectionTestCase $self): array
+    {
+        /** @var array{0: T, foo: T, 42: T, 43: T} $elements */
+        $elements = [
+            0 => 42,
+            'foo' => 3.1415,
+            42 => null,
+            43 => true,
+        ];
+
+        return $elements;
+    }
+
+    protected static function createSingleElement(AbstractCollectionTestCase $self): int
+    {
+        return 42;
+    }
+
+    protected static function getHandledCollectionClassName(): string
+    {
+        return Collection::class;
+    }
+
     public function testConstructThrowsExceptionWhenSomeElementsAreNotAccepted(): void
     {
         $elements = [
@@ -25,19 +367,16 @@ class CollectionTest extends AbstractCollectionTestCase
         ];
 
         try {
-            new class ($elements) extends Collection
+            new class ($elements) extends Collection // @phpstan-ignore-line
             {
-                /**
-                 * {@inheritDoc}
-                 */
-                public static function isElementAccepted($element): bool
+                public static function isElementAccepted(mixed $element): bool
                 {
                     return is_string($element);
                 }
             };
         } catch (Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -59,7 +398,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
             assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -95,7 +434,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return false;
             }
@@ -105,7 +444,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collectionA->contains(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
+            $this->assertSame(InvalidArgumentException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -135,14 +474,14 @@ class CollectionTest extends AbstractCollectionTestCase
     {
         $collection = new Collection();
 
-        $this->assertNull($collection->current());
+        $this->assertNull($collection->current()); // @phpstan-ignore-line
     }
 
     /**
-     * @dataProvider dataProvider_testEachWorks
      * @param array<int, string> $expected
      * @param array<int, mixed> $elements
      */
+    #[DataProvider('providerTestEachWorks')]
     public function testEachWorks(array $expected, array $elements, Closure $callback): void
     {
         $collection = new Collection($elements);
@@ -221,12 +560,15 @@ class CollectionTest extends AbstractCollectionTestCase
         ]);
 
         try {
-            $collection->toReindexed(static function ($element) {
-                return $element;
-            });
+            $collection->toReindexed(
+                // @phpstan-ignore-next-line
+                static function ($element) {
+                    return $element;
+                },
+            );
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -247,8 +589,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -278,12 +619,15 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection = new Collection([0 => null]);
 
         try {
-            $collection->toReindexed(static function ($element) {
-                return $element;
-            });
+            $collection->toReindexed(
+                // @phpstan-ignore-next-line
+                static function ($element) {
+                    return $element;
+                },
+            );
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -304,8 +648,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -347,7 +690,7 @@ class CollectionTest extends AbstractCollectionTestCase
             });
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -368,8 +711,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -402,7 +744,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return null !== $element;
             }
@@ -412,7 +754,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection->withAdded(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -436,8 +778,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
+            $this->assertSame(InvalidArgumentException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -473,7 +814,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return null !== $element;
             }
@@ -483,7 +824,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection->withAddedMultiple([null, 3.1415]);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -507,8 +848,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -541,7 +881,7 @@ class CollectionTest extends AbstractCollectionTestCase
             });
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -563,8 +903,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame('Exception', get_class($currentException));
+            $this->assertSame('Exception', $currentException::class);
             $this->assertSame('fail', $currentException->getMessage());
 
             $currentException = $currentException->getPrevious();
@@ -585,7 +924,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return null !== $element;
             }
@@ -597,7 +936,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collectionA->withMerged($collectionB); // @phpstan-ignore-line
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -622,8 +961,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -652,36 +990,6 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->fail('Exception was never thrown.');
     }
 
-    public function testWithRemovedThrowsExceptionWhenArgumentKeyIsInvalid(): void
-    {
-        $collection = new Collection([null, true, 42, 'foo' => 'bar']);
-
-        try {
-            $collection->withRemoved(null); // @phpstan-ignore-line
-        } catch (Exception $e) {
-            $currentException = $e;
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
-                implode('', [
-                    '/',
-                    '^',
-                    'Argument \$key must be int or string, but it is not\.',
-                    ' Found\: \(null\) null',
-                    '$',
-                    '/',
-                ]),
-                $currentException->getMessage(),
-            );
-
-            $currentException = $currentException->getPrevious();
-            $this->assertTrue(null === $currentException);
-
-            return;
-        }
-
-        $this->fail('Exception was never thrown.');
-    }
-
     public function testWithRemovedElementThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
     {
         $collection = new class ([true, 42, 'foo' => 'bar']) extends Collection
@@ -691,7 +999,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return null !== $element;
             }
@@ -701,7 +1009,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection->withRemovedElement(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -725,8 +1033,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
+            $this->assertSame(InvalidArgumentException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -752,60 +1059,6 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->fail('Exception was never thrown.');
     }
 
-    public function testWithSetElementThrowsExceptionWhenArgumentKeyIsInvalid(): void
-    {
-        $collection = new Collection([true, 42, 'foo' => 'bar']);
-
-        try {
-            $collection->withSet(null, null); // @phpstan-ignore-line
-        } catch (Exception $e) {
-            $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s\-\>withSet\(',
-                            '\$key = \(null\) null',
-                            ', \$element = \(null\) null',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\$elements = \(array\(3\)\) \[.+\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
-                $currentException->getMessage(),
-            );
-
-            $currentException = $currentException->getPrevious();
-            $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
-                implode('', [
-                    '/',
-                    '^',
-                    'Argument \$key must be int or string, but it is not\.',
-                    ' Found\: \(null\) null',
-                    '$',
-                    '/',
-                ]),
-                $currentException->getMessage(),
-            );
-
-            $currentException = $currentException->getPrevious();
-            $this->assertTrue(null === $currentException);
-
-            return;
-        }
-
-        $this->fail('Exception was never thrown.');
-    }
-
     public function testWithSetElementThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
     {
         $collection = new class ([true, 42, 'foo' => 'bar']) extends Collection
@@ -815,7 +1068,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return null !== $element;
             }
@@ -825,7 +1078,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection->withSet(0, null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -850,8 +1103,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -891,7 +1143,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return false;
             }
@@ -901,7 +1153,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection::assertIsElementAccepted(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
+            $this->assertSame(InvalidArgumentException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -941,7 +1193,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return false;
             }
@@ -972,7 +1224,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return false;
             }
@@ -982,50 +1234,6 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->assertFalse($collection::isElementAccepted(true));
         $this->assertFalse($collection::isElementAccepted(42));
         $this->assertFalse($collection::isElementAccepted('bar'));
-    }
-
-    /**
-     * @return array<int, array{array<int, string>, array<int|string, mixed>, Closure}>
-     */
-    public function dataProvider_testEachWorks(): array
-    {
-        return [
-            [
-                [
-                    'integer:NULL',
-                    'integer:boolean',
-                    'integer:integer',
-                    'string:string',
-                ],
-                [null, true, 42, 'foo' => 'bar'],
-                static function ($v, $k, object $carry): void {
-                    $carry->results[] = sprintf( // @phpstan-ignore-line
-                        '%s:%s',
-                        gettype($k),
-                        gettype($v),
-                    );
-                },
-            ],
-            [
-                [
-                    'integer:NULL',
-                    'integer:boolean',
-                    'string:string',
-                ],
-                [null, true, 42, 'foo' => 'bar'],
-                static function ($v, $k, object $carry) {
-                    if (2 === $k) {
-                        return false;
-                    }
-
-                    $carry->results[] = sprintf( // @phpstan-ignore-line
-                        '%s:%s',
-                        gettype($k),
-                        gettype($v),
-                    );
-                },
-            ],
-        ];
     }
 
     public function testEachHandlesExceptionGracefullyWhenAFailureHappensInsideTheCallback(): void
@@ -1039,7 +1247,7 @@ class CollectionTest extends AbstractCollectionTestCase
             });
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -1062,8 +1270,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1076,7 +1283,6 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -1089,10 +1295,10 @@ class CollectionTest extends AbstractCollectionTestCase
     }
 
     /**
-     * @dataProvider dataProvider_testEveryWorks
      * @param array<int, string> $expected
      * @param array<int|string, mixed> $elements
      */
+    #[DataProvider('providerTestEveryWorks')]
     public function testEveryWorks(array $expected, array $elements, Closure $callback): void
     {
         $collection = new Collection($elements);
@@ -1103,59 +1309,6 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection->every($callback, $carry);
 
         $this->assertSame($expected, $carry->results);
-    }
-
-    /**
-     * @return array<int, array{array<int, string>, array<int|string, mixed>, Closure}>
-     */
-    public function dataProvider_testEveryWorks(): array
-    {
-        return [
-            [
-                [
-                    'integer:NULL',
-                    'integer:boolean',
-                ],
-                [null, true, 42, 'foo' => 'bar'],
-                static function ($v, $k, object $carry) {
-                    if (2 === $k) {
-                        return false;
-                    }
-
-                    $carry->results[] = sprintf( // @phpstan-ignore-line
-                        '%s:%s',
-                        gettype($k),
-                        gettype($v),
-                    );
-                },
-            ],
-            [
-                ['integer:NULL'],
-                [null],
-                static function ($v, $k, object $carry) {
-                    $carry->results[] = sprintf( // @phpstan-ignore-line
-                        '%s:%s',
-                        gettype($k),
-                        gettype($v),
-                    );
-
-                    return true;
-                },
-            ],
-            [
-                ['integer:NULL'],
-                [null],
-                static function ($v, $k, object $carry) {
-                    $carry->results[] = sprintf( // @phpstan-ignore-line
-                        '%s:%s',
-                        gettype($k),
-                        gettype($v),
-                    );
-
-                    return null;
-                },
-            ],
-        ];
     }
 
     public function testEveryHandlesExceptionGracefullyWhenAFailureHappensInsideTheCallback(): void
@@ -1169,7 +1322,7 @@ class CollectionTest extends AbstractCollectionTestCase
             });
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -1192,8 +1345,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1206,7 +1358,6 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -1224,20 +1375,21 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->every(
-                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                // @phpstan-ignore-next-line
+                static function (): int {
                     return 42;
                 }
             );
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>every\(',
-                            '\$callback = \(object\) \\\\Closure\(\)',
+                            '\$callback = \(object\) \\\\Closure\(\)(: *[^,\)]+)?',
                             ', \$carry = \(null\) null',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',
@@ -1253,8 +1405,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1279,9 +1430,13 @@ class CollectionTest extends AbstractCollectionTestCase
     {
         $collection = new Collection();
 
-        $this->assertNull($collection->find(static function () {
-            return false;
-        }));
+        $this->assertNull( // @phpstan-ignore-line
+            $collection->find(
+                static function () {
+                    return false;
+                },
+            ),
+        );
     }
 
     public function testFindWorksWithTypeHintedValueAndKey(): void
@@ -1302,20 +1457,21 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->find(
-                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                // @phpstan-ignore-next-line
+                static function (): int {
                     return 42;
                 }
             );
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>find\(',
-                            '\$callback = \(object\) \\\\Closure\(\)',
+                            '\$callback = \(object\) \\\\Closure\(\)(: *[^,\)]+)?',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',
                         '\}',
@@ -1330,8 +1486,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1357,7 +1512,7 @@ class CollectionTest extends AbstractCollectionTestCase
     {
         $collection = new Collection();
 
-        $this->assertNull($collection->first());
+        $this->assertNull($collection->first()); // @phpstan-ignore-line
     }
 
     public function testIndexOfThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
@@ -1369,7 +1524,7 @@ class CollectionTest extends AbstractCollectionTestCase
              *
              * @override
              */
-            public static function isElementAccepted($element): bool
+            public static function isElementAccepted(mixed $element): bool
             {
                 return null !== $element;
             }
@@ -1379,7 +1534,7 @@ class CollectionTest extends AbstractCollectionTestCase
             $collection->indexOf(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
+            $this->assertSame(InvalidArgumentException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -1416,7 +1571,7 @@ class CollectionTest extends AbstractCollectionTestCase
             });
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -1438,8 +1593,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1453,7 +1607,6 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -1471,20 +1624,21 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->maxByCallback(
-                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                // @phpstan-ignore-next-line
+                static function (): null {
                     return null;
                 }
             );
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>maxByCallback\(',
-                            '\$callback = \(object\) \\\\Closure\(\)',
+                            '\$callback = \(object\) \\\\Closure\(\)(: *[^,\)]+)?',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',
                         '\}',
@@ -1499,8 +1653,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1533,7 +1686,7 @@ class CollectionTest extends AbstractCollectionTestCase
             });
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -1555,8 +1708,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1570,7 +1722,6 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
             $this->assertSame($exception, $currentException);
 
             $currentException = $currentException->getPrevious();
@@ -1588,20 +1739,21 @@ class CollectionTest extends AbstractCollectionTestCase
 
         try {
             $collection->minByCallback(
-                static function () { // @phpstan-ignore-line This is specifically what we are testing for
+                // @phpstan-ignore-next-line
+                static function (): null {
                     return null;
                 }
             );
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>minByCallback\(',
-                            '\$callback = \(object\) \\\\Closure\(\)',
+                            '\$callback = \(object\) \\\\Closure\(\)(: *[^,\)]+)?',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',
                         '\}',
@@ -1616,8 +1768,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
@@ -1643,155 +1794,6 @@ class CollectionTest extends AbstractCollectionTestCase
     {
         $collection = new Collection();
 
-        $this->assertNull($collection->last());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function dataProvider_testToUniqueByCallbackWorks(): array
-    {
-        return [
-            [
-                'Empty collection.',
-                [],
-                [],
-                static function (): string {
-                    return '';
-                },
-                true,
-            ],
-            [
-                '1 single item collection.',
-                [$this->createSingleElement()],
-                [$this->createSingleElement()],
-                static function (): string {
-                    return '';
-                },
-                true,
-            ],
-            [
-                'Integer item collection, ascending, use first encountered.',
-                [0 => 1, 1 => 2, 3 => 3, 5 => 4],
-                [1, 2, 1, 3, 1, 4],
-                static function (int $value): string {
-                    return strval($value);
-                },
-                true,
-            ],
-            [
-                'Integer item collection, ascending, use last encountered.',
-                [1 => 2, 3 => 3, 4 => 1, 5 => 4],
-                [1, 2, 1, 3, 1, 4],
-                static function (int $value): string {
-                    return strval($value);
-                },
-                false,
-            ],
-            [
-                'Integer item collection, descending, use first encountered.',
-                [0 => 4, 1 => 1, 2 => 3, 4 => 2],
-                [4, 1, 3, 1, 2, 1],
-                static function (int $value): string {
-                    return strval($value);
-                },
-                true,
-            ],
-            [
-                'Integer item collection, descending, use last encountered.',
-                [0 => 4, 2 => 3, 4 => 2, 5 => 1],
-                [4, 1, 3, 1, 2, 1],
-                static function (int $value): string {
-                    return strval($value);
-                },
-                false,
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, array{string, Collection<mixed>, Collection<mixed>, Closure: void}>
-     */
-    public function dataProvider_testWithMergedWorks(): array
-    {
-        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
-        return [
-            [
-                'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new Collection([0 => 3.1415, 1 => null]),
-                new Collection([0 => 2.7182, 1 => 42]),
-                function (
-                    Collection $collectionA,
-                    Collection $collectionB,
-                    Collection $collectionC,
-                    string $message
-                ): void {
-                    $this->assertCount(4, $collectionC, $message);
-                    $this->assertSame(
-                        [
-                            0 => 3.1415,
-                            1 => null,
-                            2 => 2.7182,
-                            3 => 42,
-                        ],
-                        $collectionC->toArray(),
-                        $message,
-                    );
-                },
-            ],
-            [
-                'Same name string keys. Will override.',
-                new Collection(['foo' => 3.1415, 1 => null]),
-                new Collection(['foo' => 2.7182, 1 => 42]),
-                function (
-                    Collection $collectionA,
-                    Collection $collectionB,
-                    Collection $collectionC,
-                    string $message
-                ): void {
-                    $this->assertCount(3, $collectionC, $message);
-                    $this->assertSame(
-                        [
-                            'foo' => 2.7182,
-                            0 => null,
-                            1 => 42
-                        ],
-                        $collectionC->toArray(),
-                        $message,
-                    );
-                },
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function createMultipleElements(): array
-    {
-        return [
-            42,
-            'foo' => 3.1415,
-            42 => null,
-            true,
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function createSingleElement()
-    {
-        return 42;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getHandledCollectionClassName(): string
-    {
-        return Collection::class;
+        $this->assertNull($collection->last()); // @phpstan-ignore-line
     }
 }
