@@ -127,7 +127,8 @@ The reason is that methods such as `current`, `find`, `first`, etc. cannot have 
 "phpstan/phpstan": "^2.1.5",
 "phpunit/phpunit": "^11.3",
 "slevomat/coding-standard": "8.15.0",
-"squizlabs/php_codesniffer": "3.10.2"
+"squizlabs/php_codesniffer": "3.10.2",
+"symfony/polyfill-intl-icu": "^1.31"
 ```
 
 ## Running tests

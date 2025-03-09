@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections;
 
 use Closure;
+use Collator;
 use Eboreum\Collections\StringCollection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -219,6 +220,26 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
     {
         return StringCollection::class;
     }
+
+    public function testToSortedByCollatorWorks(): void
+    {
+        $collator = $this->createMock(Collator::class);
+
+        $collectionA = new StringCollection(['2', '1']);
+
+        $collator
+            ->expects($this->once())
+            ->method('compare')
+            ->with('2', '1')
+            ->willReturn(1);
+
+        $collectionB = $collectionA->toSortedByCollator($collator);
+
+        $this->assertNotSame($collectionA, $collectionB);
+        $this->assertSame(['2', '1'], $collectionA->toArray());
+        $this->assertSame([1 => '1', 0 => '2'], $collectionB->toArray());
+    }
+
 
     #[DataProvider('providerTestToUniqueByCallbackWorks')]
     public function testToUniqueWorks(

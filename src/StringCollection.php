@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Closure;
+use Collator;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
 
 use function is_string;
@@ -93,6 +94,23 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     public function next(): ?string
     {
         return parent::next();
+    }
+
+    /**
+     * Requires either:
+     *
+     *   - The PHP extension "intl": https://www.php.net/manual/en/class.collator.php
+     *   - A polyfill, e.g. https://packagist.org/packages/symfony/polyfill-intl-icu
+     *
+     * @return StringCollection<T>
+     */
+    public function toSortedByCollator(Collator $collator): static
+    {
+        return $this->toSortedByCallback(
+            static function (string $a, string $b) use ($collator): int {
+                return $collator->compare($a, $b);
+            },
+        );
     }
 
     public function toUnique(bool $isUsingFirstEncounteredElement = true): static
