@@ -108,7 +108,7 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     {
         return $this->toSortedByCallback(
             static function (string $a, string $b) use ($collator): int {
-                return $collator->compare($a, $b);
+                return (int) $collator->compare($a, $b);
             },
         );
     }
