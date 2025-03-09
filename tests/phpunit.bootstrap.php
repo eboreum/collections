@@ -15,6 +15,15 @@ define('TEST_ROOT_PATH', __DIR__);
     $annotationToBytes = static function (string $annotation): int {
         preg_match('/^(\d+)([MG])?$/D', $annotation, $match);
 
+        if (false === array_key_exists(1, $match)) {
+            throw new Exception(
+                sprintf(
+                    'Argument $annotation = %s is invalid',
+                    Caster::getInstance()->castTyped($annotation),
+                ),
+            );
+        }
+
         return (int) match ($match[2] ?? null) {
             'M' => ((int) $match[1]) * pow(1024, 2),
             'G' => ((int) $match[1]) * pow(1024, 3),
