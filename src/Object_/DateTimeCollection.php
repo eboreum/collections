@@ -134,6 +134,28 @@ class DateTimeCollection extends AbstractNamedClassOrInterfaceCollection impleme
         return parent::next();
     }
 
+
+    /**
+     * Converts all instances of DateTime to their equivalent Unix Epoch time in microseconds.
+     *
+     * @return IntegerCollection<int>
+     */
+    public function toMicrosecondTimestampIntegerCollection(): IntegerCollection
+    {
+        return new IntegerCollection(
+            $this->map(
+                static function (DateTime $dateTime): int {
+                    return (int) sprintf(
+                        '%d%06d',
+                        $dateTime->getTimestamp(),
+                        $dateTime->format('u'),
+                    );
+                },
+            ),
+        );
+    }
+
+
     public function toSorted(bool $isAscending = true): static
     {
         $direction = ($isAscending ? 1 : -1);

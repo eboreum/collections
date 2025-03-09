@@ -416,6 +416,28 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
         $this->assertSame($expected, $element);
     }
 
+    public function testToMicrosecondTimestampIntegerCollectionWorks(): void
+    {
+        $elements = [
+            new DateTime('2021-02-01T12:34:56.000001+01:00'),
+            new DateTime('2021-02-01T12:34:57.000002+01:00'),
+            new DateTime('2021-02-01T12:34:58.000003+01:00'),
+        ];
+
+        $dateTimeCollection = new DateTimeCollection($elements);
+        $integerCollection = $dateTimeCollection->toMicrosecondTimestampIntegerCollection();
+
+        $this->assertSame($elements, $dateTimeCollection->toArray());
+        $this->assertSame(
+            [
+                1612179296000001,
+                1612179297000002,
+                1612179298000003,
+            ],
+            $integerCollection->toArray(),
+        );
+    }
+
     public function testToSortedWorks(): void
     {
         $elements = [
