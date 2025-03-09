@@ -19,7 +19,7 @@ class ExceptionMessageGenerator extends EboreumExceptionMessageGenerator
         return self::$instance;
     }
 
-    public static function create(): static
+    public static function create(): self
     {
         $caster = Caster::getInstance();
 
