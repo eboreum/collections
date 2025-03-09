@@ -32,6 +32,12 @@ foreach ($absoluteFilePaths as $filePathAbsolute) {
         continue;
     }
 
+    $reflectionClass = new ReflectionClass($className);
+
+    if ($reflectionClass->isAbstract()) {
+        continue;
+    }
+
     $count++;
 
     echo sprintf(

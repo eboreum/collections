@@ -136,170 +136,6 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     /**
      * {@inheritDoc}
-     */
-    public static function providerTestToUniqueByCallbackWorks(): array
-    {
-        return [
-            [
-                'Empty collection.',
-                static function (): array {
-                    return [
-                        [],
-                        [],
-                    ];
-                },
-                static function (): string {
-                    return '';
-                },
-                true,
-            ],
-            [
-                '1 single item collection.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTime('2021-01-01 00:00:00+01:00'),
-                    ];
-
-                    return [
-                        $elements,
-                        $elements,
-                    ];
-                },
-                static function (DateTime $object): string {
-                    return $object->format('c');
-                },
-                true,
-            ],
-            [
-                'Ascending, use first encountered.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTime('2021-01-01 00:00:00+01:00'),
-                        1 => new DateTime('2021-01-01 00:00:01+01:00'),
-                        2 => new DateTime('2021-01-01 00:00:02+01:00'),
-                        3 => new DateTime('2021-01-01 00:00:01+01:00'),
-                        4 => new DateTime('2021-01-01 00:00:03+01:00'),
-                        5 => new DateTime('2021-01-01 00:00:01+01:00'),
-                    ];
-
-                    /** @var array<T> $expected */
-                    $expected = [
-                        0 => $elements[0],
-                        1 => $elements[1],
-                        2 => $elements[2],
-                        4 => $elements[4],
-                    ];
-
-                    return [
-                        $expected,
-                        $elements,
-                    ];
-                },
-                static function (DateTime $object): string {
-                    return $object->format('c');
-                },
-                true,
-            ],
-            [
-                'Ascending, use last encountered.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTime('2021-01-01 00:00:00+01:00'),
-                        1 => new DateTime('2021-01-01 00:00:01+01:00'),
-                        2 => new DateTime('2021-01-01 00:00:02+01:00'),
-                        3 => new DateTime('2021-01-01 00:00:01+01:00'),
-                        4 => new DateTime('2021-01-01 00:00:03+01:00'),
-                        5 => new DateTime('2021-01-01 00:00:01+01:00'),
-                    ];
-
-                    /** @var array<T> $expected */
-                    $expected = [
-                        0 => $elements[0],
-                        2 => $elements[2],
-                        4 => $elements[4],
-                        5 => $elements[5],
-                    ];
-
-                    return [
-                        $expected,
-                        $elements,
-                    ];
-                },
-                static function (DateTime $object): string {
-                    return $object->format('c');
-                },
-                false,
-            ],
-            [
-                'Descending, use first encountered.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTime('2021-01-01 00:00:03+01:00'),
-                        1 => new DateTime('2021-01-01 00:00:01+01:00'),
-                        2 => new DateTime('2021-01-01 00:00:02+01:00'),
-                        3 => new DateTime('2021-01-01 00:00:01+01:00'),
-                        4 => new DateTime('2021-01-01 00:00:00+01:00'),
-                        5 => new DateTime('2021-01-01 00:00:01+01:00'),
-                    ];
-
-                    /** @var array<T> $expected */
-                    $expected = [
-                        0 => $elements[0],
-                        1 => $elements[1],
-                        2 => $elements[2],
-                        4 => $elements[4],
-                    ];
-
-                    return [
-                        $expected,
-                        $elements,
-                    ];
-                },
-                static function (DateTime $object): string {
-                    return $object->format('c');
-                },
-                true,
-            ],
-            [
-                'Descending, use last encountered.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTime('2021-01-01 00:00:03+01:00'),
-                        1 => new DateTime('2021-01-01 00:00:01+01:00'),
-                        2 => new DateTime('2021-01-01 00:00:02+01:00'),
-                        3 => new DateTime('2021-01-01 00:00:01+01:00'),
-                        4 => new DateTime('2021-01-01 00:00:00+01:00'),
-                        5 => new DateTime('2021-01-01 00:00:01+01:00'),
-                    ];
-
-                    /** @var array<T> $expected */
-                    $expected = [
-                        0 => $elements[0],
-                        2 => $elements[2],
-                        4 => $elements[4],
-                        5 => $elements[5],
-                    ];
-
-                    return [
-                        $expected,
-                        $elements,
-                    ];
-                },
-                static function (DateTime $object): string {
-                    return $object->format('c');
-                },
-                false,
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * @return array<
      *   int,
@@ -313,16 +149,19 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     public static function providerTestWithMergedWorks(): array
     {
         /** @var TCollection<T> $a0 */
-        $a0 = new DateTimeCollection([0 => new DateTime()]);
+        $a0 = self::createDateTimeCollection([0 => self::createDateTime()]);
 
         /** @var TCollection<T> $b0 */
-        $b0 = new DateTimeCollection([0 => new DateTime()]);
+        $b0 = self::createDateTimeCollection([0 => self::createDateTime()]);
 
         /** @var TCollection<T> $aAssociative */
-        $aAssociative = new DateTimeCollection(['foo' => new DateTime()]);
+        $aAssociative = self::createDateTimeCollection(['foo' => self::createDateTime()]);
+
+        /** @var array<T> $elements */
+        $elements = ['foo' => self::createDateTime()];
 
         /** @var TCollection<T> $bAssociative */
-        $bAssociative = new DateTimeCollection(['foo' => new DateTime()]);
+        $bAssociative = self::createDateTimeCollection($elements);
 
         return [
             [
@@ -366,6 +205,170 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     /**
      * {@inheritDoc}
      */
+    public static function providerTestToUniqueByCallbackWorks(): array
+    {
+        return [
+            [
+                'Empty collection.',
+                static function (): array {
+                    return [
+                        [],
+                        [],
+                    ];
+                },
+                static function (): string {
+                    return '';
+                },
+                true,
+            ],
+            [
+                '1 single item collection.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTime('2021-01-01 00:00:00+01:00'),
+                    ];
+
+                    return [
+                        $elements,
+                        $elements,
+                    ];
+                },
+                static function (DateTime $object): string {
+                    return $object->format('c');
+                },
+                true,
+            ],
+            [
+                'Ascending, use first encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTime('2021-01-01 00:00:00+01:00'),
+                        1 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                        2 => self::createDateTime('2021-01-01 00:00:02+01:00'),
+                        3 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                        4 => self::createDateTime('2021-01-01 00:00:03+01:00'),
+                        5 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
+                        0 => $elements[0],
+                        1 => $elements[1],
+                        2 => $elements[2],
+                        4 => $elements[4],
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (DateTime $object): string {
+                    return $object->format('c');
+                },
+                true,
+            ],
+            [
+                'Ascending, use last encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTime('2021-01-01 00:00:00+01:00'),
+                        1 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                        2 => self::createDateTime('2021-01-01 00:00:02+01:00'),
+                        3 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                        4 => self::createDateTime('2021-01-01 00:00:03+01:00'),
+                        5 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
+                        0 => $elements[0],
+                        2 => $elements[2],
+                        4 => $elements[4],
+                        5 => $elements[5],
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (DateTime $object): string {
+                    return $object->format('c');
+                },
+                false,
+            ],
+            [
+                'Descending, use first encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTime('2021-01-01 00:00:03+01:00'),
+                        1 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                        2 => self::createDateTime('2021-01-01 00:00:02+01:00'),
+                        3 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                        4 => self::createDateTime('2021-01-01 00:00:00+01:00'),
+                        5 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
+                        0 => $elements[0],
+                        1 => $elements[1],
+                        2 => $elements[2],
+                        4 => $elements[4],
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (DateTime $object): string {
+                    return $object->format('c');
+                },
+                true,
+            ],
+            [
+                'Descending, use last encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTime('2021-01-01 00:00:03+01:00'),
+                        1 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                        2 => self::createDateTime('2021-01-01 00:00:02+01:00'),
+                        3 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                        4 => self::createDateTime('2021-01-01 00:00:00+01:00'),
+                        5 => self::createDateTime('2021-01-01 00:00:01+01:00'),
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
+                        0 => $elements[0],
+                        2 => $elements[2],
+                        4 => $elements[4],
+                        5 => $elements[5],
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (DateTime $object): string {
+                    return $object->format('c');
+                },
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected static function createMultipleElements(AbstractCollectionTestCase $self): array
     {
         /** @var array{0: T, foo: T, 42: T, 43: T} $elements */
@@ -390,6 +393,31 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
     protected static function getHandledCollectionClassName(): string
     {
         return DateTimeCollection::class;
+    }
+
+    /**
+     * @return T
+     */
+    protected static function createDateTime(string $timestamp = 'now'): DateTime
+    {
+        /** @var T $dateTime */
+        $dateTime = new DateTime($timestamp);
+
+        return $dateTime;
+    }
+
+    /**
+     * @param array<int|string, T> $elements
+     *
+     * @return TCollection<T>
+     */
+    protected static function createDateTimeCollection(
+        array $elements,
+    ): DateTimeCollection {
+        /** @var TCollection<T> $collection */
+        $collection = new DateTimeCollection($elements);
+
+        return $collection;
     }
 
     /**
@@ -418,13 +446,14 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     public function testToMicrosecondTimestampIntegerCollectionWorks(): void
     {
+        /** @var array<T> $elements */
         $elements = [
-            new DateTime('2021-02-01T12:34:56.000001+01:00'),
-            new DateTime('2021-02-01T12:34:57.000002+01:00'),
-            new DateTime('2021-02-01T12:34:58.000003+01:00'),
+            self::createDateTime('2021-02-01T12:34:56.000001+01:00'),
+            self::createDateTime('2021-02-01T12:34:57.000002+01:00'),
+            self::createDateTime('2021-02-01T12:34:58.000003+01:00'),
         ];
 
-        $dateTimeCollection = new DateTimeCollection($elements);
+        $dateTimeCollection = self::createDateTimeCollection($elements);
         $integerCollection = $dateTimeCollection->toMicrosecondTimestampIntegerCollection();
 
         $this->assertSame($elements, $dateTimeCollection->toArray());
@@ -440,15 +469,16 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     public function testToSortedWorks(): void
     {
+        /** @var array<T> $elements */
         $elements = [
-            new DateTime('2021-02-01 12:34:57'),
-            new DateTime('2021-02-01 12:34:56'),
-            new DateTime('2021-02-01 12:34:55'),
-            new DateTime('2021-01-01 12:34:57'),
-            new DateTime('2021-03-01 12:34:55'),
+            self::createDateTime('2021-02-01 12:34:57'),
+            self::createDateTime('2021-02-01 12:34:56'),
+            self::createDateTime('2021-02-01 12:34:55'),
+            self::createDateTime('2021-01-01 12:34:57'),
+            self::createDateTime('2021-03-01 12:34:55'),
         ];
 
-        $dateTimeCollectionA = new DateTimeCollection($elements);
+        $dateTimeCollectionA = self::createDateTimeCollection($elements);
         $dateTimeCollectionB = $dateTimeCollectionA->toSorted();
 
         $this->assertNotSame($dateTimeCollectionA, $dateTimeCollectionB);
@@ -467,13 +497,14 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     public function testToTimestampIntegerCollectionWorks(): void
     {
+        /** @var array<T> $elements */
         $elements = [
-            new DateTime('2021-02-01T12:34:56+01:00'),
-            new DateTime('2021-02-01T12:34:57+01:00'),
-            new DateTime('2021-02-01T12:34:58+01:00'),
+            self::createDateTime('2021-02-01T12:34:56+01:00'),
+            self::createDateTime('2021-02-01T12:34:57+01:00'),
+            self::createDateTime('2021-02-01T12:34:58+01:00'),
         ];
 
-        $dateTimeCollection = new DateTimeCollection($elements);
+        $dateTimeCollection = self::createDateTimeCollection($elements);
         $integerCollection = $dateTimeCollection->toTimestampIntegerCollection();
 
         $this->assertSame($elements, $dateTimeCollection->toArray());
@@ -489,17 +520,18 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
 
     public function testToUniqueWorks(): void
     {
+        /** @var array<T> $elements */
         $elements = [
-            new DateTime('2021-02-01 12:34:57'),
-            new DateTime('2021-02-01 12:34:56'),
-            new DateTime('2021-02-01 12:34:55'),
-            new DateTime('2021-01-01 12:34:57'),
-            new DateTime('2021-03-01 12:34:55'),
-            new DateTime('2021-02-01 12:34:55'),
-            new DateTime('2021-02-01 12:34:57'),
+            self::createDateTime('2021-02-01 12:34:57'),
+            self::createDateTime('2021-02-01 12:34:56'),
+            self::createDateTime('2021-02-01 12:34:55'),
+            self::createDateTime('2021-01-01 12:34:57'),
+            self::createDateTime('2021-03-01 12:34:55'),
+            self::createDateTime('2021-02-01 12:34:55'),
+            self::createDateTime('2021-02-01 12:34:57'),
         ];
 
-        $dateTimeCollectionA = new DateTimeCollection($elements);
+        $dateTimeCollectionA = self::createDateTimeCollection($elements);
         $dateTimeCollectionB = $dateTimeCollectionA->toUnique(true);
         $dateTimeCollectionC = $dateTimeCollectionA->toUnique(false);
 

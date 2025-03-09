@@ -137,158 +137,6 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
 
     /**
      * {@inheritDoc}
-     */
-    public static function providerTestToUniqueByCallbackWorks(): array
-    {
-        return [
-            [
-                'Empty collection.',
-                static function (): array {
-                    return [
-                        [],
-                        [],
-                    ];
-                },
-                static function (): string {
-                    return '';
-                },
-                true,
-            ],
-            [
-                '1 single item collection.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                    ];
-
-                    return [
-                        $elements,
-                        $elements,
-                    ];
-                },
-                static function (DateTimeImmutable $object): string {
-                    return $object->format('c');
-                },
-                true,
-            ],
-            [
-                'Ascending, use first encountered.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                        1 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                        2 => new DateTimeImmutable('2021-01-01 00:00:02+01:00'),
-                        3 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                        4 => new DateTimeImmutable('2021-01-01 00:00:03+01:00'),
-                        5 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    ];
-
-                    return [
-                        [
-                            0 => $elements[0],
-                            1 => $elements[1],
-                            2 => $elements[2],
-                            4 => $elements[4],
-                        ],
-                        $elements,
-                    ];
-                },
-                static function (DateTimeImmutable $object): string {
-                    return $object->format('c');
-                },
-                true,
-            ],
-            [
-                'Ascending, use last encountered.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                        1 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                        2 => new DateTimeImmutable('2021-01-01 00:00:02+01:00'),
-                        3 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                        4 => new DateTimeImmutable('2021-01-01 00:00:03+01:00'),
-                        5 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    ];
-
-                    return [
-                        [
-                            0 => $elements[0],
-                            2 => $elements[2],
-                            4 => $elements[4],
-                            5 => $elements[5],
-                        ],
-                        $elements,
-                    ];
-                },
-                static function (DateTimeImmutable $object): string {
-                    return $object->format('c');
-                },
-                false,
-            ],
-            [
-                'Descending, use first encountered.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTimeImmutable('2021-01-01 00:00:03+01:00'),
-                        1 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                        2 => new DateTimeImmutable('2021-01-01 00:00:02+01:00'),
-                        3 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                        4 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                        5 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    ];
-
-                    return [
-                        [
-                            0 => $elements[0],
-                            1 => $elements[1],
-                            2 => $elements[2],
-                            4 => $elements[4],
-                        ],
-                        $elements,
-                    ];
-                },
-                static function (DateTimeImmutable $object): string {
-                    return $object->format('c');
-                },
-                true,
-            ],
-            [
-                'Descending, use last encountered.',
-                static function (): array {
-                    /** @var array<T> $elements */
-                    $elements = [
-                        0 => new DateTimeImmutable('2021-01-01 00:00:03+01:00'),
-                        1 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                        2 => new DateTimeImmutable('2021-01-01 00:00:02+01:00'),
-                        3 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                        4 => new DateTimeImmutable('2021-01-01 00:00:00+01:00'),
-                        5 => new DateTimeImmutable('2021-01-01 00:00:01+01:00'),
-                    ];
-
-                    return [
-                        [
-                            0 => $elements[0],
-                            2 => $elements[2],
-                            4 => $elements[4],
-                            5 => $elements[5],
-                        ],
-                        $elements,
-                    ];
-                },
-                static function (DateTimeImmutable $object): string {
-                    return $object->format('c');
-                },
-                false,
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * @return array<
      *   int,
@@ -302,16 +150,19 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     public static function providerTestWithMergedWorks(): array
     {
         /** @var TCollection<T> $a0 */
-        $a0 = new DateTimeImmutableCollection([0 => new DateTimeImmutable()]);
+        $a0 = self::createDateTimeImmutableCollection([0 => self::createDateTimeImmutable()]);
 
         /** @var TCollection<T> $b0 */
-        $b0 = new DateTimeImmutableCollection([0 => new DateTimeImmutable()]);
+        $b0 = self::createDateTimeImmutableCollection([0 => self::createDateTimeImmutable()]);
 
         /** @var TCollection<T> $aAssociative */
-        $aAssociative = new DateTimeImmutableCollection(['foo' => new DateTimeImmutable()]);
+        $aAssociative = self::createDateTimeImmutableCollection(['foo' => self::createDateTimeImmutable()]);
+
+        /** @var array<T> $elements */
+        $elements = ['foo' => self::createDateTimeImmutable()];
 
         /** @var TCollection<T> $bAssociative */
-        $bAssociative = new DateTimeImmutableCollection(['foo' => new DateTimeImmutable()]);
+        $bAssociative = self::createDateTimeImmutableCollection($elements);
 
         return [
             [
@@ -326,6 +177,7 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
                     string $message
                 ): void {
                     $self->assertCount(2, $collectionC, $message);
+                    $self->assertSame([0, 1], $collectionC->getKeys(), $message);
                     $self->assertSame($collectionA->first(), $collectionC->first(), $message);
                     $self->assertSame($collectionB->first(), $collectionC->last(), $message);
                 },
@@ -354,6 +206,170 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
     /**
      * {@inheritDoc}
      */
+    public static function providerTestToUniqueByCallbackWorks(): array
+    {
+        return [
+            [
+                'Empty collection.',
+                static function (): array {
+                    return [
+                        [],
+                        [],
+                    ];
+                },
+                static function (): string {
+                    return '';
+                },
+                true,
+            ],
+            [
+                '1 single item collection.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                    ];
+
+                    return [
+                        $elements,
+                        $elements,
+                    ];
+                },
+                static function (DateTimeImmutable $object): string {
+                    return $object->format('c');
+                },
+                true,
+            ],
+            [
+                'Ascending, use first encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                        1 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                        2 => self::createDateTimeImmutable('2021-01-01 00:00:02+01:00'),
+                        3 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                        4 => self::createDateTimeImmutable('2021-01-01 00:00:03+01:00'),
+                        5 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
+                        0 => $elements[0],
+                        1 => $elements[1],
+                        2 => $elements[2],
+                        4 => $elements[4],
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (DateTimeImmutable $object): string {
+                    return $object->format('c');
+                },
+                true,
+            ],
+            [
+                'Ascending, use last encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                        1 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                        2 => self::createDateTimeImmutable('2021-01-01 00:00:02+01:00'),
+                        3 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                        4 => self::createDateTimeImmutable('2021-01-01 00:00:03+01:00'),
+                        5 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
+                        0 => $elements[0],
+                        2 => $elements[2],
+                        4 => $elements[4],
+                        5 => $elements[5],
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (DateTimeImmutable $object): string {
+                    return $object->format('c');
+                },
+                false,
+            ],
+            [
+                'Descending, use first encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTimeImmutable('2021-01-01 00:00:03+01:00'),
+                        1 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                        2 => self::createDateTimeImmutable('2021-01-01 00:00:02+01:00'),
+                        3 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                        4 => self::createDateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                        5 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
+                        0 => $elements[0],
+                        1 => $elements[1],
+                        2 => $elements[2],
+                        4 => $elements[4],
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (DateTimeImmutable $object): string {
+                    return $object->format('c');
+                },
+                true,
+            ],
+            [
+                'Descending, use last encountered.',
+                static function (): array {
+                    /** @var array<T> $elements */
+                    $elements = [
+                        0 => self::createDateTimeImmutable('2021-01-01 00:00:03+01:00'),
+                        1 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                        2 => self::createDateTimeImmutable('2021-01-01 00:00:02+01:00'),
+                        3 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                        4 => self::createDateTimeImmutable('2021-01-01 00:00:00+01:00'),
+                        5 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
+                    ];
+
+                    /** @var array<T> $expected */
+                    $expected = [
+                        0 => $elements[0],
+                        2 => $elements[2],
+                        4 => $elements[4],
+                        5 => $elements[5],
+                    ];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (DateTimeImmutable $object): string {
+                    return $object->format('c');
+                },
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected static function createMultipleElements(AbstractCollectionTestCase $self): array
     {
         /** @var array{0: T, foo: T, 42: T, 43: T} $elements */
@@ -372,9 +388,37 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
         return new DateTimeImmutable();
     }
 
+    /**
+     * @return class-string<TCollection<T>>
+     */
     protected static function getHandledCollectionClassName(): string
     {
         return DateTimeImmutableCollection::class;
+    }
+
+    /**
+     * @return T
+     */
+    protected static function createDateTimeImmutable(string $timestamp = 'now'): DateTimeImmutable
+    {
+        /** @var T $dateTimeImmutable */
+        $dateTimeImmutable = new DateTimeImmutable($timestamp);
+
+        return $dateTimeImmutable;
+    }
+
+    /**
+     * @param array<int|string, T> $elements
+     *
+     * @return TCollection<T>
+     */
+    protected static function createDateTimeImmutableCollection(
+        array $elements,
+    ): DateTimeImmutableCollection {
+        /** @var TCollection<T> $collection */
+        $collection = new DateTimeImmutableCollection($elements);
+
+        return $collection;
     }
 
     /**
@@ -492,17 +536,41 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
         );
     }
 
-    public function testToSortedWorks(): void
+    public function testToMicrosecondTimestampIntegerCollectionWorks(): void
     {
+        /** @var array<T> $elements */
         $elements = [
-            new DateTimeImmutable('2021-02-01 12:34:57'),
-            new DateTimeImmutable('2021-02-01 12:34:56'),
-            new DateTimeImmutable('2021-02-01 12:34:55'),
-            new DateTimeImmutable('2021-01-01 12:34:57'),
-            new DateTimeImmutable('2021-03-01 12:34:55'),
+            self::createDateTimeImmutable('2021-02-01T12:34:56.000001+01:00'),
+            self::createDateTimeImmutable('2021-02-01T12:34:57.000002+01:00'),
+            self::createDateTimeImmutable('2021-02-01T12:34:58.000003+01:00'),
         ];
 
-        $dateTimeImmutableCollectionA = new DateTimeImmutableCollection($elements);
+        $dateTimeImmutableCollection = self::createDateTimeImmutableCollection($elements);
+        $integerCollection = $dateTimeImmutableCollection->toMicrosecondTimestampIntegerCollection();
+
+        $this->assertSame($elements, $dateTimeImmutableCollection->toArray());
+        $this->assertSame(
+            [
+                1612179296000001,
+                1612179297000002,
+                1612179298000003,
+            ],
+            $integerCollection->toArray(),
+        );
+    }
+
+    public function testToSortedWorks(): void
+    {
+        /** @var array<T> $elements */
+        $elements = [
+            self::createDateTimeImmutable('2021-02-01 12:34:57'),
+            self::createDateTimeImmutable('2021-02-01 12:34:56'),
+            self::createDateTimeImmutable('2021-02-01 12:34:55'),
+            self::createDateTimeImmutable('2021-01-01 12:34:57'),
+            self::createDateTimeImmutable('2021-03-01 12:34:55'),
+        ];
+
+        $dateTimeImmutableCollectionA = self::createDateTimeImmutableCollection($elements);
         $dateTimeImmutableCollectionB = $dateTimeImmutableCollectionA->toSorted();
 
         $this->assertNotSame($dateTimeImmutableCollectionA, $dateTimeImmutableCollectionB);
@@ -519,19 +587,43 @@ class DateTimeImmutableCollectionTest extends AbstractNamedClassOrInterfaceColle
         );
     }
 
-    public function testToUniqueWorks(): void
+    public function testToTimestampIntegerCollectionWorks(): void
     {
+        /** @var array<T> $elements */
         $elements = [
-            new DateTimeImmutable('2021-02-01 12:34:57'),
-            new DateTimeImmutable('2021-02-01 12:34:56'),
-            new DateTimeImmutable('2021-02-01 12:34:55'),
-            new DateTimeImmutable('2021-01-01 12:34:57'),
-            new DateTimeImmutable('2021-03-01 12:34:55'),
-            new DateTimeImmutable('2021-02-01 12:34:55'),
-            new DateTimeImmutable('2021-02-01 12:34:57'),
+            self::createDateTimeImmutable('2021-02-01T12:34:56+01:00'),
+            self::createDateTimeImmutable('2021-02-01T12:34:57+01:00'),
+            self::createDateTimeImmutable('2021-02-01T12:34:58+01:00'),
         ];
 
-        $dateTimeImmutableCollectionA = new DateTimeImmutableCollection($elements);
+        $dateTimeImmutableCollection = self::createDateTimeImmutableCollection($elements);
+        $integerCollection = $dateTimeImmutableCollection->toTimestampIntegerCollection();
+
+        $this->assertSame($elements, $dateTimeImmutableCollection->toArray());
+        $this->assertSame(
+            [
+                1612179296,
+                1612179297,
+                1612179298,
+            ],
+            $integerCollection->toArray(),
+        );
+    }
+
+    public function testToUniqueWorks(): void
+    {
+        /** @var array<T> $elements */
+        $elements = [
+            self::createDateTimeImmutable('2021-02-01 12:34:57'),
+            self::createDateTimeImmutable('2021-02-01 12:34:56'),
+            self::createDateTimeImmutable('2021-02-01 12:34:55'),
+            self::createDateTimeImmutable('2021-01-01 12:34:57'),
+            self::createDateTimeImmutable('2021-03-01 12:34:55'),
+            self::createDateTimeImmutable('2021-02-01 12:34:55'),
+            self::createDateTimeImmutable('2021-02-01 12:34:57'),
+        ];
+
+        $dateTimeImmutableCollectionA = self::createDateTimeImmutableCollection($elements);
         $dateTimeImmutableCollectionB = $dateTimeImmutableCollectionA->toUnique(true);
         $dateTimeImmutableCollectionC = $dateTimeImmutableCollectionA->toUnique(false);
 
