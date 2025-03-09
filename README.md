@@ -3,8 +3,8 @@ Eboreum/Collections: Moving PHP closer towards generics
 
 ![license](https://img.shields.io/packagist/l/eboreum/collections.svg)
 ![build](https://github.com/eboreum/collections/workflows/build/badge.svg?branch=main)
-[![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/7f2a8588f0b8689e3e6341028fd0bcfa/raw/test-coverage__main.json)](https://github.com/eboreum/collections/actions)
-[![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/7f2a8588f0b8689e3e6341028fd0bcfa/raw/phpstan-level__main.json)](https://github.com/eboreum/collections/actions)
+[![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/41726f60f5b61eb3197459c1fbfea90e/raw/test-coverage__main.json)](https://github.com/eboreum/collections/actions)
+[![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/41726f60f5b61eb3197459c1fbfea90e/raw/phpstan-level__main.json)](https://github.com/eboreum/collections/actions)
 
 Wish you had generics in PHP? This library provides a sensible means of managing collections of data (i.e. arrays with restrictions), immutably, until such a time that PHP generics are bestowed upon us.
 
