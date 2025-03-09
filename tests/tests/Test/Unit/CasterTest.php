@@ -14,6 +14,7 @@ use function count;
 #[CoversClass(Caster::class)]
 class CasterTest extends TestCase
 {
+    #[RunInSeparateProcess]
     public function testCreateInstanceWorks(): void
     {
         $casterA = Caster::create();
