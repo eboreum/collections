@@ -487,6 +487,37 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return new ArrayIterator($this->elements);
     }
 
+    /**
+     * @param CollectionInterface<T> $collection
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function guardCollectionInheritanceAndAcceptedElements(CollectionInterface $collection): void
+    {
+        if (false === is_a($collection, static::class)) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'Argument $collection = %s must be an instance of %s, but it is not',
+                    Caster::getInstance()->castTyped($collection),
+                    Caster::makeNormalizedClassName(new ReflectionObject($this)),
+                ),
+            );
+        }
+
+        $invalids = static::makeInvalids($collection->toArray());
+
+        if ($invalids) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    '%d/%d elements are invalid, including: [%s]',
+                    count($invalids),
+                    count($collection),
+                    implode(', ', $invalids),
+                ),
+            );
+        }
+    }
+
     public function has(int|string $key): bool
     {
         return array_key_exists($key, $this->elements);
@@ -1056,33 +1087,12 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     public function withMerged(CollectionInterface $collection): static
     {
         try {
-            if (false === is_a($collection, static::class)) {
-                throw new UnacceptableCollectionException(
-                    sprintf(
-                        'Argument $collection = %s must be an instance of %s, but it is not',
-                        Caster::getInstance()->castTyped($collection),
-                        Caster::makeNormalizedClassName(new ReflectionObject($this)),
-                    ),
-                );
-            }
-
-            $invalids = static::makeInvalids($collection->toArray());
-
-            if ($invalids) {
-                throw new UnacceptableElementException(
-                    sprintf(
-                        '%d/%d elements are invalid, including: [%s]',
-                        count($invalids),
-                        count($collection),
-                        implode(', ', $invalids),
-                    ),
-                );
-            }
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
 
             $clone = clone $this;
             $clone->elements = array_merge(
                 $clone->elements,
-                $collection->elements,
+                $collection->toArray(),
             );
         } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
             throw new UnacceptableCollectionException(

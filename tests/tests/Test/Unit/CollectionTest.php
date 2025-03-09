@@ -11,6 +11,7 @@ use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBeha
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\Exception\UnacceptableCollectionException;
 use Eboreum\Collections\Exception\UnacceptableElementException;
+use Eboreum\Collections\FloatCollection;
 use Eboreum\Collections\IntegerCollection;
 use Eboreum\Exceptional\ExceptionMessageGenerator;
 use Exception;
@@ -492,6 +493,50 @@ class CollectionTest extends AbstractCollectionTestCase
         $collection->each($callback, $carry);
 
         $this->assertSame($expected, $carry->results);
+    }
+
+    public function testGuardCollectionInheritanceAndAcceptedElementsThrowsExceptionWhenCollectionsMismatch(): void
+    {
+        $collectionA = new IntegerCollection();
+        $collectionB = $this->createMock(FloatCollection::class);
+
+        $this->expectException(UnacceptableCollectionException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Argument $collection = %s must be an instance of %s, but it is not',
+                Caster::getInstance()->castTyped($collectionB),
+                Caster::makeNormalizedClassName(new ReflectionObject($collectionA)),
+            ),
+        );
+
+        $collectionA->guardCollectionInheritanceAndAcceptedElements($collectionB);
+    }
+
+    public function testGuardCollectionInheritanceAndAcceptedElementsThrowsExceptionWhenElementsAreInvalid(): void
+    {
+        $collectionA = new IntegerCollection();
+        $collectionB = $this->createMock(IntegerCollection::class);
+
+        $collectionB
+            ->expects($this->once())
+            ->method('toArray')
+            ->willReturn([true, 42, 'foo']);
+
+        $collectionB
+            ->expects($this->once())
+            ->method('count')
+            ->willReturn(3);
+
+        $this->expectException(UnacceptableElementException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                '2/3 elements are invalid, including: [0 => %s, 2 => %s]',
+                Caster::getInstance()->castTyped(true),
+                Caster::getInstance()->castTyped('foo'),
+            ),
+        );
+
+        $collectionA->guardCollectionInheritanceAndAcceptedElements($collectionB);
     }
 
     public function testToReindexedWorks(): void

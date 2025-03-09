@@ -237,6 +237,18 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
     public function getOrFail(int|string $key): mixed;
 
     /**
+     * Implementing method must guard two things:
+     *
+     *   1. That the $collection argument has the same class or is a subclass of $this.
+     *   1. That $this accepts all the elements in the $collection argument.
+     *
+     * @param self<T> $collection
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function guardCollectionInheritanceAndAcceptedElements(self $collection): void;
+
+    /**
      * Returns `true`, if the argument $key exists as an array key in the collection's elements. Otherwise, returns
      * `false`.
      */
