@@ -17,7 +17,7 @@ use function sprintf;
 
 /**
  * @template T of object
- * @template TCollection of Collection<mixed>
+ * @template TCollection of Collection<T>
  * @extends AbstractTypeCollectionTestCase<T, TCollection>
  */
 abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractTypeCollectionTestCase
