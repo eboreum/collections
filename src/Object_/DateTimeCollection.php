@@ -12,6 +12,7 @@ use Eboreum\Collections\Contract\CollectionInterface\MaximumableCollectionInterf
 use Eboreum\Collections\Contract\CollectionInterface\MinimumableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
+use Eboreum\Collections\IntegerCollection;
 
 /**
  * {@inheritDoc}
@@ -141,6 +142,22 @@ class DateTimeCollection extends AbstractNamedClassOrInterfaceCollection impleme
             static function (DateTime $a, DateTime $b) use ($direction): int {
                 return ($a->getTimestamp() - $b->getTimestamp()) * $direction;
             }
+        );
+    }
+
+    /**
+     * Converts all instances of DateTime to their equivalent Unix Epoch time in seconds.
+     *
+     * @return IntegerCollection<int>
+     */
+    public function toTimestampIntegerCollection(): IntegerCollection
+    {
+        return new IntegerCollection(
+            $this->map(
+                static function (DateTime $dateTime): int {
+                    return $dateTime->getTimestamp();
+                },
+            ),
         );
     }
 

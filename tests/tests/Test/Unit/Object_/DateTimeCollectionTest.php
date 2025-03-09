@@ -443,6 +443,28 @@ class DateTimeCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
         );
     }
 
+    public function testToTimestampIntegerCollectionWorks(): void
+    {
+        $elements = [
+            new DateTime('2021-02-01T12:34:56+01:00'),
+            new DateTime('2021-02-01T12:34:57+01:00'),
+            new DateTime('2021-02-01T12:34:58+01:00'),
+        ];
+
+        $dateTimeCollection = new DateTimeCollection($elements);
+        $integerCollection = $dateTimeCollection->toTimestampIntegerCollection();
+
+        $this->assertSame($elements, $dateTimeCollection->toArray());
+        $this->assertSame(
+            [
+                1612179296,
+                1612179297,
+                1612179298,
+            ],
+            $integerCollection->toArray(),
+        );
+    }
+
     public function testToUniqueWorks(): void
     {
         $elements = [
