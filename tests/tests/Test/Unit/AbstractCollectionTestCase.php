@@ -11,9 +11,11 @@ use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Exception\ElementNotFoundException;
 use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Exceptional\ExceptionMessageGenerator;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 use function array_key_first;
 use function array_key_last;
@@ -442,20 +444,11 @@ abstract class AbstractCollectionTestCase extends TestCase
         } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in (\\\\%s|\\\\%s)-\>chunk\(',
-                            '\$chunkSize = \(int\) -1',
-                        '\) inside \(object\) \\\\%s \{.+\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collection,
+                    new ReflectionMethod($collection, 'chunk'),
+                    [-1],
                 ),
                 $currentException->getMessage(),
             );
@@ -1060,28 +1053,20 @@ abstract class AbstractCollectionTestCase extends TestCase
         $collection = new Collection([null, null]);
         $exception = new Exception();
 
+        $callback = static function () use ($exception): void {
+            throw $exception;
+        };
+
         try {
-            $collection->toSortedByCallback(static function () use ($exception): void {
-                throw $exception;
-            });
+            $collection->toSortedByCallback($callback);
         } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s-\>toSortedByCallback\(',
-                            '\$callback = \(object\) \\\\Closure\(\): void',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\$elements = \(array\(2\)\) \[.+\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(Collection::class, '/'),
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collection,
+                    new ReflectionMethod($collection, 'toSortedByCallback'),
+                    [$callback],
                 ),
                 $currentException->getMessage(),
             );
@@ -1139,34 +1124,20 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $exception = new Exception();
 
+        $callback = static function () use ($exception): void {
+            throw $exception;
+        };
+
         try {
-            $collection->toUniqueByCallback(static function () use ($exception): void {
-                throw $exception;
-            });
+            $collection->toUniqueByCallback($callback);
         } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s-\>toUniqueByCallback\(',
-                            '\$callback = \(object\) \\\\Closure\(\): void',
-                            ', \$isUsingFirstEncounteredElement = \(bool\) true',
-                        '\) inside \(object\) \\\\%s \{',
-                            '%s\$elements = \(array\(4\)\) \[.+\] \(sample\)',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    (
-                        Collection::class !== $handledCollectionClassName
-                        ? preg_quote('\\' . Collection::class . '->', '/')
-                        : ''
-                    ),
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collection,
+                    new ReflectionMethod($collection, 'toUniqueByCallback'),
+                    [$callback],
                 ),
                 $currentException->getMessage(),
             );
@@ -1205,37 +1176,20 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $this->assertInstanceOf(Collection::class, $collection);
 
+        $callback = static function (): null {
+            return null;
+        };
+
         try {
-            $collection->toUniqueByCallback(
-                // @phpstan-ignore-next-line
-                static function (): null {
-                    return null;
-                }
-            );
+            $collection->toUniqueByCallback($callback); // @phpstan-ignore-line
         } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s-\>toUniqueByCallback\(',
-                            '\$callback = \(object\) \\\\Closure\(\)(: *[^,\)]+)?',
-                            ', \$isUsingFirstEncounteredElement = \(bool\) true',
-                        '\) inside \(object\) \\\\%s \{',
-                            '%s\$elements = \(array\(4\)\) \[.+\] \(sample\)',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    (
-                        Collection::class !== $handledCollectionClassName
-                        ? preg_quote('\\' . Collection::class . '->', '/')
-                        : ''
-                    ),
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collection,
+                    new ReflectionMethod($collection, 'toUniqueByCallback'),
+                    [$callback],
                 ),
                 $currentException->getMessage(),
             );
