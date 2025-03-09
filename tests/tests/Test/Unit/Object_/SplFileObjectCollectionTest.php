@@ -47,7 +47,7 @@ class SplFileObjectCollectionTest extends AbstractNamedClassOrInterfaceCollectio
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileObject(__FILE__),
                     ];
@@ -65,7 +65,7 @@ class SplFileObjectCollectionTest extends AbstractNamedClassOrInterfaceCollectio
             [
                 'Ascending, use first encountered.',
                 static function () use ($basePath): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileObject($basePath . '/A.txt'),
                         1 => new SplFileObject($basePath . '/B.txt'),
@@ -93,7 +93,7 @@ class SplFileObjectCollectionTest extends AbstractNamedClassOrInterfaceCollectio
             [
                 'Ascending, use last encountered.',
                 static function () use ($basePath): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileObject($basePath . '/A.txt'),
                         1 => new SplFileObject($basePath . '/B.txt'),
@@ -121,7 +121,7 @@ class SplFileObjectCollectionTest extends AbstractNamedClassOrInterfaceCollectio
             [
                 'Descending, use first encountered.',
                 static function () use ($basePath): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileObject($basePath . '/D.txt'),
                         1 => new SplFileObject($basePath . '/B.txt'),
@@ -149,7 +149,7 @@ class SplFileObjectCollectionTest extends AbstractNamedClassOrInterfaceCollectio
             [
                 'Descending, use last encountered.',
                 static function () use ($basePath): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileObject($basePath . '/D.txt'),
                         1 => new SplFileObject($basePath . '/B.txt'),

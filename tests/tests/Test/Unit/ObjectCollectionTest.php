@@ -42,7 +42,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new class
                         {
@@ -68,7 +68,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new class
                         {
@@ -114,7 +114,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                         },
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -137,7 +137,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new class
                         {
@@ -183,7 +183,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                         },
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -206,7 +206,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new class
                         {
@@ -252,7 +252,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                         },
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -275,7 +275,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new class
                         {
@@ -321,7 +321,7 @@ class ObjectCollectionTest extends AbstractTypeCollectionTestCase
                         },
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         2 => $elements[2],

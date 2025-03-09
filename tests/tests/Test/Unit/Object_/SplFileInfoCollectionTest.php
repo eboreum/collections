@@ -47,7 +47,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileInfo(__FILE__),
                     ];
@@ -65,7 +65,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
             [
                 'Ascending, use first encountered.',
                 static function () use ($basePath): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileInfo($basePath . '/A.txt'),
                         1 => new SplFileInfo($basePath . '/B.txt'),
@@ -93,7 +93,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
             [
                 'Ascending, use last encountered.',
                 static function () use ($basePath): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileInfo($basePath . '/A.txt'),
                         1 => new SplFileInfo($basePath . '/B.txt'),
@@ -121,7 +121,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
             [
                 'Descending, use first encountered.',
                 static function () use ($basePath): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileInfo($basePath . '/D.txt'),
                         1 => new SplFileInfo($basePath . '/B.txt'),
@@ -149,7 +149,7 @@ class SplFileInfoCollectionTest extends AbstractNamedClassOrInterfaceCollectionT
             [
                 'Descending, use last encountered.',
                 static function () use ($basePath): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new SplFileInfo($basePath . '/D.txt'),
                         1 => new SplFileInfo($basePath . '/B.txt'),

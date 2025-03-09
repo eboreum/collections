@@ -39,7 +39,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Exception('foo'),
                     ];
@@ -57,7 +57,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Exception('A'),
                         1 => new Exception('B'),
@@ -85,7 +85,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Exception('A'),
                         1 => new Exception('B'),
@@ -113,7 +113,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Exception('D'),
                         1 => new Exception('B'),
@@ -141,7 +141,7 @@ class ExceptionCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Exception('D'),
                         1 => new Exception('B'),

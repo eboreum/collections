@@ -226,7 +226,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => self::createDateTimeImmutable('2021-01-01 00:00:00+01:00'),
                     ];
@@ -244,7 +244,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => self::createDateTimeImmutable('2021-01-01 00:00:00+01:00'),
                         1 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
@@ -254,7 +254,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
                         5 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -275,7 +275,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => self::createDateTimeImmutable('2021-01-01 00:00:00+01:00'),
                         1 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
@@ -285,7 +285,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
                         5 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -306,7 +306,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => self::createDateTimeImmutable('2021-01-01 00:00:03+01:00'),
                         1 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
@@ -316,7 +316,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
                         5 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -337,7 +337,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => self::createDateTimeImmutable('2021-01-01 00:00:03+01:00'),
                         1 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
@@ -347,7 +347,7 @@ class DateTimeInterfaceCollectionTest extends AbstractNamedClassOrInterfaceColle
                         5 => self::createDateTimeImmutable('2021-01-01 00:00:01+01:00'),
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         2 => $elements[2],

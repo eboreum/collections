@@ -39,7 +39,7 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new stdClass(),
                     ];
@@ -51,15 +51,19 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         $elements,
                     ];
                 },
-                static function (stdClass $object) {
-                    return $object->var;
+                static function (stdClass $object): string {
+                    $var = $object->var;
+
+                    static::assertIsString($var);
+
+                    return $var;
                 },
                 true,
             ],
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new stdClass(),
                         1 => new stdClass(),
@@ -86,15 +90,19 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         $elements,
                     ];
                 },
-                static function (stdClass $object) {
-                    return $object->var;
+                static function (stdClass $object): string {
+                    $var = $object->var;
+
+                    static::assertIsString($var);
+
+                    return $var;
                 },
                 true,
             ],
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new stdClass(),
                         1 => new stdClass(),
@@ -121,15 +129,19 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         $elements,
                     ];
                 },
-                static function (stdClass $object) {
-                    return $object->var;
+                static function (stdClass $object): string {
+                    $var = $object->var;
+
+                    static::assertIsString($var);
+
+                    return $var;
                 },
                 false,
             ],
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new stdClass(),
                         1 => new stdClass(),
@@ -156,15 +168,19 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         $elements,
                     ];
                 },
-                static function (stdClass $object) {
-                    return $object->var;
+                static function (stdClass $object): string {
+                    $var = $object->var;
+
+                    static::assertIsString($var);
+
+                    return $var;
                 },
                 true,
             ],
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new stdClass(),
                         1 => new stdClass(),
@@ -191,8 +207,12 @@ class stdClassCollectionTest extends AbstractNamedClassOrInterfaceCollectionTest
                         $elements,
                     ];
                 },
-                static function (stdClass $object) {
-                    return $object->var;
+                static function (stdClass $object): string {
+                    $var = $object->var;
+
+                    static::assertIsString($var);
+
+                    return $var;
                 },
                 false,
             ],

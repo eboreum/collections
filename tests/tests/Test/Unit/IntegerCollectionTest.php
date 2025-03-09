@@ -157,7 +157,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
             [
                 '1 single item collection.',
                 static function (AbstractCollectionTestCase $self): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [self::createSingleElement($self)];
 
                     return [
@@ -173,10 +173,10 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Integer item collection, ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 1, 1 => 2, 3 => 3, 5 => 4];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [1, 2, 1, 3, 1, 4];
 
                     return [
@@ -192,10 +192,10 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Integer item collection, ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [1 => 2, 3 => 3, 4 => 1, 5 => 4];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [1, 2, 1, 3, 1, 4];
 
                     return [
@@ -211,10 +211,10 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Integer item collection, descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 4, 1 => 1, 2 => 3, 4 => 2];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [4, 1, 3, 1, 2, 1];
 
                     return [
@@ -230,10 +230,10 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Integer item collection, descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 4, 2 => 3, 4 => 2, 5 => 1];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [4, 1, 3, 1, 2, 1];
 
                     return [
@@ -394,7 +394,18 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
         Closure $callback,
         bool $isUsingFirstEncounteredElement,
     ): void {
-        [$expected, $elements] = $elementsFactory($this);
+        $data = $elementsFactory($this);
+
+        $this->assertIsArray($data);
+        $this->assertCount(2, $data);
+        $this->assertArrayHasKey(0, $data);
+        $this->assertArrayHasKey(1, $data);
+
+        /**
+         * @var array<mixed> $expected
+         * @var array<mixed> $elements
+         */
+        [$expected, $elements] = $data;
 
         $handledCollectionClassName = static::getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);

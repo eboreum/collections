@@ -47,7 +47,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => dir(__DIR__),
                     ];
@@ -65,7 +65,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => dir(dirname(__DIR__, 1)),
                         1 => dir(__DIR__),
@@ -93,7 +93,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => dir(dirname(__DIR__, 1)),
                         1 => dir(__DIR__),
@@ -121,7 +121,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => dir(dirname(__DIR__, 3)),
                         1 => dir(__DIR__),
@@ -149,7 +149,7 @@ class DirectoryCollectionTest extends AbstractNamedClassOrInterfaceCollectionTes
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => dir(dirname(__DIR__, 3)),
                         1 => dir(__DIR__),

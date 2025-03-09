@@ -11,9 +11,9 @@ use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBeha
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Collections\Exception\UnacceptableCollectionException;
 use Eboreum\Collections\Exception\UnacceptableElementException;
+use Eboreum\Collections\ExceptionMessageGenerator;
 use Eboreum\Collections\FloatCollection;
 use Eboreum\Collections\IntegerCollection;
-use Eboreum\Collections\ExceptionMessageGenerator;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -56,6 +56,8 @@ class CollectionTest extends AbstractCollectionTestCase
                 ],
                 [null, true, 42, 'foo' => 'bar'],
                 static function ($v, $k, stdClass $carry): void {
+                    static::assertIsArray($carry->results);
+
                     $carry->results[] = sprintf(
                         '%s:%s',
                         gettype($k),
@@ -71,6 +73,8 @@ class CollectionTest extends AbstractCollectionTestCase
                 ],
                 [null, true, 42, 'foo' => 'bar'],
                 static function ($v, $k, stdClass $carry) {
+                    static::assertIsArray($carry->results);
+
                     if (2 === $k) {
                         return false;
                     }
@@ -98,6 +102,8 @@ class CollectionTest extends AbstractCollectionTestCase
                 ],
                 [null, true, 42, 'foo' => 'bar'],
                 static function ($v, $k, stdClass $carry) {
+                    static::assertIsArray($carry->results);
+
                     if (2 === $k) {
                         return false;
                     }
@@ -113,6 +119,8 @@ class CollectionTest extends AbstractCollectionTestCase
                 ['integer:NULL'],
                 [null],
                 static function ($v, $k, stdClass $carry) {
+                    static::assertIsArray($carry->results);
+
                     $carry->results[] = sprintf(
                         '%s:%s',
                         gettype($k),
@@ -126,6 +134,8 @@ class CollectionTest extends AbstractCollectionTestCase
                 ['integer:NULL'],
                 [null],
                 static function ($v, $k, stdClass $carry) {
+                    static::assertIsArray($carry->results);
+
                     $carry->results[] = sprintf(
                         '%s:%s',
                         gettype($k),
@@ -895,7 +905,7 @@ class CollectionTest extends AbstractCollectionTestCase
         };
 
         try {
-            $collection->toReindexed($callback);
+            $collection->toReindexed($callback); // @phpstan-ignore-line
         } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, $currentException::class);
@@ -943,7 +953,7 @@ class CollectionTest extends AbstractCollectionTestCase
         };
 
         try {
-            $collection->toReindexed($callback);
+            $collection->toReindexed($callback); // @phpstan-ignore-line
         } catch (Exception $e) {
             $currentException = $e;
             $this->assertSame(RuntimeException::class, $currentException::class);

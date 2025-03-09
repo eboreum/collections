@@ -39,7 +39,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Error('foo'),
                     ];
@@ -57,7 +57,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Error('A'),
                         1 => new Error('B'),
@@ -85,7 +85,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Error('A'),
                         1 => new Error('B'),
@@ -113,7 +113,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Error('D'),
                         1 => new Error('B'),
@@ -141,7 +141,7 @@ class ErrorCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestCas
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => new Error('D'),
                         1 => new Error('B'),

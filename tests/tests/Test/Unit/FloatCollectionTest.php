@@ -125,7 +125,7 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [3.1415];
 
                     return [
@@ -141,10 +141,10 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 0.0, 1 => 3.1415, 3 => -1.0, 5 => 2.7183];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [0.0, 3.1415, 0.0, -1.0, 0.0, 2.7183];
 
                     return [
@@ -160,10 +160,10 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [1 => 3.1415, 3 => -1.0, 4 => 0.0, 5 => 2.7183];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [0.0, 3.1415, 0.0, -1.0, 0.0, 2.7183];
 
                     return [
@@ -179,10 +179,10 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 2.7183, 1 => 0.0, 2 => -1.0, 4 => 3.1415];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [2.7183, 0.0, -1.0, 0.0, 3.1415, 0.0];
 
                     return [
@@ -198,10 +198,10 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 2.7183, 2 => -1.0, 4 => 3.1415, 5 => 0.0];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [2.7183, 0.0, -1.0, 0.0, 3.1415, 0.0];
 
                     return [
@@ -362,7 +362,18 @@ class FloatCollectionTest extends AbstractTypeCollectionTestCase
         Closure $callback,
         bool $isUsingFirstEncounteredElement,
     ): void {
-        [$expected, $elements] = $elementsFactory($this);
+        $data = $elementsFactory($this);
+
+        $this->assertIsArray($data);
+        $this->assertCount(2, $data);
+        $this->assertArrayHasKey(0, $data);
+        $this->assertArrayHasKey(1, $data);
+
+        /**
+         * @var array<mixed> $expected
+         * @var array<mixed> $elements
+         */
+        [$expected, $elements] = $data;
 
         $handledCollectionClassName = static::getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);

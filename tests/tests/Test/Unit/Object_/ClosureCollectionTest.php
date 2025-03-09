@@ -39,7 +39,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => static function (): string {
                             return '';
@@ -51,15 +51,19 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         $elements,
                     ];
                 },
-                static function (Closure $closure) {
-                    return $closure();
+                static function (Closure $closure): string {
+                    $result = $closure();
+
+                    static::assertIsString($result);
+
+                    return $result;
                 },
                 true,
             ],
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => static function (): string {
                             return 'a';
@@ -81,7 +85,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         },
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -94,15 +98,19 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         $elements,
                     ];
                 },
-                static function (Closure $closure) {
-                    return $closure();
+                static function (Closure $closure): string {
+                    $result = $closure();
+
+                    static::assertIsString($result);
+
+                    return $result;
                 },
                 true,
             ],
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => static function (): string {
                             return 'a';
@@ -124,7 +132,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         },
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -137,15 +145,19 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         $elements,
                     ];
                 },
-                static function (Closure $closure) {
-                    return $closure();
+                static function (Closure $closure): string {
+                    $result = $closure();
+
+                    static::assertIsString($result);
+
+                    return $result;
                 },
                 false,
             ],
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => static function (): string {
                             return 'd';
@@ -167,7 +179,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         },
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         1 => $elements[1],
@@ -180,15 +192,19 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         $elements,
                     ];
                 },
-                static function (Closure $closure) {
-                    return $closure();
+                static function (Closure $closure): string {
+                    $result = $closure();
+
+                    static::assertIsString($result);
+
+                    return $result;
                 },
                 true,
             ],
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = [
                         0 => static function (): string {
                             return 'd';
@@ -210,7 +226,7 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         },
                     ];
 
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [
                         0 => $elements[0],
                         2 => $elements[2],
@@ -223,8 +239,12 @@ class ClosureCollectionTest extends AbstractNamedClassOrInterfaceCollectionTestC
                         $elements,
                     ];
                 },
-                static function (Closure $closure) {
-                    return $closure();
+                static function (Closure $closure): string {
+                    $result = $closure();
+
+                    static::assertIsString($result);
+
+                    return $result;
                 },
                 false,
             ],

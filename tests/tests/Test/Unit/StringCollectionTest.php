@@ -42,7 +42,7 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             [
                 '1 single item collection.',
                 static function (): array {
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = ['foo'];
 
                     return [
@@ -58,10 +58,10 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Ascending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 'a', 1 => 'b', 3 => 'c', 5 => 'd'];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = ['a', 'b', 'a', 'c', 'a', 'd'];
 
                     return [
@@ -77,10 +77,10 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Ascending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [1 => 'b', 3 => 'c', 4 => 'a', 5 => 'd'];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = ['a', 'b', 'a', 'c', 'a', 'd'];
 
                     return [
@@ -96,10 +96,10 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Descending, use first encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 'd', 1 => 'a', 2 => 'c', 4 => 'b'];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = ['d', 'a', 'c', 'a', 'b', 'a'];
 
                     return [
@@ -115,10 +115,10 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
             [
                 'Descending, use last encountered.',
                 static function (): array {
-                    /** @var array<T> $expected */
+                    /** @var array<int, T> $expected */
                     $expected = [0 => 'd', 2 => 'c', 4 => 'b', 5 => 'a'];
 
-                    /** @var array<T> $elements */
+                    /** @var array<int, T> $elements */
                     $elements = ['d', 'a', 'c', 'a', 'b', 'a'];
 
                     return [
@@ -247,7 +247,18 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
         Closure $callback,
         bool $isUsingFirstEncounteredElement,
     ): void {
-        [$expected, $elements] = $elementsFactory($this);
+        $data = $elementsFactory($this);
+
+        $this->assertIsArray($data);
+        $this->assertCount(2, $data);
+        $this->assertArrayHasKey(0, $data);
+        $this->assertArrayHasKey(1, $data);
+
+        /**
+         * @var array<mixed> $expected
+         * @var array<mixed> $elements
+         */
+        [$expected, $elements] = $data;
 
         $handledCollectionClassName = static::getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
