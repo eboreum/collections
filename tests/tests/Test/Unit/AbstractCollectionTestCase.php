@@ -463,14 +463,11 @@ abstract class AbstractCollectionTestCase extends TestCase
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
             $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                implode('', [
-                    '/',
-                    '^',
-                    'Argument \$chunkSize must be \>\= 1, but it is not\. Found\: \(int\) \-1',
-                    '$',
-                    '/',
-                ]),
+            $this->assertSame(
+                sprintf(
+                    'Argument $chunkSize = %s must be >= 1, but it is not',
+                    Caster::getInstance()->castTyped(-1),
+                ),
                 $currentException->getMessage(),
             );
 
@@ -1247,13 +1244,10 @@ abstract class AbstractCollectionTestCase extends TestCase
             $this->assertIsObject($currentException);
             $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
-                implode('', [
-                    '/',
-                    'Call \$callback\(.+, .+\) must return string, but it did not\.',
-                    ' Found return value\: \(null\) null',
-                    '$',
-                    '/',
-                ]),
+                sprintf(
+                    '/^Call \$callback\(.+, .+\) must return a string, but it did not\. Resulting return value\: %s$/',
+                    preg_quote(Caster::getInstance()->castTyped(null), '/'),
+                ),
                 $currentException->getMessage(),
             );
 

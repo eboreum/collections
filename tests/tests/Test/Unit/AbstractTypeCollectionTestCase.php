@@ -6,13 +6,12 @@ namespace Test\Unit\Eboreum\Collections;
 
 use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
-use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\Exception\UnacceptableCollectionException;
+use Eboreum\Collections\Exception\UnacceptableElementException;
 use Exception;
 use ReflectionObject;
 
-use function implode;
-use function preg_quote;
 use function sprintf;
 
 /**
@@ -35,44 +34,19 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $collection->withAdded(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s-\>withAdded\(',
-                            '\$element = \(null\) null',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\\\\%s\-\>\$elements = \(array\(4\)\) \[.+, \.\.\. and 1 more element\] \(sample\)',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
+                    'Argument $element = %s cannot be added to the current collection, %s',
+                    Caster::getInstance()->castTyped(null),
+                    Caster::getInstance()->castTyped($collection),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            $this->assertSame(InvalidArgumentException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Argument \$element is not accepted by \\\\%s\.',
-                        ' Found: \(null\) null',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote($handledCollectionClassName, '/'),
-                ),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);
@@ -96,44 +70,19 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $collection->withAddedMultiple([null]);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s-\>withAddedMultiple\(',
-                            '\$elements = \(array\(1\)\) \[',
-                                '\(int\) 0 \=\> \(null\) null',
-                            '\]',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\\\\%s\-\>\$elements = \(array\(4\)\) \[.+, \.\.\. and 1 more element\] \(sample\)',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
+                    'Argument $elements = %s cannot be added to the current collection, %s',
+                    Caster::getInstance()->castTyped([null]),
+                    Caster::getInstance()->castTyped($collection),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                implode('', [
-                    '/',
-                    '^',
-                    'In argument \$elements, 1\/1 elements are invalid, including\: \[',
-                        '0 \=\> \(null\) null',
-                    '\]',
-                    '$',
-                    '/',
-                ]),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);
@@ -156,46 +105,19 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $collectionA->withMerged($collectionB);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableCollectionException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s\-\>withMerged\(',
-                            '\$collection = \(object\) \\\\%s \{.+\}',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\\\\%s\-\>\$elements = \(array\(0\)\) \[\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($collectionA),
+                    Caster::getInstance()->castTyped($collectionB),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Argument \$collection must be an instance of \\\\%s, but it is not\.',
-                        ' Found\: \(object\) \\\\%s \{\$elements = \(array\(0\)\) \[\]\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableCollectionException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);
@@ -242,42 +164,19 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $collectionA->withMerged($collectionB);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableCollectionException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s\-\>withMerged\(',
-                            '\$collection = \(object\) \\\\%s \{.+\}',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\\\\%s\-\>\$elements = \(array\(0\)\) \[\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($collectionA),
+                    Caster::getInstance()->castTyped($collectionB),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                implode('', [
-                    '/',
-                    '^',
-                    'Argument \$collection cannot be merged into the current collection, because 1\/1 elements',
-                    ' are invalid, including\: \[0 \=\> \(null\) null\]',
-                    '$',
-                    '/',
-                ]),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);
@@ -299,44 +198,19 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $collection->withRemovedElement(null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s\-\>withRemovedElement\(',
-                            '\$element = \(null\) null',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\\\\%s\-\>\$elements = \(array\(0\)\) \[\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
+                    'Argument $element = %s cannot be removed from the current collection, %s',
+                    Caster::getInstance()->castTyped(null),
+                    Caster::getInstance()->castTyped($collection),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            $this->assertSame(InvalidArgumentException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Argument \$element is not accepted by \\\\%s\.',
-                        ' Found\: \(null\) null',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote($handledCollectionClassName, '/'),
-                ),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);
@@ -358,44 +232,20 @@ abstract class AbstractTypeCollectionTestCase extends AbstractCollectionTestCase
             $collection->withSet(0, null);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s\-\>withSet\(',
-                            '\$key = \(int\) 0',
-                            ', \$element = \(null\) null',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\\\\%s\-\>\$elements = \(array\(0\)\) \[\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
+                    'Argument $element = %s (with $key = %s) cannot be set on the current collection, %s',
+                    Caster::getInstance()->castTyped(null),
+                    Caster::getInstance()->castTyped(0),
+                    Caster::getInstance()->castTyped($collection),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Argument \$element is not accepted by \\\\%s\. Found\: \(null\) null',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote($handledCollectionClassName, '/'),
-                ),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);

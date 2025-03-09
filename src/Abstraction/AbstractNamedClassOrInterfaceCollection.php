@@ -7,8 +7,8 @@ namespace Eboreum\Collections\Abstraction;
 use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\ObjectCollectionInterface;
-use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\Exception\UnacceptableElementException;
 use Eboreum\Exceptional\ExceptionMessageGenerator;
 use ReflectionClass;
 use ReflectionMethod;
@@ -37,11 +37,13 @@ abstract class AbstractNamedClassOrInterfaceCollection extends Collection implem
 
             assert(class_exists($handledClassName) || interface_exists($handledClassName));
 
-            throw new InvalidArgumentException(sprintf(
-                'Expects argument $element to be an object, instance of %s, but it is not. Found: %s',
-                Caster::makeNormalizedClassName(new ReflectionClass($handledClassName)),
-                Caster::getInstance()->castTyped($element),
-            ));
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Expects argument $element = %s to be an object, instance of %s, but it is not',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::makeNormalizedClassName(new ReflectionClass($handledClassName)),
+                ),
+            );
         }
     }
 

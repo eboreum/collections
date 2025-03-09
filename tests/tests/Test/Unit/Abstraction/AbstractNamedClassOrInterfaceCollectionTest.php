@@ -7,8 +7,10 @@ namespace Test\Unit\Eboreum\Collections\Abstraction;
 use DateTime;
 use DateTimeImmutable;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
+use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\Exception\UnacceptableCollectionException;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -220,54 +222,19 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $collectionA->withMerged($collectionB);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableCollectionException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s-\>withMerged\(',
-                            '\$collection = \(object\) \\\\%s@anonymous\/in\/.+\/%s\:\d+ \{.+\}',
-                        '\) inside \(object\) \\\\%s@anonymous\/in\/.+\/%s\:+\d+ \{',
-                            '\\\\%s\-\>\$elements = \(array\(2\)\) \[.+\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(Collection::class, '/'),
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($collectionA),
+                    Caster::getInstance()->castTyped($collectionB),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            $this->assertSame(RuntimeException::class, $currentException::class);
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Argument \$collection must be an instance of \\\\%s@anonymous\/in\/.+\/%s\:\d+',
-                        ', but it is not\.',
-                        ' Found\: \(object\) \\\\%s@anonymous\/in\/.+\/%s\:\d+ \{',
-                            '\\\\%s\-\>\$elements = \(array\(2\)\) \[.+\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableCollectionException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);

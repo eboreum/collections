@@ -8,9 +8,11 @@ use Closure;
 use Countable;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\ElementNotFoundException;
-use Eboreum\Collections\Exception\InvalidArgumentException;
+use Eboreum\Collections\Exception\InvalidClosureReturnValueException;
 use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\Exception\UnacceptableCollectionException;
+use Eboreum\Collections\Exception\UnacceptableElementException;
 use IteratorAggregate;
 
 /**
@@ -28,9 +30,9 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
 {
     /**
      * Do nothing if the provided $element argument is accepted in the implementing collection class. Otherwise,
-     * must throw an InvalidArgumentException.
+     * must throw an UnacceptableElementException.
      *
-     * @throws InvalidArgumentException
+     * @throws UnacceptableElementException
      */
     public static function assertIsElementAccepted(mixed $element): void;
 
@@ -50,10 +52,10 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
     public static function isElementAccepted(mixed $element): bool;
 
     /**
-     * @param array<int|string, T> $elements Must throw a RuntimeException when one or more elements are not accepted
-     *                                       by the implementing collection class.
+     * @param array<int|string, T> $elements Must throw a UnacceptableElementException when one or more elements are not
+     *                                       accepted by the implementing collection class.
      *
-     * @throws RuntimeException
+     * @throws UnacceptableElementException
      */
     public function __construct(array $elements = []);
 
@@ -75,11 +77,12 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
 
     /**
      * Returns `true` when the collection contains the $element argument. Otherwise, returns `false`.
-     * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
+     * Must throw an UnacceptableElementException when the $element argument is invalid for the implementing collection
+     * class.
      *
      * @param T $element
      *
-     * @throws RuntimeException
+     * @throws UnacceptableElementException
      */
     public function contains(mixed $element): bool;
 
@@ -124,12 +127,12 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * To break out of the iteration (like the `break` keyword in an ordinary loop), return `false` inside the
      * $callback. Returning nothing (void), `null`, or `true` will cause the loop to continue.
      *
-     * Any other return value returned by $callback must cause an exception to be thrown.
+     * Any other return value returned by $callback must cause an InvalidClosureReturnValueException to be thrown.
      *
      * @param Closure(mixed, int|string, object|null):(bool|void|null) $callback
      * @param object|null $carry Corresponds to the $carry argument in the $callback.
      *
-     * @throws RuntimeException
+     * @throws InvalidClosureReturnValueException|RuntimeException
      */
     public function every(Closure $callback, ?object $carry = null): void;
 
@@ -143,7 +146,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @return T|null
      *
-     * @throws RuntimeException
+     * @throws ElementNotFoundException
      */
     public function find(Closure $callback): mixed;
 
@@ -216,11 +219,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
 
     /**
      * Returns the element at the $key position in the collection's elements. If key does not exist, returns `null`.
-     * Must throw a RuntimeException when argument $key is invalid.
      *
      * @return T|null
-     *
-     * @throws InvalidArgumentException
      */
     public function get(int|string $key): mixed;
 
@@ -239,9 +239,6 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
     /**
      * Returns `true`, if the argument $key exists as an array key in the collection's elements. Otherwise, returns
      * `false`.
-     * Must throw a RuntimeException when argument $key is invalid.
-     *
-     * @throws InvalidArgumentException
      */
     public function has(int|string $key): bool;
 
@@ -255,7 +252,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @param T $element
      *
-     * @throws InvalidArgumentException
+     * @throws UnacceptableElementException
      */
     public function indexOf(mixed $element): int|string|null;
 
@@ -341,14 +338,14 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
      *
-     * Argument $callback must return an integer. Any other return value returned by $callback must cause an exception
-     * to be thrown.
+     * Argument $callback must return an integer. Any other return value returned by $callback must cause an
+     * InvalidClosureReturnValueException to be thrown.
      *
      * @param Closure(T, int|string):int $callback
      *
      * @return T|null
      *
-     * @throws RuntimeException
+     * @throws InvalidClosureReturnValueException|RuntimeException
      */
     public function maxByCallback(Closure $callback);
 
@@ -361,14 +358,14 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
      *
-     * Argument $callback must return an integer. Any other return value returned by $callback must cause an exception
-     * to be thrown.
+     * Argument $callback must return an integer. Any other return value returned by $callback must cause an
+     * InvalidClosureReturnValueException to be thrown.
      *
      * @param Closure(T, int|string):int $callback
      *
      * @return T|null
      *
-     * @throws RuntimeException
+     * @throws InvalidClosureReturnValueException|RuntimeException
      */
     public function minByCallback(Closure $callback);
 
@@ -418,11 +415,10 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
     /**
      * Reindex the elements in a clone of the current collection, using the value returned by the $closure argument.
      *
-     * Must throw a RuntimeException when either:
+     * Must throw a InvalidClosureReturnValueException when the $closure argument does not return an int or string.
      *
-     *  (A) The $closure argument does not return an int or string.
-     *  (B) When argument $duplicateKeyBehavior is ToReindexedDuplicateKeyBehaviorEnum::throw_exception and one or more
-     *      duplicate keys are found.
+     * Must throw a RuntimeException when argument $duplicateKeyBehavior is
+     * ToReindexedDuplicateKeyBehaviorEnum::throw_exception and one or more duplicate keys are found.
      *
      * Must return said clone.
      *
@@ -476,8 +472,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *   - T $value: An element within the current collection.
      *   - int|string $key: An array key.
      *
-     * Argument $callback must return a string. Any other value returned by $callback must cause an exception to be
-     * thrown.
+     * Argument $callback must return a string. Any other value than string returned by $callback must cause an
+     * InvalidClosureReturnValueException to be thrown.
      *
      * Must return a clone.
      *
@@ -488,7 +484,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *                                          resulting collection. Otherwise, only the last element will exist in the
      *                                          resulting collection.
      *
-     * @throws RuntimeException
+     * @throws InvalidClosureReturnValueException|RuntimeException
      */
     public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): static;
 
@@ -498,7 +494,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @param T $element
      *
-     * @throws RuntimeException
+     * @throws UnacceptableElementException|RuntimeException
      */
     public function withAdded(mixed $element): static;
 
@@ -508,7 +504,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @param array<int|string, T> $elements
      *
-     * @throws RuntimeException
+     * @throws UnacceptableElementException|RuntimeException
      */
     public function withAddedMultiple(array $elements): static;
 
@@ -530,27 +526,25 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @param CollectionInterface<T> $collection
      *
-     * @throws RuntimeException
+     * @throws UnacceptableCollectionException|UnacceptableElementException|RuntimeException
      */
     public function withMerged(CollectionInterface $collection): static;
 
     /**
      * Remove the $key from a clone of the current collection, if the array key exists.
      * Must return a clone.
-     * Must throw a RuntimeException when argument $key is invalid.
-     *
-     * @throws InvalidArgumentException
      */
     public function withRemoved(int|string $key): static;
 
     /**
      * Remove the $element from a clone of the current collection, if the element exists in the collection.
      * Must return a clone.
-     * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
+     * Must throw a UnacceptableElementException when the $element argument is invalid for the implementing collection
+     * class.
      *
      * @param T $element
      *
-     * @throws RuntimeException
+     * @throws UnacceptableElementException|RuntimeException
      */
     public function withRemovedElement(mixed $element): static;
 
@@ -561,7 +555,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @param T $element
      *
-     * @throws RuntimeException
+     * @throws UnacceptableElementException|RuntimeException
      */
     public function withSet(int|string $key, $element): static;
 

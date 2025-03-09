@@ -41,9 +41,10 @@ use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\ElementNotFoundException;
-use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\Exception\UnacceptableCollectionException;
+use Eboreum\Collections\Exception\UnacceptableElementException;
 use Eboreum\Exceptional\ExceptionMessageGenerator;
 use ReflectionClass;
 use ReflectionMethod;
@@ -91,11 +92,13 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     public static function assertIsElementAccepted(mixed $element): void
     {
         if (false === static::isElementAccepted($element)) {
-            throw new InvalidArgumentException(sprintf(
-                'Argument $element is not accepted by %s. Found: %s',
-                Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
-                Caster::getInstance()->castTyped($element),
-            ));
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $element = %s is not accepted by %s',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
+                ),
+            );
         }
     }
 
@@ -161,10 +164,12 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     {
         try {
             if (false === ($chunkSize >= 1)) { // @phpstan-ignore-line
-                throw new RuntimeException(sprintf(
-                    'Argument $chunkSize must be >= 1, but it is not. Found: %s',
-                    Caster::getInstance()->castTyped($chunkSize),
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Argument $chunkSize = %s must be >= 1, but it is not',
+                        Caster::getInstance()->castTyped($chunkSize),
+                    ),
+                );
             }
 
             $elements = [];
@@ -905,10 +910,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
                 if (false === is_string($result)) { // @phpstan-ignore-line We want to capture this anyway
                     throw new RuntimeException(sprintf(
-                        implode('', [
-                            'Call $callback(%s, %s) must return string, but it did not.',
-                            ' Found return value: %s',
-                        ]),
+                        'Call $callback(%s, %s) must return a string, but it did not. Resulting return value: %s',
                         Caster::getInstance()->castTyped($value),
                         Caster::getInstance()->castTyped($key),
                         Caster::getInstance()->castTyped($result),
@@ -956,12 +958,26 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
             $clone = clone $this;
             $clone->elements[] = $element;
+        } catch (UnacceptableElementException $e) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $element = %s cannot be added to the current collection, %s',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::getInstance()->castTyped($this),
+                ),
+                0,
+                $e,
+            );
         } catch (Throwable $t) {
-            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
-                $this,
-                new ReflectionMethod(self::class, __FUNCTION__),
-                func_get_args(),
-            ), 0, $t);
+            throw new RuntimeException(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $this,
+                    new ReflectionMethod(self::class, __FUNCTION__),
+                    func_get_args(),
+                ),
+                0,
+                $t,
+            );
         }
 
         return $clone;
@@ -976,12 +992,15 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             $invalids = static::makeInvalids($elements);
 
             if ($invalids) {
-                throw new RuntimeException(sprintf(
-                    'In argument $elements, %d/%d elements are invalid, including: [%s]',
-                    count($invalids),
-                    count($elements),
-                    implode(', ', $invalids),
-                ));
+                throw new UnacceptableElementException(
+                    sprintf(
+                        'In argument $elements = %s, %d/%d elements are invalid, including: [%s]',
+                        Caster::getInstance()->castTyped($elements),
+                        count($invalids),
+                        count($elements),
+                        implode(', ', $invalids),
+                    ),
+                );
             }
 
             $clone = clone $this;
@@ -989,12 +1008,26 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($elements as $element) {
                 $clone->elements[] = $element;
             }
+        } catch (UnacceptableElementException $e) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $elements = %s cannot be added to the current collection, %s',
+                    Caster::getInstance()->castTyped($elements),
+                    Caster::getInstance()->castTyped($this),
+                ),
+                0,
+                $e,
+            );
         } catch (Throwable $t) {
-            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
-                $this,
-                new ReflectionMethod(self::class, __FUNCTION__),
-                func_get_args(),
-            ), 0, $t);
+            throw new RuntimeException(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $this,
+                    new ReflectionMethod(self::class, __FUNCTION__),
+                    func_get_args(),
+                ),
+                0,
+                $t,
+            );
         }
 
         return $clone;
@@ -1024,31 +1057,42 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     {
         try {
             if (false === is_a($collection, static::class)) {
-                throw new RuntimeException(sprintf(
-                    'Argument $collection must be an instance of %s, but it is not. Found: %s',
-                    Caster::makeNormalizedClassName(new ReflectionObject($this)),
-                    Caster::getInstance()->castTyped($collection),
-                ));
+                throw new UnacceptableCollectionException(
+                    sprintf(
+                        'Argument $collection = %s must be an instance of %s, but it is not',
+                        Caster::getInstance()->castTyped($collection),
+                        Caster::makeNormalizedClassName(new ReflectionObject($this)),
+                    ),
+                );
             }
 
             $invalids = static::makeInvalids($collection->toArray());
 
             if ($invalids) {
-                throw new RuntimeException(sprintf(
-                    implode('', [
-                        'Argument $collection cannot be merged into the current collection',
-                        ', because %d/%d elements are invalid, including: [%s]',
-                    ]),
-                    count($invalids),
-                    count($collection),
-                    implode(', ', $invalids),
-                ));
+                throw new UnacceptableElementException(
+                    sprintf(
+                        '%d/%d elements are invalid, including: [%s]',
+                        count($invalids),
+                        count($collection),
+                        implode(', ', $invalids),
+                    ),
+                );
             }
 
             $clone = clone $this;
             $clone->elements = array_merge(
                 $clone->elements,
                 $collection->elements,
+            );
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
             );
         } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
@@ -1084,6 +1128,16 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             if (false !== $key) {
                 unset($clone->elements[$key]);
             }
+        } catch (UnacceptableElementException $e) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $element = %s cannot be removed from the current collection, %s',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::getInstance()->castTyped($this),
+                ),
+                0,
+                $e,
+            );
         } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
@@ -1098,18 +1152,21 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     public function withSet(int|string $key, mixed $element): static
     {
         try {
-            if (false === static::isElementAccepted($element)) {
-                throw new RuntimeException(
-                    sprintf(
-                        'Argument $element is not accepted by %s. Found: %s',
-                        Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
-                        Caster::getInstance()->castTyped($element),
-                    ),
-                );
-            }
+            static::assertIsElementAccepted($element);
 
             $clone = clone $this;
             $clone->elements[$key] = $element;
+        } catch (UnacceptableElementException $e) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $element = %s (with $key = %s) cannot be set on the current collection, %s',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::getInstance()->castTyped($key),
+                    Caster::getInstance()->castTyped($this),
+                ),
+                0,
+                $e,
+            );
         } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
