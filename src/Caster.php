@@ -48,6 +48,8 @@ class Caster extends EboreumCaster
         ];
 
         $caster = $caster->withCustomObjectFormatterCollection(new ObjectFormatterCollection($formatters));
+        $caster = $caster->withIsConvertingASCIIControlCharactersToHexAnnotationInStrings(true);
+        $caster = $caster->withIsWrapping(true);
 
         return $caster;
     }

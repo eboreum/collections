@@ -1148,7 +1148,7 @@ abstract class AbstractCollectionTestCase extends TestCase
             $this->assertMatchesRegularExpression(
                 implode('', [
                     '/',
-                    'Failure when calling \$callback\(.+, .+\)',
+                    'Failure when calling \$callback\((.|\n)+, (.|\n)+\)',
                     '$',
                     '/',
                 ]),
@@ -1199,7 +1199,10 @@ abstract class AbstractCollectionTestCase extends TestCase
             $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
-                    '/^Call \$callback\(.+, .+\) must return a string, but it did not\. Resulting return value\: %s$/',
+                    implode('', [
+                        '/^Call \$callback\((.|\n)+, (.|\n)+\) must return a string, but it did not\. Resulting return',
+                        ' value\: %s$/',
+                    ]),
                     preg_quote(Caster::getInstance()->castTyped(null), '/'),
                 ),
                 $currentException->getMessage(),
