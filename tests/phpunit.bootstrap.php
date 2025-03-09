@@ -13,6 +13,10 @@ define('TEST_ROOT_PATH', __DIR__);
     // The following code allows for dynamic memory limit overrides, but always run with a certain minimum limit.
 
     $annotationToBytes = static function (string $annotation): int {
+        if ('-1' === $annotation) {
+            return -1;
+        }
+
         preg_match('/^(\d+)([MG])?$/D', $annotation, $match);
 
         if (false === array_key_exists(1, $match)) {
