@@ -10,6 +10,16 @@ Eboreum/Collections: Moving PHP closer towards generics
 
 Comes fully equipped with [phpstan](https://packagist.org/packages/phpstan/phpstan) generics annotations. For details, see: https://phpstan.org/blog/generics-in-php-using-phpdocs
 
+The main goals of this library are:
+
+1. **Accuracy**.
+   - You know with certainty what the collections in your code base can and must contain.
+2. **Safety**.
+   - Immutability prevents unintentional modifications of collections.
+   - You get an exception as soon as an invalid element is encountered.
+
+It is ***not*** intended for speed. If you need speed in certain areas, you still have e.g. raw array manipulation you can rely on.
+
 <a name="requirements"></a>
 # Requirements
 
