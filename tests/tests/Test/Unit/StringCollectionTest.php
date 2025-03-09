@@ -240,7 +240,6 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
         $this->assertSame([1 => '1', 0 => '2'], $collectionB->toArray());
     }
 
-
     #[DataProvider('providerTestToUniqueByCallbackWorks')]
     public function testToUniqueWorks(
         string $message,
