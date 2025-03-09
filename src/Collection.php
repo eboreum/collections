@@ -40,7 +40,9 @@ use Eboreum\Caster\Attribute\DebugIdentifier;
 use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
+use Eboreum\Collections\Exception\ElementNotFoundException;
 use Eboreum\Collections\Exception\InvalidArgumentException;
+use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
 use Eboreum\Exceptional\ExceptionMessageGenerator;
 use ReflectionClass;
@@ -288,43 +290,86 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function find(Closure $callback)
+    public function find(Closure $callback): mixed
     {
         if (!$this->elements) {
             return null;
         }
 
+        try {
+            $return = $this->findOrFail($callback);
+        } catch (ElementNotFoundException) {
+            return null;
+        }
+
+        return $return;
+    }
+
+    public function findOrFail(Closure $callback): mixed
+    {
+        /** @var T|null $return */
         $return = null;
+
+        /**
+         * We need this variable, in addition to the $return variable, because someone may indeed be searching for null
+         * in a collection.
+         *
+         * @var bool $found
+         */
+        $found = false;
 
         try {
             foreach ($this->elements as $k => $v) {
                 $callbackResult = $callback($v, $k);
 
-                if (false === is_bool($callbackResult)) { // @phpstan-ignore-line We want to capture this anyway
-                    throw new RuntimeException(sprintf(
-                        'Call $callback(%s, %s) did not return a boolean, which it must. Found return value: %s',
-                        Caster::getInstance()->castTyped($v),
-                        Caster::getInstance()->castTyped($k),
-                        Caster::getInstance()->castTyped($callbackResult),
-                    ));
+                if (false === is_bool($callbackResult)) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Call $callback(%s, %s) did not return a boolean, which it must. Found return value: %s',
+                            Caster::getInstance()->castTyped($v),
+                            Caster::getInstance()->castTyped($k),
+                            Caster::getInstance()->castTyped($callbackResult),
+                        ),
+                    );
                 }
 
                 if (true === $callbackResult) {
                     $return = $v;
+                    $found = true;
 
                     break;
                 }
             }
         } catch (Throwable $t) {
-            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
-                $this,
-                new ReflectionMethod(self::class, __FUNCTION__),
-                func_get_args(),
-            ), 0, $t);
+            throw new RuntimeException(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $this,
+                    new ReflectionMethod(self::class, __FUNCTION__),
+                    func_get_args(),
+                ),
+                0,
+                $t,
+            );
         }
+
+        if (false === $found) {
+            throw new ElementNotFoundException(
+                sprintf(
+                    'In collection %s, an element could not be found from argument $callback = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($callback),
+                ),
+            );
+        }
+
+        /**
+         * phpstan needs the "var" definition to be here.
+         * phpcs is angry, unless there is a variable reference (assignment) below.
+         * Assigning the same variable into itself will get optimized away.
+         *
+         * @var T $return
+         */
+        $return = $return;
 
         return $return;
     }
@@ -351,6 +396,47 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return array_key_first($this->elements);
     }
 
+    public function firstKeyOrFail(): int|string
+    {
+        $key = $this->firstKey();
+
+        if (null === $key) {
+            throw new KeyNotFoundException(
+                sprintf(
+                    'Collection %s is empty and therefore it does not have a "first" key',
+                    Caster::getInstance()->castTyped($this)
+                ),
+            );
+        }
+
+        return $key;
+    }
+
+    public function firstOrFail(): mixed
+    {
+        $first = $this->first();
+
+        if (null === array_key_first($this->elements)) {
+            throw new ElementNotFoundException(
+                sprintf(
+                    'Collection %s is empty and therefore it does not have a "first" element',
+                    Caster::getInstance()->castTyped($this)
+                ),
+            );
+        }
+
+        /**
+         * phpstan needs the "var" definition to be here.
+         * phpcs is angry, unless there is a variable reference (assignment) below.
+         * Assigning the same variable into itself will get optimized away.
+         *
+         * @var T $first
+         */
+        $first = $first;
+
+        return $first;
+    }
+
     public function get(int|string $key): mixed
     {
         if (array_key_exists($key, $this->elements)) {
@@ -358,6 +444,24 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
 
         return null;
+    }
+
+    public function getOrFail(int|string $key): mixed
+    {
+        if (false === array_key_exists($key, $this->elements)) {
+            throw new ElementNotFoundException(
+                sprintf(
+                    'In collection %s, an element with $key = %s does not exist',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($key),
+                ),
+            );
+        }
+
+        /** @var T $return */
+        $return = $this->elements[$key];
+
+        return $return;
     }
 
     /**
@@ -424,6 +528,48 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
 
         return array_key_last($this->elements);
+    }
+
+    public function lastKeyOrFail(): int|string
+    {
+        $key = $this->lastKey();
+
+        if (null === $key) {
+            throw new KeyNotFoundException(
+                sprintf(
+                    'Collection %s is empty and therefore it does not have a "last" key',
+                    Caster::getInstance()->castTyped($this)
+                ),
+            );
+        }
+
+        return $key;
+    }
+
+    public function lastOrFail(): mixed
+    {
+        /** @var T|null $last */
+        $last = $this->last();
+
+        if (null === array_key_last($this->elements)) {
+            throw new ElementNotFoundException(
+                sprintf(
+                    'Collection %s is empty and therefore it does not have a "last" element',
+                    Caster::getInstance()->castTyped($this)
+                ),
+            );
+        }
+
+        /**
+         * phpstan needs the "var" definition to be here.
+         * phpcs is angry, unless there is a variable reference (assignment) below.
+         * Assigning the same variable into itself will get optimized away.
+         *
+         * @var T $last
+         */
+        $last = $last;
+
+        return $last;
     }
 
     /**

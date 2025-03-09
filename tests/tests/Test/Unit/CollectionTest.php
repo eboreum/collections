@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections;
 
 use Closure;
+use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
 use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\IntegerCollection;
+use Eboreum\Exceptional\ExceptionMessageGenerator;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionMethod;
 use stdClass;
 
 use function assert;
@@ -990,6 +994,58 @@ class CollectionTest extends AbstractCollectionTestCase
         $this->fail('Exception was never thrown.');
     }
 
+    public function testWithMergedThrowsExceptionWhenArgumentCollectionContainsInvalidElements(): void
+    {
+        $collectionA = new IntegerCollection();
+        $collectionB = $this->createMock(IntegerCollection::class);
+
+        $collectionB
+            ->expects($this->once())
+            ->method('toArray')
+            ->willReturn([true]);
+
+        $collectionB
+            ->expects($this->once())
+            ->method('count')
+            ->willReturn(7);
+
+        try {
+            $collectionA->withMerged($collectionB);
+        } catch (Exception $e) {
+            $currentException = $e;
+            $this->assertSame(RuntimeException::class, $currentException::class);
+            $this->assertSame(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $collectionA,
+                    new ReflectionMethod($collectionA, 'withMerged'),
+                    [$collectionB],
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertIsObject($currentException);
+            $this->assertSame(RuntimeException::class, $currentException::class);
+            $this->assertSame(
+                sprintf(
+                    implode(' ', [
+                        'Argument $collection cannot be merged into the current collection, because 1/7 elements are',
+                        'invalid, including: [0 => %s]',
+                    ]),
+                    Caster::getInstance()->castTyped(true),
+                ),
+                $currentException->getMessage(),
+            );
+
+            $currentException = $currentException->getPrevious();
+            $this->assertTrue(null === $currentException);
+
+            return;
+        }
+
+        $this->fail('Exception was never thrown.');
+    }
+
     public function testWithRemovedElementThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void
     {
         $collection = new class ([true, 42, 'foo' => 'bar']) extends Collection
@@ -1451,13 +1507,20 @@ class CollectionTest extends AbstractCollectionTestCase
         );
     }
 
-    public function testFindThrowsExceptionWhenArgumentCallbackDoesNotReturnABooleanWhenCalled(): void
+    public function testFirstReturnsNullWhenThereAreNoElementsInCollection(): void
+    {
+        $collection = new Collection();
+
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertNull($collection->first()); // @phpstan-ignore-line
+    }
+
+    public function testFindOrFailThrowsExceptionWhenArgumentCallbackDoesNotReturnABooleanWhenCalled(): void
     {
         $collection = new Collection([null]);
 
         try {
-            $collection->find(
-                // @phpstan-ignore-next-line
+            $collection->findOrFail(
                 static function (): int {
                     return 42;
                 }
@@ -1470,7 +1533,7 @@ class CollectionTest extends AbstractCollectionTestCase
                     implode('', [
                         '/',
                         '^',
-                        'Failure in \\\\%s-\>find\(',
+                        'Failure in \\\\%s-\>findOrFail\(',
                             '\$callback = \(object\) \\\\Closure\(\)(: *[^,\)]+)?',
                         '\) inside \(object\) \\\\%s \{',
                             '\$elements = \(array\(1\)\) \[.+\]',
@@ -1506,13 +1569,6 @@ class CollectionTest extends AbstractCollectionTestCase
         }
 
         $this->fail('Exception was never thrown.');
-    }
-
-    public function testFirstReturnsNullWhenThereAreNoElementsInCollection(): void
-    {
-        $collection = new Collection();
-
-        $this->assertNull($collection->first()); // @phpstan-ignore-line
     }
 
     public function testIndexOfThrowsExceptionWhenArgumentElementIsNotAcceptedByCollection(): void

@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections;
 
 use Closure;
+use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\CollectionInterface;
+use Eboreum\Collections\Exception\ElementNotFoundException;
+use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use function array_key_first;
+use function array_key_last;
 use function array_keys;
 use function array_map;
 use function array_merge;
@@ -575,15 +580,6 @@ abstract class AbstractCollectionTestCase extends TestCase
         $this->assertSame($elements[0], $collection->current());
     }
 
-    public function testFirstReturnsNullWhenThereAreNoElementsInCollection(): void
-    {
-        $handledCollectionClassName = static::getHandledCollectionClassName();
-        $collection = new $handledCollectionClassName();
-
-        $this->assertInstanceOf(Collection::class, $collection);
-        $this->assertNull($collection->first());
-    }
-
     public function testFirstKeyWorks(): void
     {
         $handledCollectionClassName = static::getHandledCollectionClassName();
@@ -613,6 +609,55 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertNull($collection->firstKey());
+    }
+
+    public function testFirstKeyOrFailThrowsKeyNotFoundExceptionWhenCollectionIsEmpty(): void
+    {
+        $collection = new Collection();
+
+        $this->expectException(KeyNotFoundException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Collection %s is empty and therefore it does not have a "first" key',
+                Caster::getInstance()->castTyped($collection)
+            ),
+        );
+
+        $collection->firstKeyOrFail();
+    }
+
+    public function testFirstKeyOrFailWorks(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
+        $collection = new $handledCollectionClassName($elements);
+
+        $this->assertSame(0, $collection->firstKeyOrFail());
+    }
+
+    public function testFirstOrFailThrowsElementNotFoundExceptionWhenCollectionIsEmpty(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName();
+
+        $this->expectException(ElementNotFoundException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Collection %s is empty and therefore it does not have a "first" element',
+                Caster::getInstance()->castTyped($collection),
+            ),
+        );
+
+        $collection->firstOrFail();
+    }
+
+    public function testFirstOrFailWorks(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
+        $collection = new $handledCollectionClassName($elements);
+
+        $this->assertSame($elements[array_key_first($elements)] ?? null, $collection->firstOrFail());
     }
 
     public function testGetWorks(): void
@@ -657,6 +702,37 @@ abstract class AbstractCollectionTestCase extends TestCase
         $this->assertInstanceOf(Collection::class, $collection);
 
         $this->assertSame([0, 'foo', 42, 43], $collection->getKeys());
+    }
+
+    public function testGetOrFailThrowsElementNotFoundExceptionWhenCollectionDoesNotContainElement(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
+        $collection = new $handledCollectionClassName($elements);
+
+        $this->assertInstanceOf(Collection::class, $collection);
+
+        $this->expectException(ElementNotFoundException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'In collection %s, an element with $key = %s does not exist',
+                Caster::getInstance()->castTyped($collection),
+                Caster::getInstance()->castTyped('bar'),
+            ),
+        );
+
+        $collection->getOrFail('bar');
+    }
+
+    public function testGetOrFailWorks(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
+        $collection = new $handledCollectionClassName($elements);
+
+        $this->assertInstanceOf(Collection::class, $collection);
+
+        $this->assertSame($elements['foo'] ?? null, $collection->getOrFail('foo'));
     }
 
     public function testHasWorks(): void
@@ -733,6 +809,62 @@ abstract class AbstractCollectionTestCase extends TestCase
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertNull($collection->lastKey());
+    }
+
+    public function testLastKeyOrFailThrowsKeyNotFoundExceptionWhenCollectionIsEmpty(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName();
+
+        $this->assertInstanceOf(Collection::class, $collection);
+
+        $this->expectException(KeyNotFoundException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Collection %s is empty and therefore it does not have a "last" key',
+                Caster::getInstance()->castTyped($collection)
+            ),
+        );
+
+        $collection->lastKeyOrFail();
+    }
+
+    public function testLastKeyOrFailWorks(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
+        $collection = new $handledCollectionClassName($elements);
+
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertSame(43, $collection->lastKeyOrFail());
+    }
+
+    public function testLastOrFailThrowsElementNotFoundExceptionWhenCollectionIsEmpty(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $collection = new $handledCollectionClassName();
+
+        $this->assertInstanceOf(Collection::class, $collection);
+
+        $this->expectException(ElementNotFoundException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Collection %s is empty and therefore it does not have a "last" element',
+                Caster::getInstance()->castTyped($collection),
+            ),
+        );
+
+        $collection->lastOrFail();
+    }
+
+    public function testLastOrFailWorks(): void
+    {
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+        $elements = static::createMultipleElements($this);
+        $collection = new $handledCollectionClassName($elements);
+
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertSame($elements[array_key_last($elements)] ?? null, $collection->lastOrFail());
     }
 
     /**

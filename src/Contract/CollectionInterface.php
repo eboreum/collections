@@ -7,7 +7,9 @@ namespace Eboreum\Collections\Contract;
 use Closure;
 use Countable;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
+use Eboreum\Collections\Exception\ElementNotFoundException;
 use Eboreum\Collections\Exception\InvalidArgumentException;
+use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
 use IteratorAggregate;
 
@@ -143,7 +145,19 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @throws RuntimeException
      */
-    public function find(Closure $callback);
+    public function find(Closure $callback): mixed;
+
+    /**
+     * Same as the "find" method above. However, when an element is NOT found, an exception is thrown instead of null
+     * being returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws ElementNotFoundException
+     */
+    public function findOrFail(Closure $callback): mixed;
 
     /**
      * Returns the first element in the collection's elements. If empty, returns `null`. Moves the array pointer.
@@ -166,6 +180,30 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
     public function firstKey(): int|string|null;
 
     /**
+     * Same as the "firstKey" method above. However, when collection is empty, an exception is thrown instead of null
+     * being returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws KeyNotFoundException
+     */
+    public function firstKeyOrFail(): mixed;
+
+    /**
+     * Same as the "first" method above. However, when collection is empty, an exception is thrown instead of null being
+     * returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws ElementNotFoundException
+     */
+    public function firstOrFail(): mixed;
+
+    /**
      * Returns the array keys for the elements in the current collection.
      *
      * Corresponds to the core PHP function `array_keys`.
@@ -185,6 +223,18 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @throws InvalidArgumentException
      */
     public function get(int|string $key): mixed;
+
+    /**
+     * Same as the "get" method above. However, when the targeted element does not exist in the collection, an exception
+     * is thrown instead of null being returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws ElementNotFoundException
+     */
+    public function getOrFail(int|string $key): mixed;
 
     /**
      * Returns `true`, if the argument $key exists as an array key in the collection's elements. Otherwise, returns
@@ -238,6 +288,30 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @see https://www.php.net/manual/en/function.array-key-last.php
      */
     public function lastKey(): int|string|null;
+
+    /**
+     * Same as the "lastKey" method above. However, when collection is empty, an exception is thrown instead of null
+     * being returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws KeyNotFoundException
+     */
+    public function lastKeyOrFail(): mixed;
+
+    /**
+     * Same as the "last" method above. However, when collection is empty, an exception is thrown instead of null being
+     * returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws ElementNotFoundException
+     */
+    public function lastOrFail(): mixed;
 
     /**
      * Map the contents of the collection and return the mapped array.

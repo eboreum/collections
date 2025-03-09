@@ -166,3 +166,7 @@ It goes against the immutable nature of this library, it's a little bit evil, an
 ### doctrine/collections
 
 This library is greatly inspired by https://packagist.org/packages/doctrine/collections (https://github.com/doctrine/collections) and some of the code is indeed copied from that library (acknowledged by inclusion of the LICENSE file contents at the top of select files, as required by https://github.com/doctrine/collections/blob/94918256daa6ac99c7e5774720c0e76f01936bda/LICENSE).
+
+## Laravel collection
+
+For certain methods, we have also drawn inspiration from https://laravel.com/docs/12.x/collections.
