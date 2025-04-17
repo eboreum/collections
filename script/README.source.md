@@ -57,7 +57,7 @@ This library comes equipped with the following simple data type collection class
 
 The real shine comes when we start making restrictions on the contents of the collection classes, for instance **restrictions on specific classes**.
 
-This library has the following **predefined class collections**:
+This library has the following **predefined class collections**, all located under the namespace `\Eboreum\Collections\Object_`:
 
 %run "script/make-readme/list-object-collection-classes-as-markdown.php"%
 

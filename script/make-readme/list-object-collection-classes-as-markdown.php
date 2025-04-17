@@ -38,11 +38,13 @@ foreach ($absoluteFilePaths as $filePathAbsolute) {
         continue;
     }
 
+    $classNameWithoutBaseName = mb_substr($className, mb_strlen('Eboreum\Collections\Object_\\'));
+
     $count++;
 
     echo sprintf(
-        " - `\\%s`: A collection, which may and will only ever contain instances of `\\%s`.\n",
-        $className,
+        " - `%s`: A collection, which may and will only ever contain instances of `\\%s`.\n",
+        $classNameWithoutBaseName,
         $className::getHandledClassName(),
     );
 }

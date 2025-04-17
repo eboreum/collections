@@ -64,19 +64,19 @@ This library comes equipped with the following simple data type collection class
 
 The real shine comes when we start making restrictions on the contents of the collection classes, for instance **restrictions on specific classes**.
 
-This library has the following **predefined class collections**:
+This library has the following **predefined class collections**, all located under the namespace `\Eboreum\Collections\Object_`:
 
- - `\Eboreum\Collections\Object_\ClosureCollection`: A collection, which may and will only ever contain instances of `\Closure`.
- - `\Eboreum\Collections\Object_\DateTimeCollection`: A collection, which may and will only ever contain instances of `\DateTime`.
- - `\Eboreum\Collections\Object_\DateTimeImmutableCollection`: A collection, which may and will only ever contain instances of `\DateTimeImmutable`.
- - `\Eboreum\Collections\Object_\DateTimeInterfaceCollection`: A collection, which may and will only ever contain instances of `\DateTimeInterface`.
- - `\Eboreum\Collections\Object_\DirectoryCollection`: A collection, which may and will only ever contain instances of `\Directory`.
- - `\Eboreum\Collections\Object_\ErrorCollection`: A collection, which may and will only ever contain instances of `\Error`.
- - `\Eboreum\Collections\Object_\ExceptionCollection`: A collection, which may and will only ever contain instances of `\Exception`.
- - `\Eboreum\Collections\Object_\SplFileInfoCollection`: A collection, which may and will only ever contain instances of `\SplFileInfo`.
- - `\Eboreum\Collections\Object_\SplFileObjectCollection`: A collection, which may and will only ever contain instances of `\SplFileObject`.
- - `\Eboreum\Collections\Object_\ThrowableCollection`: A collection, which may and will only ever contain instances of `\Throwable`.
- - `\Eboreum\Collections\Object_\stdClassCollection`: A collection, which may and will only ever contain instances of `\stdClass`.
+ - `ClosureCollection`: A collection, which may and will only ever contain instances of `\Closure`.
+ - `DateTimeCollection`: A collection, which may and will only ever contain instances of `\DateTime`.
+ - `DateTimeImmutableCollection`: A collection, which may and will only ever contain instances of `\DateTimeImmutable`.
+ - `DateTimeInterfaceCollection`: A collection, which may and will only ever contain instances of `\DateTimeInterface`.
+ - `DirectoryCollection`: A collection, which may and will only ever contain instances of `\Directory`.
+ - `ErrorCollection`: A collection, which may and will only ever contain instances of `\Error`.
+ - `ExceptionCollection`: A collection, which may and will only ever contain instances of `\Exception`.
+ - `SplFileInfoCollection`: A collection, which may and will only ever contain instances of `\SplFileInfo`.
+ - `SplFileObjectCollection`: A collection, which may and will only ever contain instances of `\SplFileObject`.
+ - `ThrowableCollection`: A collection, which may and will only ever contain instances of `\Throwable`.
+ - `stdClassCollection`: A collection, which may and will only ever contain instances of `\stdClass`.
 
 
 You may use the above files as inspiration on how to build your own specific class collections.
