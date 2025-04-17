@@ -228,14 +228,16 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
         $collectionA = new StringCollection(['2', '1']);
 
         $collator
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('compare')
             ->with('2', '1')
             ->willReturn(1);
 
         $collectionB = $collectionA->toSortedByCollator($collator);
+        $collectionC = $collectionA->toSortedByCollator($collator, false);
 
         $this->assertNotSame($collectionA, $collectionB);
+        $this->assertNotSame($collectionA, $collectionC);
         $this->assertSame(['2', '1'], $collectionA->toArray());
         $this->assertSame([1 => '1', 0 => '2'], $collectionB->toArray());
     }

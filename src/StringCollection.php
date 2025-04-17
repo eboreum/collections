@@ -102,11 +102,13 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
      *   - The PHP extension "intl": https://www.php.net/manual/en/class.collator.php
      *   - A polyfill, e.g. https://packagist.org/packages/symfony/polyfill-intl-icu
      */
-    public function toSortedByCollator(Collator $collator): static
+    public function toSortedByCollator(Collator $collator, bool $isAscending = true): static
     {
+        $direction = $isAscending ? 1 : -1;
+
         return $this->toSortedByCallback(
-            static function (string $a, string $b) use ($collator): int {
-                return (int) $collator->compare($a, $b);
+            static function (string $a, string $b) use ($collator, $direction): int {
+                return ((int) $collator->compare($a, $b)) * $direction;
             },
         );
     }
