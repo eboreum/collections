@@ -135,9 +135,9 @@ Imagine you have a database ORM (Doctrine, Eloquent, etc.). If you use `DateTime
 
 ```json
 "phpstan/phpstan": "^2.1.5",
-"phpunit/phpunit": "^11.3",
+"phpunit/phpunit": "^12.1",
 "slevomat/coding-standard": "8.15.0",
-"squizlabs/php_codesniffer": "3.10.2",
+"squizlabs/php_codesniffer": "3.12.2",
 "symfony/polyfill-intl-icu": "^1.31"
 ```
 
