@@ -221,6 +221,16 @@ class StringCollectionTest extends AbstractTypeCollectionTestCase
         return StringCollection::class;
     }
 
+    public function testToSortedWorks(): void
+    {
+        $collectionA = new StringCollection(['b', 'c', 'a']);
+        $collectionB = $collectionA->toSorted();
+
+        $this->assertNotSame($collectionA, $collectionB);
+        $this->assertSame(['b', 'c', 'a'], $collectionA->toArray());
+        $this->assertSame([2 => 'a', 0 => 'b', 1 => 'c'], $collectionB->toArray());
+    }
+
     public function testToSortedByCollatorWorks(): void
     {
         $collator = $this->createMock(Collator::class);

@@ -6,6 +6,7 @@ namespace Eboreum\Collections;
 
 use Closure;
 use Collator;
+use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
 
 use function is_string;
@@ -19,7 +20,7 @@ use function is_string;
  * @extends Collection<T>
  * @implements UniqueableCollectionInterface<T>
  */
-class StringCollection extends Collection implements UniqueableCollectionInterface
+class StringCollection extends Collection implements SortableCollectionInterface, UniqueableCollectionInterface
 {
     public static function isElementAccepted(mixed $element): bool
     {
@@ -94,6 +95,22 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
     public function next(): ?string
     {
         return parent::next();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Uses the space operator, <=>, for sorting the elements on the clone being returned.
+     */
+    public function toSorted(bool $isAscending = true): static
+    {
+        $direction = $isAscending ? 1 : -1;
+
+        return $this->toSortedByCallback(
+            static function (string $a, string $b) use ($direction): int {
+                return ($a <=> $b) * $direction;
+            },
+        );
     }
 
     /**
