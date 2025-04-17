@@ -158,6 +158,11 @@ See [`LICENSE`](LICENSE) file. Basically: Use this library at your own risk.
 
 We prefer that you create a ticket and or a pull request at https://github.com/eboreum/collections, and have a discussion about a feature or bug here.
 
+## Version branches
+
+- `2.x` = `main`
+- `1.x`
+
 ## No `\ArrayAccess`!
 
 This library does not and will not utilize `\ArrayAccess` ([https://www.php.net/manual/en/class.arrayaccess.php](https://www.php.net/manual/en/class.arrayaccess.php)).
