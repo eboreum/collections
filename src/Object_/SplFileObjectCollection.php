@@ -7,7 +7,6 @@ namespace Eboreum\Collections\Object_;
 use Closure;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
-use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 use SplFileObject;
 
 /**
@@ -16,14 +15,11 @@ use SplFileObject;
  * A collection which contains instances of SplFileObject, exclusively.
  *
  * @template T of SplFileObject
+ * @implements CollectionInterface<T>
  * @extends AbstractNamedClassOrInterfaceCollection<T>
- * @implements GeneratedCollectionInterface<T>
  */
-class SplFileObjectCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
+class SplFileObjectCollection extends AbstractNamedClassOrInterfaceCollection implements CollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public static function getHandledClassName(): string
     {
         return SplFileObject::class;
@@ -49,9 +45,6 @@ class SplFileObjectCollection extends AbstractNamedClassOrInterfaceCollection im
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?SplFileObject
     {
         return parent::current();
@@ -65,17 +58,11 @@ class SplFileObjectCollection extends AbstractNamedClassOrInterfaceCollection im
         return parent::find($key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?SplFileObject
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?SplFileObject
     {
         return parent::get($key);
@@ -91,33 +78,21 @@ class SplFileObjectCollection extends AbstractNamedClassOrInterfaceCollection im
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?SplFileObject
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?SplFileObject
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?SplFileObject
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?SplFileObject
     {
         return parent::next();

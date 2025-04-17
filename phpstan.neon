@@ -1,8 +1,8 @@
 parameters:
-    level: 9
+    level: 10
     paths:
         - script/
         - src/
-        - tests/
+        - tests/tests/
     bootstrapFiles:
         - tests/phpunit.bootstrap.php

@@ -7,7 +7,6 @@ namespace Eboreum\Collections\Object_;
 use Closure;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
-use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 use Exception;
 
 /**
@@ -16,14 +15,11 @@ use Exception;
  * A collection which contains instances of Exception, exclusively.
  *
  * @template T of Exception
+ * @implements CollectionInterface<T>
  * @extends AbstractNamedClassOrInterfaceCollection<T>
- * @implements GeneratedCollectionInterface<T>
  */
-class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
+class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implements CollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public static function getHandledClassName(): string
     {
         return Exception::class;
@@ -49,9 +45,6 @@ class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implem
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?Exception
     {
         return parent::current();
@@ -65,17 +58,11 @@ class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implem
         return parent::find($key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?Exception
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?Exception
     {
         return parent::get($key);
@@ -91,33 +78,21 @@ class ExceptionCollection extends AbstractNamedClassOrInterfaceCollection implem
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?Exception
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?Exception
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?Exception
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?Exception
     {
         return parent::next();

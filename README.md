@@ -3,8 +3,8 @@ Eboreum/Collections: Moving PHP closer towards generics
 
 ![license](https://img.shields.io/packagist/l/eboreum/collections.svg)
 ![build](https://github.com/eboreum/collections/workflows/build/badge.svg?branch=main)
-[![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/7f2a8588f0b8689e3e6341028fd0bcfa/raw/test-coverage__main.json)](https://github.com/eboreum/collections/actions)
-[![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/7f2a8588f0b8689e3e6341028fd0bcfa/raw/phpstan-level__main.json)](https://github.com/eboreum/collections/actions)
+[![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/41726f60f5b61eb3197459c1fbfea90e/raw/test-coverage__main.json)](https://github.com/eboreum/collections/actions)
+[![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/kafoso/41726f60f5b61eb3197459c1fbfea90e/raw/phpstan-level__main.json)](https://github.com/eboreum/collections/actions)
 
 Wish you had generics in PHP? This library provides a sensible means of managing collections of data (i.e. arrays with restrictions), immutably, until such a time that PHP generics are bestowed upon us.
 
@@ -13,13 +13,23 @@ Wish you had generics in PHP? This library provides a sensible means of managing
 
 Comes fully equipped with [phpstan](https://packagist.org/packages/phpstan/phpstan) generics annotations. For details, see: https://phpstan.org/blog/generics-in-php-using-phpdocs
 
+The main goals of this library are:
+
+1. **Accuracy**.
+   - You know with certainty what the collections in your code base can and must contain.
+2. **Safety**.
+   - Immutability prevents unintentional modifications of collections.
+   - You get an exception as soon as an invalid element is encountered.
+
+It is ***not*** intended for speed. If you need speed in certain areas, you still have e.g. raw array manipulation you can rely on.
+
 <a name="requirements"></a>
 # Requirements
 
 ```json
-"php": "^8.1",
-"eboreum/caster": "^1.0",
-"eboreum/exceptional": "^1.0"
+"php": "^8.3",
+"eboreum/caster": "^2.1",
+"eboreum/exceptional": "^2.0"
 ```
 
 For more information, see the [`composer.json`](composer.json) file.
@@ -54,32 +64,24 @@ This library comes equipped with the following simple data type collection class
 
 The real shine comes when we start making restrictions on the contents of the collection classes, for instance **restrictions on specific classes**.
 
-This library has the following **predefined class collections**:
+This library has the following **predefined class collections**, all located under the namespace `\Eboreum\Collections\Object_`:
 
- - `\Eboreum\Collections\Object_\ClosureCollection`: A collection, which may and will only ever contain instances of `\Closure`.
- - `\Eboreum\Collections\Object_\DateTimeCollection`: A collection, which may and will only ever contain instances of `\DateTime`.
- - `\Eboreum\Collections\Object_\DateTimeImmutableCollection`: A collection, which may and will only ever contain instances of `\DateTimeImmutable`.
- - `\Eboreum\Collections\Object_\DateTimeInterfaceCollection`: A collection, which may and will only ever contain instances of `\DateTimeInterface`.
- - `\Eboreum\Collections\Object_\DirectoryCollection`: A collection, which may and will only ever contain instances of `\Directory`.
- - `\Eboreum\Collections\Object_\ErrorCollection`: A collection, which may and will only ever contain instances of `\Error`.
- - `\Eboreum\Collections\Object_\ExceptionCollection`: A collection, which may and will only ever contain instances of `\Exception`.
- - `\Eboreum\Collections\Object_\SplFileInfoCollection`: A collection, which may and will only ever contain instances of `\SplFileInfo`.
- - `\Eboreum\Collections\Object_\SplFileObjectCollection`: A collection, which may and will only ever contain instances of `\SplFileObject`.
- - `\Eboreum\Collections\Object_\ThrowableCollection`: A collection, which may and will only ever contain instances of `\Throwable`.
- - `\Eboreum\Collections\Object_\stdClassCollection`: A collection, which may and will only ever contain instances of `\stdClass`.
+ - `ClosureCollection`: A collection, which may and will only ever contain instances of `\Closure`.
+ - `DateTimeCollection`: A collection, which may and will only ever contain instances of `\DateTime`.
+ - `DateTimeImmutableCollection`: A collection, which may and will only ever contain instances of `\DateTimeImmutable`.
+ - `DateTimeInterfaceCollection`: A collection, which may and will only ever contain instances of `\DateTimeInterface`.
+ - `DirectoryCollection`: A collection, which may and will only ever contain instances of `\Directory`.
+ - `ErrorCollection`: A collection, which may and will only ever contain instances of `\Error`.
+ - `ExceptionCollection`: A collection, which may and will only ever contain instances of `\Exception`.
+ - `SplFileInfoCollection`: A collection, which may and will only ever contain instances of `\SplFileInfo`.
+ - `SplFileObjectCollection`: A collection, which may and will only ever contain instances of `\SplFileObject`.
+ - `ThrowableCollection`: A collection, which may and will only ever contain instances of `\Throwable`.
+ - `stdClassCollection`: A collection, which may and will only ever contain instances of `\stdClass`.
 
 
-You may use the above files as inspiration on how to build your own specific class collections. However, this process can be automated; read more about automation further down.
+You may use the above files as inspiration on how to build your own specific class collections.
 
 The above classes utilize the abstract class `\Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection` and subsequently the interface `\Eboreum\Collections\Contract\ObjectCollectionInterface`.
-
-## Automating writing of collection classes
-
-> **⚠️ NOTICE ⚠️**
->
-> **"eboreum/collection-class-generator" is NOT YET publicly available!**
-
-Writing tens or even hundreds of collection classes, which essentially have the same structure, is tedious. This process can be automated by utilizing [https://packagist.org/packages/eboreum/collection-class-generator](https://packagist.org/packages/eboreum/collection-class-generator), which will write all desired collection classes for you, directly into in your own project to one or more locations of your choosing. It even comes with opt-in writing of unit tests ([https://packagist.org/packages/phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit))!
 
 ## Make collections for anything – not just classes
 
@@ -119,13 +121,24 @@ Notice: Intersection types ([https://php.watch/versions/8.1/intersection-types](
 
 The reason is that methods such as `current`, `find`, `first`, etc. cannot have nullable return types when handling intersections.
 
+# Why is immutability necessary?
+
+Simply put: You unintentionally risk changing mutable ("non-immutable") objects when they are being passed around the code base. You and your team may know not to change a mutable object in code bases you control, but third-party libraries (e.g. via Composer) certainly will not respect your rules. Eventually, someone in your team **_will_** forget about your "do-not-change" rule and introduce an ugly bug, which often times is hard to track down.
+
+## Real-world example of a mutable object incident
+
+Imagine you have a database ORM (Doctrine, Eloquent, etc.). If you use `DateTime` instead of `DateTimeImmutable`, passing that instance of `DateTime` around may change it. Consider this: The instance of `DateTime` was used to set an end date from which point a user can no longer log in to your application. The same instance of `DateTime` was used across 100 users (e.g. for optimization reasons). Now your code, because of the change on the `DateTime` instance, inadvertently blocked 100 users from using your application. Such a type of bug is **_very_** hard to find the root cause for.
+
 # Tests
 
 ## Test/development requirements
 
 ```json
-"phpstan/phpstan": "^1.4",
-"phpunit/phpunit": "^9.5"
+"phpstan/phpstan": "^2.1.5",
+"phpunit/phpunit": "^12.1",
+"slevomat/coding-standard": "8.15.0",
+"squizlabs/php_codesniffer": "3.12.2",
+"symfony/polyfill-intl-icu": "^1.31"
 ```
 
 ## Running tests
@@ -145,6 +158,11 @@ See [`LICENSE`](LICENSE) file. Basically: Use this library at your own risk.
 
 We prefer that you create a ticket and or a pull request at https://github.com/eboreum/collections, and have a discussion about a feature or bug here.
 
+## Version branches
+
+- `2.x` = `main`
+- `1.x`
+
 ## No `\ArrayAccess`!
 
 This library does not and will not utilize `\ArrayAccess` ([https://www.php.net/manual/en/class.arrayaccess.php](https://www.php.net/manual/en/class.arrayaccess.php)).
@@ -163,3 +181,7 @@ It goes against the immutable nature of this library, it's a little bit evil, an
 ### doctrine/collections
 
 This library is greatly inspired by https://packagist.org/packages/doctrine/collections (https://github.com/doctrine/collections) and some of the code is indeed copied from that library (acknowledged by inclusion of the LICENSE file contents at the top of select files, as required by https://github.com/doctrine/collections/blob/94918256daa6ac99c7e5774720c0e76f01936bda/LICENSE).
+
+## Laravel collection
+
+For certain methods, we have also drawn inspiration from https://laravel.com/docs/12.x/collections.

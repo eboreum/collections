@@ -26,8 +26,6 @@ interface MaximumableCollectionInterface extends CollectionInterface
      * Corresponds to the PHP core function `max`.
      *
      * @see https://www.php.net/manual/en/function.max.php
-     *
-     * @return mixed|null
      */
-    public function max();
+    public function max(): mixed;
 }

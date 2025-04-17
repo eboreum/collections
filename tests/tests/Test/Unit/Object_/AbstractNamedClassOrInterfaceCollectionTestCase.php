@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace Test\Unit\Eboreum\Collections\Object_;
 
+use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
+use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
-use Eboreum\Collections\Exception\InvalidArgumentException;
-use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\Exception\UnacceptableElementException;
 use Exception;
 use Test\Unit\Eboreum\Collections\AbstractTypeCollectionTestCase;
 
+use function sprintf;
+
+/**
+ * @template T of object
+ * @template TCollection of Collection<T>
+ * @extends AbstractTypeCollectionTestCase<T, TCollection>
+ */
 abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractTypeCollectionTestCase
 {
     /**
@@ -17,57 +25,34 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
      */
     public function testWithAddedThrowsExceptionWhenArgumentElementIsNotAccepted(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
-        $handledClassName = $handledCollectionClassName::getHandledClassName();
-        $elements = $this->createMultipleElements();
+        /** @var class-string<AbstractNamedClassOrInterfaceCollection<T>> $handledCollectionClassName */
+        $handledCollectionClassName = static::getHandledCollectionClassName();
 
+        /** @var class-string<T> $handledClassName */
+        $handledClassName = $handledCollectionClassName::getHandledClassName();
+
+        $elements = static::createMultipleElements($this);
+
+        /** @var TCollection<T> $collection */
         $collection = new $handledCollectionClassName($elements);
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
         try {
-            $collection->withAdded(null);
+            $collection->withAdded(null); // @phpstan-ignore-line
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s-\>withAdded\(',
-                            '\$element = \(null\) null',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\\\\%s\-\>\$elements = \(array\(4\)\) \[.+, \.\.\. and 1 more element\] \(sample\)',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
+                    'Argument $element = %s cannot be added to the current collection, %s',
+                    Caster::getInstance()->castTyped(null),
+                    Caster::getInstance()->castTyped($collection),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Expects argument \$element to be an object, instance of \\\\%s, but it is not\.',
-                        ' Found: \(null\) null',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote($handledClassName, '/'),
-                ),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);
@@ -83,55 +68,32 @@ abstract class AbstractNamedClassOrInterfaceCollectionTestCase extends AbstractT
      */
     public function testWithRemovedElementThrowsExceptionWhenArgumentElementIsNotAcceptedbyTheCollection(): void
     {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        /** @var class-string<AbstractNamedClassOrInterfaceCollection<T>> $handledCollectionClassName */
+        $handledCollectionClassName = static::getHandledCollectionClassName();
+
+        /** @var class-string<T> $handledClassName */
         $handledClassName = $handledCollectionClassName::getHandledClassName();
+
+        /** @var TCollection<T> $collection */
         $collection = new $handledCollectionClassName();
 
-        assert(is_a($collection, Collection::class)); // Make phpstan happy
-
         try {
-            $collection->withRemovedElement(null);
+            $collection->withRemovedElement(null); // @phpstan-ignore-line
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s\-\>withRemovedElement\(',
-                            '\$element = \(null\) null',
-                        '\) inside \(object\) \\\\%s \{',
-                            '\\\\%s\-\>\$elements = \(array\(0\)\) \[\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote($handledCollectionClassName, '/'),
-                    preg_quote(Collection::class, '/'),
+                    'Argument $element = %s cannot be removed from the current collection, %s',
+                    Caster::getInstance()->castTyped(null),
+                    Caster::getInstance()->castTyped($collection),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(InvalidArgumentException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Expects argument \$element to be an object, instance of \\\\%s, but it is not\.',
-                        ' Found\: \(null\) null',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote($handledClassName, '/'),
-                ),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableElementException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);

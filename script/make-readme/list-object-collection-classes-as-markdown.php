@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=0);
+declare(strict_types=1);
 
 use Eboreum\Collections\Contract\ObjectCollectionInterface;
 
@@ -32,17 +32,25 @@ foreach ($absoluteFilePaths as $filePathAbsolute) {
         continue;
     }
 
+    $reflectionClass = new ReflectionClass($className);
+
+    if ($reflectionClass->isAbstract()) {
+        continue;
+    }
+
+    $classNameWithoutBaseName = mb_substr($className, mb_strlen('Eboreum\Collections\Object_\\'));
+
     $count++;
 
     echo sprintf(
-        " - `\\%s`: A collection, which may and will only ever contain instances of `\\%s`.\n",
-        $className,
+        " - `%s`: A collection, which may and will only ever contain instances of `\\%s`.\n",
+        $classNameWithoutBaseName,
         $className::getHandledClassName(),
     );
 }
 
 if (0 === $count) {
-    throw new \RuntimeException(sprintf(
+    throw new RuntimeException(sprintf(
         '0 instances of \\%s were processed',
         ObjectCollectionInterface::class,
     ));

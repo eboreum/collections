@@ -7,7 +7,6 @@ namespace Eboreum\Collections\Object_;
 use Closure;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
-use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 use stdClass;
 
 /**
@@ -16,14 +15,11 @@ use stdClass;
  * A collection which contains instances of stdClass, exclusively.
  *
  * @template T of stdClass
+ * @implements CollectionInterface<T>
  * @extends AbstractNamedClassOrInterfaceCollection<T>
- * @implements GeneratedCollectionInterface<T>
  */
-class stdClassCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
+class stdClassCollection extends AbstractNamedClassOrInterfaceCollection implements CollectionInterface // phpcs:ignore
 {
-    /**
-     * {@inheritDoc}
-     */
     public static function getHandledClassName(): string
     {
         return stdClass::class;
@@ -49,9 +45,6 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?stdClass
     {
         return parent::current();
@@ -65,17 +58,11 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
         return parent::find($key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?stdClass
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?stdClass
     {
         return parent::get($key);
@@ -91,33 +78,21 @@ class stdClassCollection extends AbstractNamedClassOrInterfaceCollection impleme
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?stdClass
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?stdClass
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?stdClass
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?stdClass
     {
         return parent::next();

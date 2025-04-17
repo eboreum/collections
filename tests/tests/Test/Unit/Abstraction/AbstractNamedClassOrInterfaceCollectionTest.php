@@ -7,22 +7,28 @@ namespace Test\Unit\Eboreum\Collections\Abstraction;
 use DateTime;
 use DateTimeImmutable;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
+use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\Exception\UnacceptableCollectionException;
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+use function basename;
+use function implode;
+use function preg_quote;
+use function sprintf;
+
+#[CoversClass(AbstractNamedClassOrInterfaceCollection::class)]
 class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 {
     public function testConstructorThrowsExceptionWhenHandledClassNameIsNotAnExistingClass(): void
     {
         try {
-            new class ([]) extends AbstractNamedClassOrInterfaceCollection
+            new class ([]) extends AbstractNamedClassOrInterfaceCollection // @phpstan-ignore-line
             {
-                /**
-                 * {@inheritDoc}
-                 */
                 public static function getHandledClassName(): string
                 {
                     /**
@@ -34,21 +40,23 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             };
         } catch (Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
                         '/',
                         '^',
-                        'Failure in \\\\%s-\>__construct\(',
-                            '\$elements = \(array\(0\)\) \[\]',
-                        '\) inside \(object\) \\\\%s@anonymous\/in\/.+\/%s:+\d+ \{',
-                            '\\\\%s\-\>\$elements = \(uninitialized\)',
+                        'Failure in \\\\%s-\>__construct\(\$elements = %s\) inside',
+                        ' \(object\) \\\\%s@anonymous\/in\/.+\/%s:+\d+ \{',
+                        "\n",
+                        '    \\\\%s\-\>\$elements = \(uninitialized\)',
+                        "\n",
                         '\}',
                         '$',
                         '/',
                     ]),
                     preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
+                    preg_quote(Caster::getInstance()->castTyped([]), '/'),
                     preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
@@ -57,7 +65,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -86,18 +94,15 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
     public function testConstructorThrowsExceptionWhenArgumentElementContainsInvalidValues(): void
     {
         $elements = [
-            new stdClass(),
-            new DateTime('2021-01-01T00:00:00+00:00'),
-            new stdClass(),
+            0 => new stdClass(),
+            1 => new DateTime('2021-01-01T00:00:00+00:00'),
+            2 => new stdClass(),
             'foo' => new DateTimeImmutable('2021-01-01T00:00:00+00:00'),
         ];
 
         try {
-            new class ($elements) extends AbstractNamedClassOrInterfaceCollection
+            new class ($elements) extends AbstractNamedClassOrInterfaceCollection // @phpstan-ignore-line
             {
-                /**
-                 * {@inheritDoc}
-                 */
                 public static function getHandledClassName(): string
                 {
                     return 'stdClass';
@@ -105,26 +110,23 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             };
         } catch (Exception $e) { // @phpstan-ignore-line
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
                         '/',
                         '^',
-                        'Failure in \\\\%s-\>__construct\(',
-                            '\$elements = \(array\(4\)\) \[',
-                                '\(int\) 0 => \(object\) \\\\stdClass',
-                                ', \(int\) 1 => \(object\) \\\\DateTime \("2021\-01\-01T00\:00\:00\+00\:00"\)',
-                                ', \(int\) 2 => \(object\) \\\\stdClass',
-                                ', \.\.\. and 1 more element',
-                            '\] \(sample\)',
-                        '\) inside \(object\) \\\\%s@anonymous\/in\/.+\/%s:+\d+ \{',
-                            '\\\\%s\-\>\$elements = \(uninitialized\)',
+                        'Failure in \\\\%s-\>__construct\(\$elements = %s\)',
+                        ' inside \(object\) \\\\%s@anonymous\/in\/.+\/%s:+\d+ \{',
+                        "\n",
+                        '    \\\\%s\-\>\$elements = \(uninitialized\)',
+                        "\n",
                         '\}',
                         '$',
                         '/',
                     ]),
                     preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
+                    preg_quote(Caster::getInstance()->castTyped($elements), '/'),
                     preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
@@ -133,26 +135,24 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
                         '/',
                         '^',
                         'Failure in \\\\%s-\>__construct\(',
-                            '\$elements = \(array\(4\)\) \[',
-                                '\(int\) 0 => \(object\) \\\\stdClass',
-                                ', \(int\) 1 => \(object\) \\\\DateTime \("2021\-01\-01T00\:00\:00\+00\:00"\)',
-                                ', \(int\) 2 => \(object\) \\\\stdClass',
-                                ', \.\.\. and 1 more element',
-                            '\] \(sample\)',
+                            '\$elements = %s',
                         '\) inside \(object\) \\\\%s@anonymous\/in\/.+\/%s:+\d+ \{',
-                            '\\\\%s\-\>\$elements = \(uninitialized\)',
+                        "\n",
+                        '    \\\\%s\-\>\$elements = \(uninitialized\)',
+                        "\n",
                         '\}',
                         '$',
                         '/',
                     ]),
                     preg_quote(Collection::class, '/'),
+                    preg_quote(Caster::getInstance()->castTyped($elements), '/'),
                     preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
                     preg_quote(basename(__FILE__), '/'),
                     preg_quote(Collection::class, '/'),
@@ -161,7 +161,7 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             );
 
             $currentException = $currentException->getPrevious();
-            $this->assertSame(RuntimeException::class, get_class($currentException));
+            $this->assertSame(RuntimeException::class, $currentException::class);
             $this->assertMatchesRegularExpression(
                 sprintf(
                     implode('', [
@@ -196,9 +196,6 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 
         $collectionA = new class ($elementsA) extends AbstractNamedClassOrInterfaceCollection
         {
-            /**
-             * {@inheritDoc}
-             */
             public static function getHandledClassName(): string
             {
                 return 'stdClass';
@@ -212,9 +209,6 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
 
         $collectionB = new class ($elementsB) extends AbstractNamedClassOrInterfaceCollection
         {
-            /**
-             * {@inheritDoc}
-             */
             public static function getHandledClassName(): string
             {
                 return 'DateTimeImmutable';
@@ -225,55 +219,19 @@ class AbstractNamedClassOrInterfaceCollectionTest extends TestCase
             $collectionA->withMerged($collectionB);
         } catch (Exception $e) {
             $currentException = $e;
-            $this->assertSame(RuntimeException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
+            $this->assertSame(UnacceptableCollectionException::class, $currentException::class);
+            $this->assertSame(
                 sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Failure in \\\\%s-\>withMerged\(',
-                            '\$collection = \(object\) \\\\%s@anonymous\/in\/.+\/%s\:\d+ \{.+\}',
-                        '\) inside \(object\) \\\\%s@anonymous\/in\/.+\/%s\:+\d+ \{',
-                            '\\\\%s\-\>\$elements = \(array\(2\)\) \[.+\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(Collection::class, '/'),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(Collection::class, '/'),
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($collectionA),
+                    Caster::getInstance()->castTyped($collectionB),
                 ),
                 $currentException->getMessage(),
             );
 
             $currentException = $currentException->getPrevious();
             $this->assertIsObject($currentException);
-            assert(is_object($currentException)); // Make phpstan happy
-            $this->assertSame(RuntimeException::class, get_class($currentException));
-            $this->assertMatchesRegularExpression(
-                sprintf(
-                    implode('', [
-                        '/',
-                        '^',
-                        'Argument \$collection must be an instance of \\\\%s@anonymous\/in\/.+\/%s\:\d+',
-                        ', but it is not\.',
-                        ' Found\: \(object\) \\\\%s@anonymous\/in\/.+\/%s\:\d+ \{',
-                            '\\\\%s\-\>\$elements = \(array\(2\)\) \[.+\]',
-                        '\}',
-                        '$',
-                        '/',
-                    ]),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(AbstractNamedClassOrInterfaceCollection::class, '/'),
-                    preg_quote(basename(__FILE__), '/'),
-                    preg_quote(Collection::class, '/'),
-                ),
-                $currentException->getMessage(),
-            );
+            $this->assertSame(UnacceptableCollectionException::class, $currentException::class);
 
             $currentException = $currentException->getPrevious();
             $this->assertTrue(null === $currentException);

@@ -1,14 +1,16 @@
 <?php
-#!/bin/env
+
+// !/bin/env
+
 
 declare(strict_types=1);
 
-require_once __DIR__ . "/bootstrap.php";
+require_once __DIR__ . '/bootstrap.php';
 
-$content = file_get_contents(__DIR__ . "/README.source.md");
+$content = file_get_contents(__DIR__ . '/README.source.md');
 assert(is_string($content));
-$composerJsonArray = (function (): array {
-    $contents = file_get_contents(dirname(__DIR__) . "/composer.json");
+$composerJsonArray = (static function (): array {
+    $contents = file_get_contents(dirname(__DIR__) . '/composer.json');
 
     assert(is_string($contents));
 
@@ -26,6 +28,8 @@ assert(is_array($split));
 
 foreach ($split as $i => &$line) {
     if ('%composer.json.description%' === trim($line)) {
+        assert(is_string($composerJsonArray['description']));
+
         $line = (
             $composerJsonArray['description']
             . "\n"
@@ -38,35 +42,45 @@ foreach ($split as $i => &$line) {
     }
 
     if ('%composer.json.authors%' === trim($line)) {
+        assert(is_array($composerJsonArray['authors']));
+
         $segments = [];
-        foreach ($composerJsonArray["authors"] as $author) {
+
+        foreach ($composerJsonArray['authors'] as $author) {
+            assert(is_array($author));
+            assert(is_string($author['name']));
+
             $homepageURL = null;
 
-            if (array_key_exists("homepage", $author)) {
+            if (array_key_exists('homepage', $author)) {
+                assert(is_string($author['homepage']));
+
                 $homepageURL = $author['homepage'];
             }
 
-            $segment = "- **" . $author["name"] . "**";
+            $segment = '- **' . $author['name'] . '**';
 
             if ($homepageURL) {
                 preg_match(
                     sprintf(
                         '/^%s\/(\w+)/',
-                        preg_quote("https://github.com", "/"),
+                        preg_quote('https://github.com', '/'),
                     ),
-                    $author["homepage"],
+                    $homepageURL,
                     $match,
                 );
 
                 if ($match) {
                     $segment .= sprintf(
-                        " (%s)",
+                        ' (%s)',
                         $match[1],
                     );
                 }
             }
 
-            if (array_key_exists("email", $author)) {
+            if (array_key_exists('email', $author)) {
+                assert(is_string($author['email']));
+
                 $segment .= '<br>E-mail: ' . sprintf(
                     '<a href="mailto:%s">%s</a>',
                     $author['email'],
@@ -101,6 +115,7 @@ foreach ($split as $i => &$line) {
         $composerJsonArrayKey = $match[1];
 
         assert(array_key_exists($composerJsonArrayKey, $composerJsonArray));
+        assert(is_array($composerJsonArray[$composerJsonArrayKey]));
 
         foreach ($composerJsonArray[$composerJsonArrayKey] as $requireName => $requireVersion) {
             assert(is_string($requireName));
@@ -114,11 +129,11 @@ foreach ($split as $i => &$line) {
         }
 
         $line = (
-            "```json"
+            '```json'
             . "\n"
-            . implode("," . "\n", $segments)
+            . implode(',' . "\n", $segments)
             . "\n"
-            . "```"
+            . '```'
         );
 
         continue;
@@ -127,7 +142,7 @@ foreach ($split as $i => &$line) {
     preg_match('/^%include "(.+)"%$/', $line, $includeMatch);
 
     if ($includeMatch) {
-        $includeContent = file_get_contents(dirname(__DIR__) . "/" . $includeMatch[1]);
+        $includeContent = file_get_contents(dirname(__DIR__) . '/' . $includeMatch[1]);
 
         assert(is_string($includeContent));
 
@@ -136,14 +151,12 @@ foreach ($split as $i => &$line) {
         assert(is_array($includeSplit));
 
         foreach ($includeSplit as $j => &$includeLine) {
-            assert(is_string($includeLine));
-
             if (preg_match('/^(.+);\s*\/\/\s*README.md.remove\s*$/', trim($includeLine))) {
                 $includeLine = null;
 
-                if (array_key_exists($j-1, $includeSplit)) {
-                    if ("" === $includeSplit[$j-1]) {
-                        $includeSplit[$j-1] = null;
+                if (array_key_exists($j - 1, $includeSplit)) {
+                    if ('' === $includeSplit[$j - 1]) {
+                        $includeSplit[$j - 1] = null;
                     }
                 }
 
@@ -151,7 +164,7 @@ foreach ($split as $i => &$line) {
             }
         }
 
-        $includeSplit = array_filter($includeSplit, "is_string");
+        $includeSplit = array_filter($includeSplit, 'is_string');
 
         $line = implode("\n", $includeSplit);
     }
@@ -160,7 +173,7 @@ foreach ($split as $i => &$line) {
 
     if ($runMatch) {
         ob_start();
-        include dirname(__DIR__) . "/" . $runMatch[1];
+        include dirname(__DIR__) . '/' . $runMatch[1];
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -170,8 +183,8 @@ foreach ($split as $i => &$line) {
 
 $content = implode("\n", $split);
 
-if (defined("TEST_ROOT_PATH")) {
+if (defined('TEST_ROOT_PATH')) {
     echo $content;
 } else {
-    file_put_contents(dirname(__DIR__) . "/README.md", $content);
+    file_put_contents(dirname(__DIR__) . '/README.md', $content);
 }

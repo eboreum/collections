@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @codingStandardsIgnoreStart
  *
@@ -37,16 +38,51 @@ use ArrayIterator;
 use Closure;
 use Eboreum\Caster\Attribute\DebugIdentifier;
 use Eboreum\Caster\Contract\DebugIdentifierAttributeInterface;
-use Eboreum\Collections\Caster;
 use Eboreum\Collections\Contract\CollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
-use Eboreum\Collections\Exception\InvalidArgumentException;
+use Eboreum\Collections\Exception\ElementNotFoundException;
+use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
-use Eboreum\Exceptional\ExceptionMessageGenerator;
+use Eboreum\Collections\Exception\UnacceptableCollectionException;
+use Eboreum\Collections\Exception\UnacceptableElementException;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionObject;
 use Throwable;
+
+use function array_chunk;
+use function array_diff;
+use function array_diff_key;
+use function array_filter;
+use function array_intersect;
+use function array_intersect_key;
+use function array_key_exists;
+use function array_key_first;
+use function array_key_last;
+use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_reverse;
+use function array_search;
+use function array_slice;
+use function array_sum;
+use function array_values;
+use function count;
+use function end;
+use function func_get_args;
+use function implode;
+use function is_a;
+use function is_bool;
+use function is_int;
+use function is_scalar;
+use function is_string;
+use function key;
+use function next;
+use function reset;
+use function sprintf;
+use function uasort;
+
+use const ARRAY_FILTER_USE_BOTH;
 
 /**
  * {@inheritDoc}
@@ -56,6 +92,44 @@ use Throwable;
  */
 class Collection implements CollectionInterface, DebugIdentifierAttributeInterface
 {
+    public static function assertIsElementAccepted(mixed $element): void
+    {
+        if (false === static::isElementAccepted($element)) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $element = %s is not accepted by %s',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
+                ),
+            );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function makeInvalids(array $elements): array
+    {
+        $invalids = [];
+
+        foreach ($elements as $k => $v) {
+            if (false === static::isElementAccepted($v)) {
+                $invalids[] = sprintf(
+                    '%s => %s',
+                    Caster::getInstance()->cast($k),
+                    Caster::getInstance()->castTyped($v),
+                );
+            }
+        }
+
+        return $invalids;
+    }
+
+    public static function isElementAccepted(mixed $element): bool
+    {
+        return true;
+    }
+
     /**
      * @var array<int|string, T>
      */
@@ -89,17 +163,16 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function chunk(int $chunkSize): CollectionInterface
     {
         try {
             if (false === ($chunkSize >= 1)) { // @phpstan-ignore-line
-                throw new RuntimeException(sprintf(
-                    'Argument $chunkSize must be >= 1, but it is not. Found: %s',
-                    Caster::getInstance()->castTyped($chunkSize),
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Argument $chunkSize = %s must be >= 1, but it is not',
+                        Caster::getInstance()->castTyped($chunkSize),
+                    ),
+                );
             }
 
             $elements = [];
@@ -119,7 +192,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 );
             }
 
-            /** @var Collection<static<T>> */
+            /** @var Collection<static<T>> $collection */
             $collection = new Collection($elements);
         } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
@@ -129,7 +202,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             ), 0, $t);
         }
 
-        return $collection; // @phpstan-ignore-line
+        return $collection;
     }
 
     /**
@@ -142,18 +215,12 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return (false !== array_search($element, $this->elements, true));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function count(): int
     {
         return count($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function current()
+    public function current(): mixed
     {
         $key = $this->key();
 
@@ -164,9 +231,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function each(Closure $callback, ?object $carry = null): void
     {
         try {
@@ -191,9 +255,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function every(Closure $callback, ?object $carry = null): void
     {
         try {
@@ -237,51 +298,91 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function find(Closure $callback)
+    public function find(Closure $callback): mixed
     {
         if (!$this->elements) {
             return null;
         }
 
-        $return = null;
-
         try {
-            foreach ($this->elements as $k => $v) {
-                $callbackResult = $callback($v, $k);
-
-                if (false === is_bool($callbackResult)) { // @phpstan-ignore-line We want to capture this anyway
-                    throw new RuntimeException(sprintf(
-                        'Call $callback(%s, %s) did not return a boolean, which it must. Found return value: %s',
-                        Caster::getInstance()->castTyped($v),
-                        Caster::getInstance()->castTyped($k),
-                        Caster::getInstance()->castTyped($callbackResult),
-                    ));
-                }
-
-                if (true === $callbackResult) {
-                    $return = $v;
-
-                    break;
-                }
-            }
-        } catch (Throwable $t) {
-            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
-                $this,
-                new ReflectionMethod(self::class, __FUNCTION__),
-                func_get_args(),
-            ), 0, $t);
+            $return = $this->findOrFail($callback);
+        } catch (ElementNotFoundException) {
+            return null;
         }
 
         return $return;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function first()
+    public function findOrFail(Closure $callback): mixed
+    {
+        /** @var T|null $return */
+        $return = null;
+
+        /**
+         * We need this variable, in addition to the $return variable, because someone may indeed be searching for null
+         * in a collection.
+         *
+         * @var bool $found
+         */
+        $found = false;
+
+        try {
+            foreach ($this->elements as $k => $v) {
+                $callbackResult = $callback($v, $k);
+
+                if (false === is_bool($callbackResult)) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Call $callback(%s, %s) did not return a boolean, which it must. Found return value: %s',
+                            Caster::getInstance()->castTyped($v),
+                            Caster::getInstance()->castTyped($k),
+                            Caster::getInstance()->castTyped($callbackResult),
+                        ),
+                    );
+                }
+
+                if (true === $callbackResult) {
+                    $return = $v;
+                    $found = true;
+
+                    break;
+                }
+            }
+        } catch (Throwable $t) {
+            throw new RuntimeException(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $this,
+                    new ReflectionMethod(self::class, __FUNCTION__),
+                    func_get_args(),
+                ),
+                0,
+                $t,
+            );
+        }
+
+        if (false === $found) {
+            throw new ElementNotFoundException(
+                sprintf(
+                    'In collection %s, an element could not be found from argument $callback = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($callback),
+                ),
+            );
+        }
+
+        /**
+         * phpstan needs the "var" definition to be here.
+         * phpcs is angry, unless there is a variable reference (assignment) below.
+         * Assigning the same variable into itself will get optimized away.
+         *
+         * @var T $return
+         */
+        $return = $return;
+
+        return $return;
+    }
+
+    public function first(): mixed
     {
         reset($this->elements);
 
@@ -294,9 +395,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $this->elements[$key];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function firstKey(): int|string|null
     {
         if (!$this->elements) {
@@ -306,16 +404,72 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return array_key_first($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function get(int|string $key)
+    public function firstKeyOrFail(): int|string
+    {
+        $key = $this->firstKey();
+
+        if (null === $key) {
+            throw new KeyNotFoundException(
+                sprintf(
+                    'Collection %s is empty and therefore it does not have a "first" key',
+                    Caster::getInstance()->castTyped($this)
+                ),
+            );
+        }
+
+        return $key;
+    }
+
+    public function firstOrFail(): mixed
+    {
+        $first = $this->first();
+
+        if (null === array_key_first($this->elements)) {
+            throw new ElementNotFoundException(
+                sprintf(
+                    'Collection %s is empty and therefore it does not have a "first" element',
+                    Caster::getInstance()->castTyped($this)
+                ),
+            );
+        }
+
+        /**
+         * phpstan needs the "var" definition to be here.
+         * phpcs is angry, unless there is a variable reference (assignment) below.
+         * Assigning the same variable into itself will get optimized away.
+         *
+         * @var T $first
+         */
+        $first = $first;
+
+        return $first;
+    }
+
+    public function get(int|string $key): mixed
     {
         if (array_key_exists($key, $this->elements)) {
             return $this->elements[$key];
         }
 
         return null;
+    }
+
+    public function getOrFail(int|string $key): mixed
+    {
+        if (false === array_key_exists($key, $this->elements)) {
+            throw new ElementNotFoundException(
+                sprintf(
+                    'In collection %s, an element with $key = %s does not exist',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($key),
+                ),
+            );
+        }
+
+        /** @var T $return */
+        $return = $this->elements[$key];
+
+        return $return;
     }
 
     /**
@@ -337,8 +491,36 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
     }
 
     /**
-     * {@inheritDoc}
+     * @param CollectionInterface<T> $collection
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
      */
+    public function guardCollectionInheritanceAndAcceptedElements(CollectionInterface $collection): void
+    {
+        if (false === is_a($collection, static::class)) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'Argument $collection = %s must be an instance of %s, but it is not',
+                    Caster::getInstance()->castTyped($collection),
+                    Caster::makeNormalizedClassName(new ReflectionObject($this)),
+                ),
+            );
+        }
+
+        $invalids = static::makeInvalids($collection->toArray());
+
+        if ($invalids) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    '%d/%d elements are invalid, including: [%s]',
+                    count($invalids),
+                    count($collection),
+                    implode(', ', $invalids),
+                ),
+            );
+        }
+    }
+
     public function has(int|string $key): bool
     {
         return array_key_exists($key, $this->elements);
@@ -360,18 +542,12 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $key;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function key(): int|string|null
     {
         return key($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function last()
+    public function last(): mixed
     {
         end($this->elements);
 
@@ -384,9 +560,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $this->elements[$key];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function lastKey(): int|string|null
     {
         if (!$this->elements) {
@@ -394,6 +567,48 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         }
 
         return array_key_last($this->elements);
+    }
+
+    public function lastKeyOrFail(): int|string
+    {
+        $key = $this->lastKey();
+
+        if (null === $key) {
+            throw new KeyNotFoundException(
+                sprintf(
+                    'Collection %s is empty and therefore it does not have a "last" key',
+                    Caster::getInstance()->castTyped($this)
+                ),
+            );
+        }
+
+        return $key;
+    }
+
+    public function lastOrFail(): mixed
+    {
+        /** @var T|null $last */
+        $last = $this->last();
+
+        if (null === array_key_last($this->elements)) {
+            throw new ElementNotFoundException(
+                sprintf(
+                    'Collection %s is empty and therefore it does not have a "last" element',
+                    Caster::getInstance()->castTyped($this)
+                ),
+            );
+        }
+
+        /**
+         * phpstan needs the "var" definition to be here.
+         * phpcs is angry, unless there is a variable reference (assignment) below.
+         * Assigning the same variable into itself will get optimized away.
+         *
+         * @var T $last
+         */
+        $last = $last;
+
+        return $last;
     }
 
     /**
@@ -512,10 +727,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $element;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function next()
+    public function next(): mixed
     {
         next($this->elements);
         $key = key($this->elements);
@@ -543,9 +755,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return array_values($this->elements);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toCleared(): static
     {
         $clone = clone $this;
@@ -554,9 +763,150 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    public function toDifference(CollectionInterface $collection, bool $isBidirectional = false): static
+    {
+        try {
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
+
+            $clone = clone $this;
+            $clone->elements = array_diff(
+                $this->toArray(),
+                $collection->toArray(),
+            );
+
+            if ($isBidirectional) {
+                $clone->elements = array_merge(
+                    $clone->elements,
+                    array_diff(
+                        $collection->toArray(),
+                        $this->toArray(),
+                    ),
+                );
+            }
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
+            );
+        } catch (Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
+
+        return $clone;
+    }
+
+    public function toDifferenceByKey(CollectionInterface $collection, bool $isBidirectional = false): static
+    {
+        try {
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
+
+            $clone = clone $this;
+            $clone->elements = array_diff_key(
+                $this->toArray(),
+                $collection->toArray(),
+            );
+
+            if ($isBidirectional) {
+                $clone->elements = array_merge(
+                    $clone->elements,
+                    array_diff_key(
+                        $collection->toArray(),
+                        $this->toArray(),
+                    ),
+                );
+            }
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
+            );
+        } catch (Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
+
+        return $clone;
+    }
+
+    public function toIntersection(CollectionInterface $collection): static
+    {
+        try {
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
+
+            $clone = clone $this;
+            $clone->elements = array_intersect(
+                $clone->elements,
+                $collection->toArray(),
+            );
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
+            );
+        } catch (Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
+
+        return $clone;
+    }
+
+    public function toIntersectionByKey(CollectionInterface $collection): static
+    {
+        try {
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
+
+            $clone = clone $this;
+            $clone->elements = array_intersect_key(
+                $clone->elements,
+                $collection->toArray(),
+            );
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
+            );
+        } catch (Throwable $t) {
+            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                $this,
+                new ReflectionMethod(self::class, __FUNCTION__),
+                func_get_args(),
+            ), 0, $t);
+        }
+
+        return $clone;
+    }
+
     public function toReindexed(
         Closure $closure,
         ToReindexedDuplicateKeyBehaviorEnum $duplicateKeyBehavior = ToReindexedDuplicateKeyBehaviorEnum::throw_exception
@@ -564,13 +914,13 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         try {
             $clone = clone $this;
 
-            /** @var array<T> */
+            /** @var array<T> $resultingElements */
             $resultingElements = [];
 
-            /** @var array<string> */
+            /** @var array<string> $invalidTypeErrorMessages */
             $invalidTypeErrorMessages = [];
 
-            /** @var array<int|string, array<int|string>> */
+            /** @var array<int|string, array<int|string>> $resultingKeyToOriginalKeys */
             $resultingKeyToOriginalKeys = [];
 
             foreach ($clone->elements as $key => $element) {
@@ -636,7 +986,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
                 $duplicateKeysGroups
                 && $duplicateKeyBehavior === ToReindexedDuplicateKeyBehaviorEnum::throw_exception
             ) {
-                /** @var array<string> */
+                /** @var array<string> $groupMessages */
                 $groupMessages = [];
 
                 foreach ($duplicateKeysGroups as $resultingKey => $originalKeys) {
@@ -683,9 +1033,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toReversed(bool $isPreservingKeys = true): static
     {
         $clone = clone $this;
@@ -694,9 +1041,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toSequential(): static
     {
         $clone = clone $this;
@@ -705,9 +1049,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toSortedByCallback(Closure $callback): static
     {
         try {
@@ -724,16 +1065,13 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): static
     {
         try {
             $clone = clone $this;
 
             /**
-             * @var array<string, array{key: int|string, value: mixed}>
+             * @var array<string, array{key: int|string, value: mixed}> $uniqueStringToKeyAndElement
              */
             $uniqueStringToKeyAndElement = [];
 
@@ -750,10 +1088,7 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
                 if (false === is_string($result)) { // @phpstan-ignore-line We want to capture this anyway
                     throw new RuntimeException(sprintf(
-                        implode('', [
-                            'Call $callback(%s, %s) must return string, but it did not.',
-                            ' Found return value: %s',
-                        ]),
+                        'Call $callback(%s, %s) must return a string, but it did not. Resulting return value: %s',
                         Caster::getInstance()->castTyped($value),
                         Caster::getInstance()->castTyped($key),
                         Caster::getInstance()->castTyped($result),
@@ -801,12 +1136,26 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
 
             $clone = clone $this;
             $clone->elements[] = $element;
+        } catch (UnacceptableElementException $e) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $element = %s cannot be added to the current collection, %s',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::getInstance()->castTyped($this),
+                ),
+                0,
+                $e,
+            );
         } catch (Throwable $t) {
-            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
-                $this,
-                new ReflectionMethod(self::class, __FUNCTION__),
-                func_get_args(),
-            ), 0, $t);
+            throw new RuntimeException(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $this,
+                    new ReflectionMethod(self::class, __FUNCTION__),
+                    func_get_args(),
+                ),
+                0,
+                $t,
+            );
         }
 
         return $clone;
@@ -821,12 +1170,15 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             $invalids = static::makeInvalids($elements);
 
             if ($invalids) {
-                throw new RuntimeException(sprintf(
-                    'In argument $elements, %d/%d elements are invalid, including: [%s]',
-                    count($invalids),
-                    count($elements),
-                    implode(', ', $invalids),
-                ));
+                throw new UnacceptableElementException(
+                    sprintf(
+                        'In argument $elements = %s, %d/%d elements are invalid, including: [%s]',
+                        Caster::getInstance()->castTyped($elements),
+                        count($invalids),
+                        count($elements),
+                        implode(', ', $invalids),
+                    ),
+                );
             }
 
             $clone = clone $this;
@@ -834,20 +1186,31 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             foreach ($elements as $element) {
                 $clone->elements[] = $element;
             }
+        } catch (UnacceptableElementException $e) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $elements = %s cannot be added to the current collection, %s',
+                    Caster::getInstance()->castTyped($elements),
+                    Caster::getInstance()->castTyped($this),
+                ),
+                0,
+                $e,
+            );
         } catch (Throwable $t) {
-            throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
-                $this,
-                new ReflectionMethod(self::class, __FUNCTION__),
-                func_get_args(),
-            ), 0, $t);
+            throw new RuntimeException(
+                ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
+                    $this,
+                    new ReflectionMethod(self::class, __FUNCTION__),
+                    func_get_args(),
+                ),
+                0,
+                $t,
+            );
         }
 
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withFiltered(Closure $callback): static
     {
         try {
@@ -868,38 +1231,25 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withMerged(CollectionInterface $collection): static
     {
         try {
-            if (false === is_a($collection, static::class)) {
-                throw new RuntimeException(sprintf(
-                    'Argument $collection must be an instance of %s, but it is not. Found: %s',
-                    Caster::makeNormalizedClassName(new ReflectionObject($this)),
-                    Caster::getInstance()->castTyped($collection),
-                ));
-            }
-
-            $invalids = static::makeInvalids($collection->toArray());
-
-            if ($invalids) {
-                throw new RuntimeException(sprintf(
-                    implode('', [
-                        'Argument $collection cannot be merged into the current collection',
-                        ', because %d/%d elements are invalid, including: [%s]',
-                    ]),
-                    count($invalids),
-                    count($collection),
-                    implode(', ', $invalids),
-                ));
-            }
+            $this->guardCollectionInheritanceAndAcceptedElements($collection);
 
             $clone = clone $this;
             $clone->elements = array_merge(
                 $clone->elements,
-                $collection->elements,
+                $collection->toArray(),
+            );
+        } catch (UnacceptableCollectionException | UnacceptableElementException $e) {
+            throw new UnacceptableCollectionException(
+                sprintf(
+                    'The current collection, %s, cannot be merged with argument $collection = %s',
+                    Caster::getInstance()->castTyped($this),
+                    Caster::getInstance()->castTyped($collection),
+                ),
+                0,
+                $e,
             );
         } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
@@ -912,18 +1262,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withRemoved($key): static
+    public function withRemoved(int|string $key): static
     {
-        if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
-            throw new InvalidArgumentException(sprintf(
-                'Argument $key must be int or string, but it is not. Found: %s',
-                Caster::getInstance()->castTyped($key),
-            ));
-        }
-
         $clone = clone $this;
 
         unset($clone->elements[$key]);
@@ -945,6 +1285,16 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
             if (false !== $key) {
                 unset($clone->elements[$key]);
             }
+        } catch (UnacceptableElementException $e) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $element = %s cannot be removed from the current collection, %s',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::getInstance()->castTyped($this),
+                ),
+                0,
+                $e,
+            );
         } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
@@ -956,35 +1306,24 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withSet($key, $element): static
+    public function withSet(int|string $key, mixed $element): static
     {
         try {
-            $errorMessages = [];
-
-            if (false === is_int($key) && false === is_string($key)) { // @phpstan-ignore-line
-                $errorMessages[] = sprintf(
-                    'Argument $key must be int or string, but it is not. Found: %s',
-                    Caster::getInstance()->castTyped($key),
-                );
-            }
-
-            if (false === static::isElementAccepted($element)) {
-                $errorMessages[] = sprintf(
-                    'Argument $element is not accepted by %s. Found: %s',
-                    Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
-                    Caster::getInstance()->castTyped($element),
-                );
-            }
-
-            if ($errorMessages) {
-                throw new RuntimeException(implode('. ', $errorMessages));
-            }
+            static::assertIsElementAccepted($element);
 
             $clone = clone $this;
             $clone->elements[$key] = $element;
+        } catch (UnacceptableElementException $e) {
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Argument $element = %s (with $key = %s) cannot be set on the current collection, %s',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::getInstance()->castTyped($key),
+                    Caster::getInstance()->castTyped($this),
+                ),
+                0,
+                $e,
+            );
         } catch (Throwable $t) {
             throw new RuntimeException(ExceptionMessageGenerator::getInstance()->makeFailureInMethodMessage(
                 $this,
@@ -996,9 +1335,6 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withSliced(int $offset, ?int $length = null): static
     {
         $clone = clone $this;
@@ -1007,56 +1343,8 @@ class Collection implements CollectionInterface, DebugIdentifierAttributeInterfa
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isEmpty(): bool
     {
         return !$this->elements;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        if (false === static::isElementAccepted($element)) {
-            throw new InvalidArgumentException(sprintf(
-                'Argument $element is not accepted by %s. Found: %s',
-                Caster::makeNormalizedClassName(new ReflectionClass(static::class)),
-                Caster::getInstance()->castTyped($element),
-            ));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function makeInvalids(array $elements): array
-    {
-        $invalids = [];
-
-        foreach ($elements as $k => $v) {
-            if (false === static::isElementAccepted($v)) {
-                $invalids[] = sprintf(
-                    '%s => %s',
-                    Caster::getInstance()->cast($k),
-                    Caster::getInstance()->castTyped($v),
-                );
-            }
-        }
-
-        return $invalids;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * We use "codingStandardsIgnoreStart", because it reports $element is unused, and we know this, but it has to
-     * respect the method definition in CollectionInterface.
-     */
-    public static function isElementAccepted($element): bool // @codingStandardsIgnoreLine
-    {
-        return true;
     }
 }

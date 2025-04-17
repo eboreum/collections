@@ -7,12 +7,20 @@ namespace Eboreum\Collections\Abstraction;
 use Eboreum\Collections\Caster;
 use Eboreum\Collections\Collection;
 use Eboreum\Collections\Contract\ObjectCollectionInterface;
-use Eboreum\Collections\Exception\InvalidArgumentException;
 use Eboreum\Collections\Exception\RuntimeException;
-use Eboreum\Exceptional\ExceptionMessageGenerator;
+use Eboreum\Collections\Exception\UnacceptableElementException;
+use Eboreum\Collections\ExceptionMessageGenerator;
 use ReflectionClass;
 use ReflectionMethod;
 use Throwable;
+
+use function assert;
+use function class_exists;
+use function func_get_args;
+use function interface_exists;
+use function is_a;
+use function is_object;
+use function sprintf;
 
 /**
  * {@inheritDoc}
@@ -22,6 +30,31 @@ use Throwable;
  */
 abstract class AbstractNamedClassOrInterfaceCollection extends Collection implements ObjectCollectionInterface
 {
+    public static function assertIsElementAccepted(mixed $element): void
+    {
+        if (false === static::isElementAccepted($element)) {
+            $handledClassName = static::getHandledClassName();
+
+            assert(class_exists($handledClassName) || interface_exists($handledClassName));
+
+            throw new UnacceptableElementException(
+                sprintf(
+                    'Expects argument $element = %s to be an object, instance of %s, but it is not',
+                    Caster::getInstance()->castTyped($element),
+                    Caster::makeNormalizedClassName(new ReflectionClass($handledClassName)),
+                ),
+            );
+        }
+    }
+
+    public static function isElementAccepted(mixed $element): bool
+    {
+        return (
+            is_object($element)
+            && is_a($element, static::getHandledClassName())
+        );
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -49,34 +82,5 @@ abstract class AbstractNamedClassOrInterfaceCollection extends Collection implem
                 func_get_args(),
             ), 0, $t);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function assertIsElementAccepted($element): void
-    {
-        if (false === static::isElementAccepted($element)) {
-            $handledClassName = static::getHandledClassName();
-
-            assert(class_exists($handledClassName) || interface_exists($handledClassName));
-
-            throw new InvalidArgumentException(sprintf(
-                'Expects argument $element to be an object, instance of %s, but it is not. Found: %s',
-                Caster::makeNormalizedClassName(new ReflectionClass($handledClassName)),
-                Caster::getInstance()->castTyped($element),
-            ));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function isElementAccepted($element): bool
-    {
-        return (
-            is_object($element)
-            && is_a($element, static::getHandledClassName())
-        );
     }
 }

@@ -7,8 +7,12 @@ namespace Eboreum\Collections\Contract;
 use Closure;
 use Countable;
 use Eboreum\Collections\Contract\CollectionInterface\ToReindexedDuplicateKeyBehaviorEnum;
-use Eboreum\Collections\Exception\InvalidArgumentException;
+use Eboreum\Collections\Exception\ElementNotFoundException;
+use Eboreum\Collections\Exception\InvalidClosureReturnValueException;
+use Eboreum\Collections\Exception\KeyNotFoundException;
 use Eboreum\Collections\Exception\RuntimeException;
+use Eboreum\Collections\Exception\UnacceptableCollectionException;
+use Eboreum\Collections\Exception\UnacceptableElementException;
 use IteratorAggregate;
 
 /**
@@ -26,33 +30,32 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
 {
     /**
      * Do nothing if the provided $element argument is accepted in the implementing collection class. Otherwise,
-     * must throw an InvalidArgumentException.
+     * must throw an UnacceptableElementException.
      *
-     * @param mixed $element
-     * @throws InvalidArgumentException
+     * @throws UnacceptableElementException
      */
-    public static function assertIsElementAccepted($element): void;
+    public static function assertIsElementAccepted(mixed $element): void;
 
     /**
      * Returns a human readable array with strings describing the sequence of invalid elements.
      *
      * @param array<int|string, mixed> $elements
+     *
      * @return array<string>
      */
     public static function makeInvalids(array $elements): array;
 
     /**
-     * Returns `true` when the $element arguemnt is accepted in the implementing collection class. Otherwise, returns
+     * Returns `true` when the $element argument is accepted in the implementing collection class. Otherwise, returns
      * `false`.
-     *
-     * @param mixed $element
      */
-    public static function isElementAccepted($element): bool;
+    public static function isElementAccepted(mixed $element): bool;
 
     /**
-     * @param array<int|string, T> $elements Must throw a RuntimeException when one or more elements are not accepted
-     *                                       by the implementing collection class.
-     * @throws RuntimeException
+     * @param array<int|string, T> $elements Must throw a UnacceptableElementException when one or more elements are not
+     *                                       accepted by the implementing collection class.
+     *
+     * @throws UnacceptableElementException
      */
     public function __construct(array $elements = []);
 
@@ -65,19 +68,23 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @see https://www.php.net/manual/en/function.array-chunk.php
      *
      * @param int<1, max> $chunkSize Must be > 0. Otherwise, a RuntimeException must be thrown.
+     *
      * @return CollectionInterface<static<T>>
+     *
      * @throws RuntimeException
      */
     public function chunk(int $chunkSize): CollectionInterface;
 
     /**
      * Returns `true` when the collection contains the $element argument. Otherwise, returns `false`.
-     * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
+     * Must throw an UnacceptableElementException when the $element argument is invalid for the implementing collection
+     * class.
      *
      * @param T $element
-     * @throws RuntimeException
+     *
+     * @throws UnacceptableElementException
      */
-    public function contains($element): bool;
+    public function contains(mixed $element): bool;
 
     /**
      * Returns the current element for the array pointer in the collection's elements. If empty, returns `null`.
@@ -88,7 +95,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @return T|null
      */
-    public function current();
+    public function current(): mixed;
 
     /**
      * Iterates over all elements in the current collection. Cannot break out of the loop. To do so, use the `every`
@@ -102,6 +109,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @param Closure(mixed, int|string, object|null):void $callback
      * @param object|null $carry Corresponds to the $carry argument in the $callback.
+     *
      * @throws RuntimeException
      */
     public function each(Closure $callback, ?object $carry = null): void;
@@ -119,11 +127,12 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * To break out of the iteration (like the `break` keyword in an ordinary loop), return `false` inside the
      * $callback. Returning nothing (void), `null`, or `true` will cause the loop to continue.
      *
-     * Any other return value returned by $callback must cause an exception to be thrown.
+     * Any other return value returned by $callback must cause an InvalidClosureReturnValueException to be thrown.
      *
      * @param Closure(mixed, int|string, object|null):(bool|void|null) $callback
      * @param object|null $carry Corresponds to the $carry argument in the $callback.
-     * @throws RuntimeException
+     *
+     * @throws InvalidClosureReturnValueException|RuntimeException
      */
     public function every(Closure $callback, ?object $carry = null): void;
 
@@ -134,10 +143,24 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @param Closure(T, int|string):bool $callback This closure will be called with arguments `mixed $v` and
      *                                              `int|string $k`, where $v is an element contained in the current
      *                                              collection and $k is the element's respective key.
+     *
      * @return T|null
-     * @throws RuntimeException
+     *
+     * @throws ElementNotFoundException
      */
-    public function find(Closure $callback);
+    public function find(Closure $callback): mixed;
+
+    /**
+     * Same as the "find" method above. However, when an element is NOT found, an exception is thrown instead of null
+     * being returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws ElementNotFoundException
+     */
+    public function findOrFail(Closure $callback): mixed;
 
     /**
      * Returns the first element in the collection's elements. If empty, returns `null`. Moves the array pointer.
@@ -148,7 +171,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @return T|null
      */
-    public function first();
+    public function first(): mixed;
 
     /**
      * Returns the first key – int or string – in the collection. If empty, returns `null`.
@@ -158,6 +181,30 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @see https://www.php.net/manual/en/function.array-key-first.php
      */
     public function firstKey(): int|string|null;
+
+    /**
+     * Same as the "firstKey" method above. However, when collection is empty, an exception is thrown instead of null
+     * being returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws KeyNotFoundException
+     */
+    public function firstKeyOrFail(): mixed;
+
+    /**
+     * Same as the "first" method above. However, when collection is empty, an exception is thrown instead of null being
+     * returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws ElementNotFoundException
+     */
+    public function firstOrFail(): mixed;
 
     /**
      * Returns the array keys for the elements in the current collection.
@@ -172,19 +219,38 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
 
     /**
      * Returns the element at the $key position in the collection's elements. If key does not exist, returns `null`.
-     * Must throw a RuntimeException when argument $key is invalid.
      *
      * @return T|null
-     * @throws InvalidArgumentException
      */
-    public function get(int|string $key);
+    public function get(int|string $key): mixed;
+
+    /**
+     * Same as the "get" method above. However, when the targeted element does not exist in the collection, an exception
+     * is thrown instead of null being returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws ElementNotFoundException
+     */
+    public function getOrFail(int|string $key): mixed;
+
+    /**
+     * Implementing method must guard two things:
+     *
+     *   1. That the $collection argument has the same class or is a subclass of $this.
+     *   1. That $this accepts all the elements in the $collection argument.
+     *
+     * @param self<T> $collection
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function guardCollectionInheritanceAndAcceptedElements(self $collection): void;
 
     /**
      * Returns `true`, if the argument $key exists as an array key in the collection's elements. Otherwise, returns
      * `false`.
-     * Must throw a RuntimeException when argument $key is invalid.
-     *
-     * @throws InvalidArgumentException
      */
     public function has(int|string $key): bool;
 
@@ -197,9 +263,10 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @see https://www.php.net/manual/en/function.array-search.php
      *
      * @param T $element
-     * @throws InvalidArgumentException
+     *
+     * @throws UnacceptableElementException
      */
-    public function indexOf($element): int|string|null;
+    public function indexOf(mixed $element): int|string|null;
 
     /**
      * Returns the key for the current element (array pointer) in the collection's elements. If key does not exist,
@@ -220,7 +287,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @return T|null
      */
-    public function last();
+    public function last(): mixed;
 
     /**
      * Returns the first key – int or string – in the collection. If empty, returns `null`.
@@ -230,6 +297,30 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * @see https://www.php.net/manual/en/function.array-key-last.php
      */
     public function lastKey(): int|string|null;
+
+    /**
+     * Same as the "lastKey" method above. However, when collection is empty, an exception is thrown instead of null
+     * being returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws KeyNotFoundException
+     */
+    public function lastKeyOrFail(): mixed;
+
+    /**
+     * Same as the "last" method above. However, when collection is empty, an exception is thrown instead of null being
+     * returned.
+     *
+     * Inspired by: https://laravel.com/docs/12.x/collections#method-first-or-fail
+     *
+     * @return T
+     *
+     * @throws ElementNotFoundException
+     */
+    public function lastOrFail(): mixed;
 
     /**
      * Map the contents of the collection and return the mapped array.
@@ -245,6 +336,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *   - int|string $key: The current element's key.
      *
      * @param Closure(T, int|string):mixed $callback
+     *
      * @return array<int|string, T>
      */
     public function map(Closure $callback): array;
@@ -258,12 +350,14 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
      *
-     * Argument $callback must return an integer. Any other return value returned by $callback must cause an exception
-     * to be thrown.
+     * Argument $callback must return an integer. Any other return value returned by $callback must cause an
+     * InvalidClosureReturnValueException to be thrown.
      *
      * @param Closure(T, int|string):int $callback
+     *
      * @return T|null
-     * @throws RuntimeException
+     *
+     * @throws InvalidClosureReturnValueException|RuntimeException
      */
     public function maxByCallback(Closure $callback);
 
@@ -276,12 +370,14 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *   - mixed $value: The current element's value.
      *   - int|string $key: The current element's key.
      *
-     * Argument $callback must return an integer. Any other return value returned by $callback must cause an exception
-     * to be thrown.
+     * Argument $callback must return an integer. Any other return value returned by $callback must cause an
+     * InvalidClosureReturnValueException to be thrown.
      *
      * @param Closure(T, int|string):int $callback
+     *
      * @return T|null
-     * @throws RuntimeException
+     *
+     * @throws InvalidClosureReturnValueException|RuntimeException
      */
     public function minByCallback(Closure $callback);
 
@@ -294,7 +390,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *
      * @return T|null
      */
-    public function next();
+    public function next(): mixed;
 
     /**
      * Return the collection's elements "as is"; keys and values intact.
@@ -319,6 +415,67 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
     public function toCleared(): static;
 
     /**
+     * Equivalent of `array_diff`.
+     *
+     * Must return a clone. The resulting clone must contain only the VALUES in this current collections, which are
+     * different from the VALUES in the $other collection.
+     *
+     * @see https://www.php.net/manual/en/function.array-diff.php
+     *
+     * @param CollectionInterface<T> $collection
+     * @param bool $isBidirectional When false, only elements in the current collection ($this) will be included. When
+     *                              true, all the different elements from both collections ($this and $collection) will
+     *                              be included.
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function toDifference(CollectionInterface $collection, bool $isBidirectional = false): static;
+
+    /**
+     * Equivalent of `array_diff_key`.
+     *
+     * Must return a clone. The resulting clone must contain only the KEYS in this current collections, which are
+     * different from the KEYS in the $other collection.
+     *
+     * @see https://www.php.net/manual/en/function.array-diff-key.php
+     *
+     * @param CollectionInterface<T> $collection
+     * @param bool $isBidirectional When false, only key in the current collection ($this) will be included. When true,
+     *                              all the different keys from both collections ($this and $collection) will be
+     *                              included.
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function toDifferenceByKey(CollectionInterface $collection, bool $isBidirectional = false): static;
+
+    /**
+     * Equivalent of `array_intersect`.
+     *
+     * Must return a clone. The resulting clone must contain only the intersection of VALUES between the two
+     * collections.
+     *
+     * @see https://www.php.net/manual/en/function.array-intersect.php
+     *
+     * @param CollectionInterface<T> $collection
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function toIntersection(CollectionInterface $collection): static;
+
+    /**
+     * Equivalent of `array_intersect_key`.
+     *
+     * Must return a clone. The resulting clone must contain only the intersection of KEYS between the two collections.
+     *
+     * @see https://www.php.net/manual/en/function.array-intersect-key.php
+     *
+     * @param CollectionInterface<T> $collection
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException
+     */
+    public function toIntersectionByKey(CollectionInterface $collection): static;
+
+    /**
      * Equivalent of `array_values`. Makes the contained elements in a clone of the current instance exist in a
      * sequential array, with all keys being numerical, starting from index 0.
      *
@@ -331,16 +488,16 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
     /**
      * Reindex the elements in a clone of the current collection, using the value returned by the $closure argument.
      *
-     * Must throw a RuntimeException when either:
+     * Must throw a InvalidClosureReturnValueException when the $closure argument does not return an int or string.
      *
-     *  (A) The $closure argument does not return an int or string.
-     *  (B) When argument $duplicateKeyBehavior is ToReindexedDuplicateKeyBehaviorEnum::throw_exception and one or more
-     *      duplicate keys are found.
+     * Must throw a RuntimeException when argument $duplicateKeyBehavior is
+     * ToReindexedDuplicateKeyBehaviorEnum::throw_exception and one or more duplicate keys are found.
      *
      * Must return said clone.
      *
      * @param Closure(T,int|string):(int|string) $closure The returned value will be used as the key in the resulting
      *                                                    collection.
+     *
      * @throws RuntimeException
      */
     public function toReindexed(
@@ -374,6 +531,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * Must return a clone.
      *
      * @param Closure(T, T):int $callback
+     *
      * @throws RuntimeException
      */
     public function toSortedByCallback(Closure $callback): static;
@@ -387,8 +545,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *   - T $value: An element within the current collection.
      *   - int|string $key: An array key.
      *
-     * Argument $callback must return a string. Any other value returned by $callback must cause an exception to be
-     * thrown.
+     * Argument $callback must return a string. Any other value than string returned by $callback must cause an
+     * InvalidClosureReturnValueException to be thrown.
      *
      * Must return a clone.
      *
@@ -398,7 +556,8 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      *                                          unique string, exist, only the first element will will exist in the
      *                                          resulting collection. Otherwise, only the last element will exist in the
      *                                          resulting collection.
-     * @throws RuntimeException
+     *
+     * @throws InvalidClosureReturnValueException|RuntimeException
      */
     public function toUniqueByCallback(Closure $callback, bool $isUsingFirstEncounteredElement = true): static;
 
@@ -407,16 +566,18 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * Must return a clone.
      *
      * @param T $element
-     * @throws RuntimeException
+     *
+     * @throws UnacceptableElementException|RuntimeException
      */
-    public function withAdded($element): static;
+    public function withAdded(mixed $element): static;
 
     /**
      * Add multiple elements to the end of a clone of the current collection. Array keys are not preserved.
      * Must return a clone.
      *
      * @param array<int|string, T> $elements
-     * @throws RuntimeException
+     *
+     * @throws UnacceptableElementException|RuntimeException
      */
     public function withAddedMultiple(array $elements): static;
 
@@ -426,6 +587,7 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * Must return a clone.
      *
      * @param Closure(T, int|string):bool $callback
+     *
      * @throws RuntimeException
      */
     public function withFiltered(Closure $callback): static;
@@ -436,40 +598,39 @@ interface CollectionInterface extends ImmutableObjectInterface, Countable, Itera
      * Must return a clone.
      *
      * @param CollectionInterface<T> $collection
-     * @throws RuntimeException
+     *
+     * @throws UnacceptableCollectionException|UnacceptableElementException|RuntimeException
      */
     public function withMerged(CollectionInterface $collection): static;
 
     /**
      * Remove the $key from a clone of the current collection, if the array key exists.
      * Must return a clone.
-     * Must throw a RuntimeException when argument $key is invalid.
-     *
-     * @param int|string $key
-     * @throws InvalidArgumentException
      */
-    public function withRemoved($key): static;
+    public function withRemoved(int|string $key): static;
 
     /**
      * Remove the $element from a clone of the current collection, if the element exists in the collection.
      * Must return a clone.
-     * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
+     * Must throw a UnacceptableElementException when the $element argument is invalid for the implementing collection
+     * class.
      *
      * @param T $element
-     * @throws RuntimeException
+     *
+     * @throws UnacceptableElementException|RuntimeException
      */
-    public function withRemovedElement($element): static;
+    public function withRemovedElement(mixed $element): static;
 
     /**
      * Set the $element argument on a clone of the current collection, using the $key argument.
      * Must return a clone.
      * Must throw a RuntimeException when the $element argument is invalid for the implementing collection class.
      *
-     * @param int|string $key
      * @param T $element
-     * @throws RuntimeException
+     *
+     * @throws UnacceptableElementException|RuntimeException
      */
-    public function withSet($key, $element): static;
+    public function withSet(int|string $key, $element): static;
 
     /**
      * Slice a clone of the current collection using the `array_slice` function.

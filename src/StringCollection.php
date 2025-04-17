@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Eboreum\Collections;
 
 use Closure;
-use Eboreum\Collections\Contract\CollectionInterface;
+use Collator;
+use Eboreum\Collections\Contract\CollectionInterface\SortableCollectionInterface;
 use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterface;
+
+use function is_string;
 
 /**
  * {@inheritDoc}
@@ -15,14 +18,12 @@ use Eboreum\Collections\Contract\CollectionInterface\UniqueableCollectionInterfa
  *
  * @template T of string
  * @extends Collection<T>
+ * @implements SortableCollectionInterface<T>
  * @implements UniqueableCollectionInterface<T>
  */
-class StringCollection extends Collection implements UniqueableCollectionInterface
+class StringCollection extends Collection implements SortableCollectionInterface, UniqueableCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public static function isElementAccepted($element): bool
+    public static function isElementAccepted(mixed $element): bool
     {
         return is_string($element);
     }
@@ -47,33 +48,21 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?string
     {
         return parent::current();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function find(Closure $callback): ?string
     {
         return parent::find($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?string
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?string
     {
         return parent::get($key);
@@ -89,33 +78,21 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?string
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?string
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?string
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?string
     {
         return parent::next();
@@ -123,7 +100,42 @@ class StringCollection extends Collection implements UniqueableCollectionInterfa
 
     /**
      * {@inheritDoc}
+     *
+     * Uses the space operator, <=>, for sorting the elements on the clone being returned.
      */
+    public function toSorted(bool $isAscending = true): static
+    {
+        $direction = $isAscending ? 1 : -1;
+
+        return $this->toSortedByCallback(
+            static function (string $a, string $b) use ($direction): int {
+                return ($a <=> $b) * $direction;
+            },
+        );
+    }
+
+    /**
+     * Sorts using a collator, which — for various character collations — will yield better results compared to the
+     * `toSorted` method above.
+     *
+     * The sorted result is added to a clone of the current class and said clone is returned.
+     *
+     * Requires either:
+     *
+     *   - The PHP extension "intl": https://www.php.net/manual/en/class.collator.php
+     *   - A polyfill, e.g. https://packagist.org/packages/symfony/polyfill-intl-icu
+     */
+    public function toSortedByCollator(Collator $collator, bool $isAscending = true): static
+    {
+        $direction = $isAscending ? 1 : -1;
+
+        return $this->toSortedByCallback(
+            static function (string $a, string $b) use ($collator, $direction): int {
+                return ((int) $collator->compare($a, $b)) * $direction;
+            },
+        );
+    }
+
     public function toUnique(bool $isUsingFirstEncounteredElement = true): static
     {
         return $this->toUniqueByCallback(

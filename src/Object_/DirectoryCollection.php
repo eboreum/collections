@@ -8,7 +8,6 @@ use Closure;
 use Directory;
 use Eboreum\Collections\Abstraction\AbstractNamedClassOrInterfaceCollection;
 use Eboreum\Collections\Contract\CollectionInterface;
-use Eboreum\Collections\Contract\GeneratedCollectionInterface;
 
 /**
  * {@inheritDoc}
@@ -16,14 +15,11 @@ use Eboreum\Collections\Contract\GeneratedCollectionInterface;
  * A collection which contains instances of Directory, exclusively.
  *
  * @template T of Directory
+ * @implements CollectionInterface<T>
  * @extends AbstractNamedClassOrInterfaceCollection<T>
- * @implements GeneratedCollectionInterface<T>
  */
-class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implements GeneratedCollectionInterface
+class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implements CollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public static function getHandledClassName(): string
     {
         return Directory::class;
@@ -49,9 +45,6 @@ class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implem
         return parent::contains($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function current(): ?Directory
     {
         return parent::current();
@@ -65,17 +58,11 @@ class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implem
         return parent::find($key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function first(): ?Directory
     {
         return parent::first();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(int|string $key): ?Directory
     {
         return parent::get($key);
@@ -91,33 +78,21 @@ class DirectoryCollection extends AbstractNamedClassOrInterfaceCollection implem
         return parent::indexOf($element);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function last(): ?Directory
     {
         return parent::last();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function maxByCallback(Closure $callback): ?Directory
     {
         return parent::maxByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function minByCallback(Closure $callback): ?Directory
     {
         return parent::minByCallback($callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function next(): ?Directory
     {
         return parent::next();

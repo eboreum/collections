@@ -5,35 +5,31 @@ declare(strict_types=1);
 namespace Test\Unit\Eboreum\Collections;
 
 use Closure;
-use Eboreum\Collections\Collection;
 use Eboreum\Collections\IntegerCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 
+use function strval;
+
+/**
+ * @template T of int
+ * @template TCollection of IntegerCollection<T>
+ * @extends AbstractTypeCollectionTestCase<T, TCollection>
+ */
+#[CoversClass(IntegerCollection::class)]
 class IntegerCollectionTest extends AbstractTypeCollectionTestCase
 {
     /**
-     * @dataProvider dataProvider_testMaxWorks
-     *
-     * @param array<int, int> $elements
-     */
-    public function testMaxWorks(?int $expected, array $elements): void
-    {
-        $integerCollection = new IntegerCollection($elements);
-        $element = $integerCollection->max();
-
-        $this->assertSame($expected, $element);
-    }
-
-    /**
      * @return array<int, array{int|null, array<int>}>
      */
-    public function dataProvider_testMaxWorks(): array
+    public static function providerTestMaxWorks(): array
     {
         return [
             [
                 null,
                 [],
             ],
-            (function(){
+            (static function () {
                 $elements = [42];
 
                 return [
@@ -41,7 +37,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
                     $elements,
                 ];
             })(),
-            (function(){
+            (static function () {
                 $elements = [
                     43,
                     42,
@@ -52,7 +48,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
                     $elements,
                 ];
             })(),
-            (function(){
+            (static function () {
                 $elements = [
                     42,
                     41,
@@ -66,7 +62,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
                     $elements,
                 ];
             })(),
-            (function(){
+            (static function () {
                 $elements = [
                     41,
                     40,
@@ -82,29 +78,16 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
     }
 
     /**
-     * @dataProvider dataProvider_testMinWorks
-     *
-     * @param array<int, int> $elements
-     */
-    public function testMinWorks(?int $expected, array $elements): void
-    {
-        $integerCollection = new IntegerCollection($elements);
-        $element = $integerCollection->min();
-
-        $this->assertSame($expected, $element);
-    }
-
-    /**
      * @return array<int, array{int|null, array<int>}>
      */
-    public function dataProvider_testMinWorks(): array
+    public static function providerTestMinWorks(): array
     {
         return [
             [
                 null,
                 [],
             ],
-            (function(){
+            (static function () {
                 $elements = [42];
 
                 return [
@@ -112,7 +95,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
                     $elements,
                 ];
             })(),
-            (function(){
+            (static function () {
                 $elements = [
                     43,
                     42,
@@ -123,7 +106,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
                     $elements,
                 ];
             })(),
-            (function(){
+            (static function () {
                 $elements = [
                     44,
                     43,
@@ -137,7 +120,7 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
                     $elements,
                 ];
             })(),
-            (function(){
+            (static function () {
                 $elements = [
                     43,
                     42,
@@ -150,6 +133,231 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
                 ];
             })(),
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function providerTestToUniqueByCallbackWorks(): array
+    {
+        return [
+            [
+                'Empty collection.',
+                static function (): array {
+                    return [
+                        [],
+                        [],
+                    ];
+                },
+                static function (): string {
+                    return '';
+                },
+                true,
+            ],
+            [
+                '1 single item collection.',
+                static function (AbstractCollectionTestCase $self): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [self::createSingleElement($self)];
+
+                    return [
+                        $expected,
+                        $expected,
+                    ];
+                },
+                static function (): string {
+                    return '';
+                },
+                true,
+            ],
+            [
+                'Integer item collection, ascending, use first encountered.',
+                static function (): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [0 => 1, 1 => 2, 3 => 3, 5 => 4];
+
+                    /** @var array<int, T> $elements */
+                    $elements = [1, 2, 1, 3, 1, 4];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (int $value): string {
+                    return strval($value);
+                },
+                true,
+            ],
+            [
+                'Integer item collection, ascending, use last encountered.',
+                static function (): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [1 => 2, 3 => 3, 4 => 1, 5 => 4];
+
+                    /** @var array<int, T> $elements */
+                    $elements = [1, 2, 1, 3, 1, 4];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (int $value): string {
+                    return strval($value);
+                },
+                false,
+            ],
+            [
+                'Integer item collection, descending, use first encountered.',
+                static function (): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [0 => 4, 1 => 1, 2 => 3, 4 => 2];
+
+                    /** @var array<int, T> $elements */
+                    $elements = [4, 1, 3, 1, 2, 1];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (int $value): string {
+                    return strval($value);
+                },
+                true,
+            ],
+            [
+                'Integer item collection, descending, use last encountered.',
+                static function (): array {
+                    /** @var array<int, T> $expected */
+                    $expected = [0 => 4, 2 => 3, 4 => 2, 5 => 1];
+
+                    /** @var array<int, T> $elements */
+                    $elements = [4, 1, 3, 1, 2, 1];
+
+                    return [
+                        $expected,
+                        $elements,
+                    ];
+                },
+                static function (int $value): string {
+                    return strval($value);
+                },
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array<
+     *   int,
+     *   array{
+     *     string,
+     *     TCollection<T>,
+     *     TCollection<T>,
+     *     Closure(self<T, TCollection<T>>, TCollection<T>, TCollection<T>, TCollection<T>, string): void,
+     *   },
+     * >
+     */
+    public static function providerTestWithMergedWorks(): array
+    {
+        /** @var TCollection<T> $a0 */
+        $a0 = new IntegerCollection([0 => 999]);
+
+        /** @var TCollection<T> $b0 */
+        $b0 = new IntegerCollection([0 => -999]);
+
+        /** @var TCollection<T> $aAssociative */
+        $aAssociative = new IntegerCollection(['foo' => 999]);
+
+        /** @var TCollection<T> $bAssociative */
+        $bAssociative = new IntegerCollection(['foo' => -999]);
+
+        return [
+            [
+                'Integer keys. 0 in both, means #2 is appended as key 1.',
+                $a0,
+                $b0,
+                static function (
+                    self $self,
+                    IntegerCollection $collectionA,
+                    IntegerCollection $collectionB,
+                    IntegerCollection $collectionC,
+                    string $message
+                ): void {
+                    $self->assertCount(2, $collectionC, $message);
+                    $self->assertSame([0 => 999, 1 => -999], $collectionC->toArray(), $message);
+                },
+            ],
+            [
+                'Same name string keys. Will override.',
+                $aAssociative,
+                $bAssociative,
+                static function (
+                    self $self,
+                    IntegerCollection $collectionA,
+                    IntegerCollection $collectionB,
+                    IntegerCollection $collectionC,
+                    string $message
+                ): void {
+                    $self->assertCount(1, $collectionC, $message);
+                    $self->assertSame(['foo' => -999], $collectionC->toArray(), $message);
+                },
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected static function createMultipleElements(AbstractCollectionTestCase $self): array
+    {
+        /** @var array{0: T, foo: T, 42: T, 43: T} $elements */
+        $elements = [
+            0 => -1,
+            'foo' => 2,
+            42 => -3,
+            43 => 42,
+        ];
+
+        return $elements;
+    }
+
+    protected static function createSingleElement(AbstractCollectionTestCase $self): int
+    {
+        return 42;
+    }
+
+    protected static function getHandledCollectionClassName(): string
+    {
+        return IntegerCollection::class;
+    }
+
+    /**
+     * @param array<int, int> $elements
+     */
+    #[DataProvider('providerTestMaxWorks')]
+    public function testMaxWorks(?int $expected, array $elements): void
+    {
+        $integerCollection = new IntegerCollection($elements);
+        $element = $integerCollection->max();
+
+        $this->assertSame($expected, $element);
+    }
+
+    /**
+     * @param array<int, int> $elements
+     */
+    #[DataProvider('providerTestMinWorks')]
+    public function testMinWorks(?int $expected, array $elements): void
+    {
+        $integerCollection = new IntegerCollection($elements);
+        $element = $integerCollection->min();
+
+        $this->assertSame($expected, $element);
     }
 
     public function testToSortedWorks(): void
@@ -179,167 +387,36 @@ class IntegerCollectionTest extends AbstractTypeCollectionTestCase
         );
     }
 
-    /**
-     * @dataProvider dataProvider_testToUniqueByCallbackWorks
-     *
-     * @param array<int, int> $expected
-     * @param array<int, int> $elements
-     */
+    #[DataProvider('providerTestToUniqueByCallbackWorks')]
     public function testToUniqueWorks(
         string $message,
-        array $expected,
-        array $elements,
+        Closure $elementsFactory,
         Closure $callback,
-        bool $isUsingFirstEncounteredElement
+        bool $isUsingFirstEncounteredElement,
     ): void {
-        $handledCollectionClassName = $this->getHandledCollectionClassName();
+        $data = $elementsFactory($this);
+
+        $this->assertIsArray($data);
+        $this->assertCount(2, $data);
+        $this->assertArrayHasKey(0, $data);
+        $this->assertArrayHasKey(1, $data);
+
+        /**
+         * @var array<mixed> $expected
+         * @var array<mixed> $elements
+         */
+        [$expected, $elements] = $data;
+
+        $handledCollectionClassName = static::getHandledCollectionClassName();
         $collectionA = new $handledCollectionClassName($elements);
 
-        assert(is_object($collectionA)); // Make phpstan happy
-        assert(is_a($collectionA, $handledCollectionClassName)); // Make phpstan happy
-        assert(is_a($collectionA, Collection::class)); // Make phpstan happy
-        assert(method_exists($collectionA, 'toUnique')); // Make phpstan happy
+        $this->assertInstanceOf(IntegerCollection::class, $collectionA);
 
         $collectionB = $collectionA->toUnique($isUsingFirstEncounteredElement);
 
-        assert(is_object($collectionB)); // Make phpstan happy
-        assert(is_a($collectionB, $handledCollectionClassName)); // Make phpstan happy
-        assert(is_a($collectionB, Collection::class)); // Make phpstan happy
-
-        $this->assertNotSame($collectionA, $collectionB);
-        $this->assertSame($elements, $collectionA->toArray());
-        $this->assertSame($expected, $collectionB->toArray());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function dataProvider_testToUniqueByCallbackWorks(): array
-    {
-        return [
-            [
-                'Empty collection.',
-                [],
-                [],
-                static function (): string {
-                    return '';
-                },
-                true,
-            ],
-            [
-                '1 single item collection.',
-                [$this->createSingleElement()],
-                [$this->createSingleElement()],
-                static function (): string {
-                    return '';
-                },
-                true,
-            ],
-            [
-                'Integer item collection, ascending, use first encountered.',
-                [0 => 1, 1 => 2, 3 => 3, 5 => 4],
-                [1, 2, 1, 3, 1, 4],
-                static function (int $value): string {
-                    return strval($value);
-                },
-                true,
-            ],
-            [
-                'Integer item collection, ascending, use last encountered.',
-                [1 => 2, 3 => 3, 4 => 1, 5 => 4],
-                [1, 2, 1, 3, 1, 4],
-                static function (int $value): string {
-                    return strval($value);
-                },
-                false,
-            ],
-            [
-                'Integer item collection, descending, use first encountered.',
-                [0 => 4, 1 => 1, 2 => 3, 4 => 2],
-                [4, 1, 3, 1, 2, 1],
-                static function (int $value): string {
-                    return strval($value);
-                },
-                true,
-            ],
-            [
-                'Integer item collection, descending, use last encountered.',
-                [0 => 4, 2 => 3, 4 => 2, 5 => 1],
-                [4, 1, 3, 1, 2, 1],
-                static function (int $value): string {
-                    return strval($value);
-                },
-                false,
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array<int, array{string, IntegerCollection<int>, IntegerCollection<int>, Closure: void}>
-     */
-    public function dataProvider_testWithMergedWorks(): array
-    {
-        // @phpstan-ignore-next-line Returned values are 100% correct, but phpstan still reports an error. False positive?
-        return [
-            [
-                'Integer keys. 0 in both, means #2 is appended as key 1.',
-                new IntegerCollection([0 => 999]),
-                new IntegerCollection([0 => -999]),
-                function (
-                    IntegerCollection $collectionA,
-                    IntegerCollection $collectionB,
-                    IntegerCollection $collectionC,
-                    string $message
-                ): void {
-                    $this->assertCount(2, $collectionC, $message);
-                    $this->assertSame([0 => 999, 1 => -999], $collectionC->toArray(), $message);
-                },
-            ],
-            [
-                'Same name string keys. Will override.',
-                new IntegerCollection(['foo' => 999]),
-                new IntegerCollection(['foo' => -999]),
-                function (
-                    IntegerCollection $collectionA,
-                    IntegerCollection $collectionB,
-                    IntegerCollection $collectionC,
-                    string $message
-                ): void {
-                    $this->assertCount(1, $collectionC, $message);
-                    $this->assertSame(['foo' => -999], $collectionC->toArray(), $message);
-                },
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function createMultipleElements(): array
-    {
-        return [
-            -1,
-            'foo' => 2,
-            42 => -3,
-            42,
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function createSingleElement()
-    {
-        return 42;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getHandledCollectionClassName(): string
-    {
-        return IntegerCollection::class;
+        $this->assertInstanceOf(IntegerCollection::class, $collectionB);
+        $this->assertNotSame($collectionA, $collectionB, $message);
+        $this->assertSame($elements, $collectionA->toArray(), $message);
+        $this->assertSame($expected, $collectionB->toArray(), $message);
     }
 }
