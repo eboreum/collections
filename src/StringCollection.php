@@ -18,6 +18,7 @@ use function is_string;
  *
  * @template T of string
  * @extends Collection<T>
+ * @implements SortableCollectionInterface<T>
  * @implements UniqueableCollectionInterface<T>
  */
 class StringCollection extends Collection implements SortableCollectionInterface, UniqueableCollectionInterface
