@@ -103,6 +103,14 @@ Notice: Intersection types ([https://php.watch/versions/8.1/intersection-types](
 
 The reason is that methods such as `current`, `find`, `first`, etc. cannot have nullable return types when handling intersections.
 
+# Why is immutability necessary?
+
+Simply put: You unintentionally risk changing mutable ("non-immutable") objects when they are being passed around the code base. You and your team may know not to change a mutable object in code bases you control, but third-party libraries (e.g. via Composer) certainly will not respect your rules. Eventually, someone in your team **_will_** forget about your "do-not-change" rule and introduce an ugly bug, which often times is hard to track down.
+
+## Real-world example of a mutable object incident
+
+Imagine you have a database ORM (Doctrine, Eloquent, etc.). If you use `DateTime` instead of `DateTimeImmutable`, passing that instance of `DateTime` around may change it. Consider this: The instance of `DateTime` was used to set an end date from which point a user can no longer log in to your application. The same instance of `DateTime` was used across 100 users (e.g. for optimization reasons). Now your code, because of the change on the `DateTime` instance, inadvertently blocked 100 users from using your application. Such a type of bug is **_very_** hard to find the root cause for.
+
 # Tests
 
 ## Test/development requirements
