@@ -118,6 +118,8 @@ class StringCollection extends Collection implements SortableCollectionInterface
      * Sorts using a collator, which — for various character collations — will yield better results compared to the
      * `toSorted` method above.
      *
+     * The sorted result is added to a clone of the current class and said clone is returned.
+     *
      * Requires either:
      *
      *   - The PHP extension "intl": https://www.php.net/manual/en/class.collator.php
